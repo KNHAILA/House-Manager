@@ -48,13 +48,14 @@ public class RunHEM_RT_Simulation
     public static void	main(String[] args)
     {
 
-        //System.out.println("salam");
+        System.out.println("salam");
 
         try {
             // map that will contain the atomic model descriptors to construct
             // the simulation architecture
             Map<String,AbstractAtomicModelDescriptor> atomicModelDescriptors =
                     new HashMap<>();
+            System.out.println("salam 1");
 
             // atomic HIOA models require RTAtomicHIOA_Descriptor while
             // atomic models require RTAtomicModelDescriptor
@@ -80,6 +81,7 @@ public class RunHEM_RT_Simulation
                             SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
                             ACCELERATION_FACTOR));
 
+            System.out.println("salam 2");
             // the heater models
             /*
             atomicModelDescriptors.put(
@@ -249,6 +251,9 @@ public class RunHEM_RT_Simulation
 */
             // coupled model descriptor: an HIOA requires a
             // RTCoupledHIOA_Descriptor
+
+            System.out.println("salam 3");
+
             coupledModelDescriptors.put(
                     HEM_CoupledModel.URI,
                     new RTCoupledHIOA_Descriptor(
@@ -265,6 +270,7 @@ public class RunHEM_RT_Simulation
                             bindings,
                             ACCELERATION_FACTOR));
 
+            System.out.println("salam 4");
             // simulation architecture
             ArchitectureI architecture =
                     new Architecture(
@@ -273,9 +279,16 @@ public class RunHEM_RT_Simulation
                             coupledModelDescriptors,
                             TimeUnit.SECONDS);
 
+            System.out.println(HEM_CoupledModel.URI);
+            System.out.println(TimeUnit.SECONDS.toString());
+            System.out.println(atomicModelDescriptors.size());
+            System.out.println(coupledModelDescriptors.size());
+
+            System.out.println("salam 5");
             // create the simulator from the simulation architecture
             SimulationEngine se = architecture.constructSimulator();
 
+            System.out.println("salam 6");
             // Optional: how to use simulation run parameters to modify
             // the behaviour of the models from runs to runs
             Map<String, Object> simParams = new HashMap<String, Object>();
