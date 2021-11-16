@@ -24,8 +24,8 @@ import fr.sorbonne_u.devs_simulation.models.AtomicModel;
  *
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-public class		Freezing
-        extends		Event
+public class		OpenRefrigeratorDoor
+        extends Event
         implements	RefrigeratorEventI
 {
     // -------------------------------------------------------------------------
@@ -51,7 +51,7 @@ public class		Freezing
      *
      * @param timeOfOccurrence	time of occurrence of the event.
      */
-    public				Freezing(
+    public				OpenRefrigeratorDoor(
             Time timeOfOccurrence
     )
     {
@@ -101,4 +101,3 @@ public class		Freezing
         }
     }
 }
-// -----------------------------------------------------------------------------

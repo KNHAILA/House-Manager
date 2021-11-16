@@ -1,6 +1,7 @@
 package fr.sorbonne_u.components.refrigerator.mil.events;
 
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorElectricityModel;
+import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorElectricityModel.State;
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorTemperatureModel;
 import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
@@ -83,6 +84,7 @@ public class			Resting
     @Override
     public void			executeOn(AtomicModel model)
     {
+
         // the DoNotHeat event can be executed either on the heater electricity
         // or temperature models
         assert	model instanceof RefrigeratorElectricityModel ||
@@ -90,7 +92,7 @@ public class			Resting
 
         if (model instanceof RefrigeratorElectricityModel) {
             RefrigeratorElectricityModel refrigerator = (RefrigeratorElectricityModel)model;
-            assert	refrigerator.getState() == FREEZING;
+            assert	refrigerator.getState() == State.FREEZING;
             refrigerator.setState(State.ON);
         } else if (model instanceof RefrigeratorTemperatureModel) {
             RefrigeratorTemperatureModel refrigeratorTemperature =

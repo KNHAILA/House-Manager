@@ -42,7 +42,9 @@ public class			RefrigeratorTemperatureModel
         /** Refrigerator is FREEZING.												*/
         FREEZING,
         /** Refrigerator is RESTING.											*/
-        RESTING
+        RESTING,
+        /** Refrigerator is WARMING.											*/
+        WARMING
     }
 
     // -------------------------------------------------------------------------
@@ -53,7 +55,7 @@ public class			RefrigeratorTemperatureModel
     /** URI for a model; works when only one instance is created.			*/
     public static final String		URI = RefrigeratorTemperatureModel.class.
             getSimpleName();
-    public static final double		INITIAL_TEMPERATURE = -3.0;
+    public static final double		MIN_TEMPERATURE = -3.0;
     public static final double		MAX_TEMPERATURE = 6.0;
     /** integration step for the differential equation(assumed in seconds).	*/
     protected static final double	STEP = 0.1;
@@ -67,14 +69,15 @@ public class			RefrigeratorTemperatureModel
     protected State					currentState = State.RESTING;
     /** the simulation time of start used to compute the mean temperature.	*/
     protected Time					start;
-    public static final double		PERIOD = 24.0;
-    protected double				cycleTime;
     /** accumulator to compute the mean external temperature for the
      *  simulation report.													*/
     protected double				temperatureAcc;
     /** the mean temperature over the simulation duration for the simulation
      *  report.																*/
     protected double				meanTemperature;
+    /** current external temperature in Celsius.							*/
+    @ImportedVariable(type = Double.class)
+    protected Value<Double>			externalTemperature;
 
 
 
@@ -110,7 +113,6 @@ public class			RefrigeratorTemperatureModel
     ) throws Exception
     {
         super(uri, simulatedTimeUnit, simulationEngine);
-        this.cycleTime = 0.0;
         this.integrationStep = new Duration(STEP, simulatedTimeUnit);
         this.setLogger(new StandardLogger());
     }
@@ -156,14 +158,10 @@ public class			RefrigeratorTemperatureModel
     }
 
     @Override
-    protected void initialiseDerivatives() {
-
-    }
+    protected void initialiseDerivatives() {}
 
     @Override
-    protected void computeDerivatives() {
-
-    }
+    protected void computeDerivatives() {}
 
     /**
      * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
@@ -172,8 +170,7 @@ public class			RefrigeratorTemperatureModel
     protected void		initialiseVariables(Time startTime)
     {
         super.initialiseVariables(startTime);
-
-        this.currentTemperature.v = INITIAL_TEMPERATURE;
+        this.currentTemperature.v = MIN_TEMPERATURE;
     }
 
     /**
@@ -202,28 +199,30 @@ public class			RefrigeratorTemperatureModel
     {
         // accumulate the temperature*time to compute the mean temperature
         this.temperatureAcc +=
-                this.currentTemperature.v * elapsedTime.getSimulatedDuration();
+                this.externalTemperature.v * elapsedTime.getSimulatedDuration();
 
-        // compute the current time in the cycle
-        this.cycleTime += elapsedTime.getSimulatedDuration();
-        if (this.cycleTime > PERIOD) {
-            this.cycleTime -= PERIOD;
+        // update the room temperature using the Euler integration of the
+        // differential equation
+        if(externalTemperature.v > 30) {
+            this.currentTemperature.v = 2.0;
+        } else if(externalTemperature.v <= 30 && externalTemperature.v > 5) {
+            this.currentTemperature.v = 1.0;
+        } else if(externalTemperature.v < -3) {
+            this.currentTemperature.v = -1.0;
         }
 
-        // update the refrigerator temperature
-        int time = Math.floorMod((int) this.cycleTime, 6);
-
-        if (time < 5 && time >= 0) {
-            this.currentTemperature.v = -3.0;
-        } else if (time >= 5 && time < 6) {
-            double result = 9*time + 51;
-            this.currentTemperature.v = result;
+        if (this.currentState == State.FREEZING) {
+            this.currentTemperature.v += MIN_TEMPERATURE;
+        } else if(currentState == State.RESTING) {
+            this.currentTemperature.v += (MAX_TEMPERATURE + MIN_TEMPERATURE)/2;
+        } else if(currentState == State.WARMING) {
+            this.currentTemperature.v += MAX_TEMPERATURE;
         }
 
         this.currentTemperature.time = this.getCurrentStateTime();
 
         // Tracing
-        String mark = this.currentState == State.FREEZING ? " (h)" : " (-)";
+        String mark = this.currentState == State.FREEZING ? " (f)" : " (-)";
         StringBuffer message = new StringBuffer();
         message.append(this.currentTemperature.time.getSimulatedTime());
         message.append(mark);
@@ -250,7 +249,7 @@ public class			RefrigeratorTemperatureModel
 
         Event ce = (Event) currentEvents.get(0);
         assert	ce instanceof RefrigeratorEventI;
-        assert	ce instanceof Freezing || ce instanceof Resting;
+        assert	ce instanceof Freezing || ce instanceof Resting || ce instanceof W;
 
         StringBuffer sb = new StringBuffer("executing the external event: ");
         sb.append(ce.eventAsString());
