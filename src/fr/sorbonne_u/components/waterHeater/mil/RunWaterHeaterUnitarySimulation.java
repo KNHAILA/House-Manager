@@ -50,10 +50,10 @@ public class			RunWaterHeaterUnitarySimulation
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
 			atomicModelDescriptors.put(
-					ExternalTemperatureModel.URI,
+					WaterHeaterExternalTemperatureModel.URI,
 					AtomicHIOA_Descriptor.create(
-							ExternalTemperatureModel.class,
-							ExternalTemperatureModel.URI,
+							WaterHeaterExternalTemperatureModel.class,
+							WaterHeaterExternalTemperatureModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -75,7 +75,7 @@ public class			RunWaterHeaterUnitarySimulation
 			Set<String> submodels = new HashSet<String>();
 			submodels.add(WaterHeaterElectricityModel.URI);
 			submodels.add(WaterHeaterTemperatureModel.URI);
-			submodels.add(ExternalTemperatureModel.URI);
+			submodels.add(WaterHeaterExternalTemperatureModel.URI);
 			submodels.add(WaterHeaterUnitTesterModel.URI);
 			
 			
@@ -118,7 +118,7 @@ public class			RunWaterHeaterUnitarySimulation
 
 			bindings.put(new VariableSource("externalWaterTemperature",
 											Double.class,
-											ExternalTemperatureModel.URI),
+							WaterHeaterExternalTemperatureModel.URI),
 						 new VariableSink[] {
 								 new VariableSink("externalWaterTemperature",
 										 		  Double.class,

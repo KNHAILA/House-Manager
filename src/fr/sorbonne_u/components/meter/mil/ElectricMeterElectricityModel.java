@@ -52,13 +52,21 @@ public class			ElectricMeterElectricityModel
     /** tension of electric circuit for appliances in volts.			 	*/
     public static final double		TENSION = 220.0;
 
-    /** current intensity of the heater in amperes.							*/
+    /** current intensity of the Refrigerator in amperes.							*/
     @ImportedVariable(type = Double.class)
     protected Value<Double>			currentRefrigeratorIntensity;
-    /** current intensity of the heater in amperes.							*/
+    /** current intensity of the fan in amperes.							*/
     @ImportedVariable(type = Double.class)
     protected Value<Double>			currentFanIntensity;
-
+    /** current intensity of the Vacuum Cleaner in amperes.							*/
+    @ImportedVariable(type = Double.class)
+    protected Value<Double>			currentVacuumCleanerIntensity;
+    /** current intensity of the Water Heater in amperes.							*/
+    @ImportedVariable(type = Double.class)
+    protected Value<Double>			currentWaterHeaterIntensity;
+    /** current intensity of the Washing machine in amperes.							*/
+    @ImportedVariable(type = Double.class)
+    protected Value<Double>			currentWashingMachineIntensity;
     /** evaluation step for the equation (assumed in seconds).				*/
     protected static final double	STEP = 0.1;
     /** evaluation step as a duration, including the time unit.				*/
@@ -148,7 +156,10 @@ public class			ElectricMeterElectricityModel
         // simple sum of all incoming intensities
        this.currentIntensity.v =
                 this.currentFanIntensity.v +
-                        this.currentRefrigeratorIntensity.v;
+                        this.currentRefrigeratorIntensity.v +
+                             this.currentVacuumCleanerIntensity.v +
+                                  this.currentWaterHeaterIntensity.v +
+                                       this.currentWashingMachineIntensity.v ;
 
         // Tracing
         StringBuffer message = new StringBuffer("current total consumption: ");

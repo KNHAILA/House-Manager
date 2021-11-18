@@ -7,23 +7,45 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.HEM_CoupledModel.HEM_Report;
+
+//Fan
 import fr.sorbonne_u.components.fan.mil.FanElectricityModel;
 import fr.sorbonne_u.components.fan.mil.FanUserModel;
-import fr.sorbonne_u.components.fan.mil.events.SetHighFan;
-import fr.sorbonne_u.components.fan.mil.events.SetLowFan;
-import fr.sorbonne_u.components.fan.mil.events.SwitchOffFan;
-import fr.sorbonne_u.components.fan.mil.events.SwitchOnFan;
+import fr.sorbonne_u.components.fan.mil.events.*;
+
+//vacuumCleaner
+import fr.sorbonne_u.components.vacuumCleaner.mil.VacuumCleanerElectricityModel;
+import fr.sorbonne_u.components.vacuumCleaner.mil.VacuumCleanerUserModel;
+import fr.sorbonne_u.components.vacuumCleaner.mil.events.*;
+
+//refrigerator
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorExternalTemperatureModel;
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorElectricityModel;
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorTemperatureModel;
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorUnitTesterModel;
-import fr.sorbonne_u.components.refrigerator.mil.events.CloseRefrigeratorDoor;
-import fr.sorbonne_u.components.refrigerator.mil.events.Freezing;
-import fr.sorbonne_u.components.refrigerator.mil.events.OffRefrigerator;
-import fr.sorbonne_u.components.refrigerator.mil.events.OnRefrigerator;
-import fr.sorbonne_u.components.refrigerator.mil.events.OpenRefrigeratorDoor;
-import fr.sorbonne_u.components.refrigerator.mil.events.Resting;
+import fr.sorbonne_u.components.refrigerator.mil.events.*;
+
+//Washing machine
+import fr.sorbonne_u.components.washingMachine.mil.WashingMachineExternalTemperatureModel;
+import fr.sorbonne_u.components.washingMachine.mil.WashingMachineElectricityModel;
+import fr.sorbonne_u.components.washingMachine.mil.WashingMachineTemperatureModel;
+import fr.sorbonne_u.components.washingMachine.mil.WashingMachineUnitTesterModel;
+import fr.sorbonne_u.components.washingMachine.mil.events.*;
+
+//WaterHeater
+import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterExternalTemperatureModel;
+import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterElectricityModel;
+import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterTemperatureModel;
+import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterUnitTesterModel;
+import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
+import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
+
+//Meter
 import fr.sorbonne_u.components.meter.mil.ElectricMeterElectricityModel;
+
+//devs_simulation
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.architectures.ArchitectureI;
 import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
@@ -107,7 +129,7 @@ public class			RunHEM_RT_Simulation
             // atomic models require RTAtomicModelDescriptor
             // the same acceleration factor must be used for all models
 
-            // hair dryer models
+            // fan models
             atomicModelDescriptors.put(
                     FanElectricityModel.URI,
                     RTAtomicHIOA_Descriptor.create(
@@ -122,6 +144,64 @@ public class			RunHEM_RT_Simulation
                     RTAtomicModelDescriptor.create(
                             FanUserModel.class,
                             FanUserModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+
+            //Vacuum Claener Model
+            atomicModelDescriptors.put(
+                    VacuumCleanerElectricityModel.URI,
+                    RTAtomicHIOA_Descriptor.create(
+                            VacuumCleanerElectricityModel.class,
+                            VacuumCleanerElectricityModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+            atomicModelDescriptors.put(
+                    VacuumCleanerUserModel.URI,
+                    RTAtomicModelDescriptor.create(
+                            VacuumCleanerUserModel.class,
+                            VacuumCleanerUserModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+
+            //the Water heater models
+            atomicModelDescriptors.put(
+                    WaterHeaterElectricityModel.URI,
+                    RTAtomicHIOA_Descriptor.create(
+                            WaterHeaterElectricityModel.class,
+                            WaterHeaterElectricityModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+            atomicModelDescriptors.put(
+                    WaterHeaterTemperatureModel.URI,
+                    RTAtomicHIOA_Descriptor.create(
+                            WaterHeaterTemperatureModel.class,
+                            WaterHeaterTemperatureModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+            atomicModelDescriptors.put(
+                    WaterHeaterExternalTemperatureModel.URI,
+                    RTAtomicHIOA_Descriptor.create(
+                            WaterHeaterExternalTemperatureModel.class,
+                            WaterHeaterExternalTemperatureModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+            atomicModelDescriptors.put(
+                    WaterHeaterUnitTesterModel.URI,
+                    RTAtomicModelDescriptor.create(
+                            WaterHeaterUnitTesterModel.class,
+                            WaterHeaterUnitTesterModel.URI,
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
@@ -165,6 +245,44 @@ public class			RunHEM_RT_Simulation
                             SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
                             ACCELERATION_FACTOR));
 
+            // the WashingMachine models
+            atomicModelDescriptors.put(
+                    WashingMachineElectricityModel.URI,
+                    RTAtomicHIOA_Descriptor.create(
+                            WashingMachineElectricityModel.class,
+                            WashingMachineElectricityModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+            atomicModelDescriptors.put(
+                    WashingMachineTemperatureModel.URI,
+                    RTAtomicHIOA_Descriptor.create(
+                            WashingMachineTemperatureModel.class,
+                            WashingMachineTemperatureModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+            atomicModelDescriptors.put(
+                    WashingMachineExternalTemperatureModel.URI,
+                    RTAtomicHIOA_Descriptor.create(
+                            WashingMachineExternalTemperatureModel.class,
+                            WashingMachineExternalTemperatureModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+            atomicModelDescriptors.put(
+                    WashingMachineUnitTesterModel.URI,
+                    RTAtomicModelDescriptor.create(
+                            WashingMachineUnitTesterModel.class,
+                            WashingMachineUnitTesterModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+
             // the electric meter model
             atomicModelDescriptors.put(
                     ElectricMeterElectricityModel.URI,
@@ -183,13 +301,33 @@ public class			RunHEM_RT_Simulation
 
             // the set of submodels of the coupled model, given by their URIs
             Set<String> submodels = new HashSet<String>();
+            //fan
             submodels.add(FanElectricityModel.URI);
             submodels.add(FanUserModel.URI);
+
+            //Vacuum Cleaner
+            submodels.add(VacuumCleanerElectricityModel.URI);
+            submodels.add(VacuumCleanerUserModel.URI);
+
+            //WaterHeater
+            submodels.add(WaterHeaterElectricityModel.URI);
+            submodels.add(WaterHeaterTemperatureModel.URI);
+            submodels.add(WaterHeaterExternalTemperatureModel.URI);
+            submodels.add(WaterHeaterUnitTesterModel.URI);
+
+            //Refrigerator
             submodels.add(RefrigeratorElectricityModel.URI);
             submodels.add(RefrigeratorTemperatureModel.URI);
             submodels.add(RefrigeratorExternalTemperatureModel.URI);
             submodels.add(RefrigeratorUnitTesterModel.URI);
 
+            //washing machine
+            submodels.add(WashingMachineElectricityModel.URI);
+            submodels.add(WashingMachineTemperatureModel.URI);
+            submodels.add(WashingMachineExternalTemperatureModel.URI);
+            submodels.add(WashingMachineUnitTesterModel.URI);
+
+            //meter
             submodels.add(ElectricMeterElectricityModel.URI);
 
             // event exchanging connections between exporting and importing
@@ -197,6 +335,7 @@ public class			RunHEM_RT_Simulation
             Map<EventSource,EventSink[]> connections =
                     new HashMap<EventSource,EventSink[]>();
 
+            //Fan
             connections.put(
                     new EventSource(FanUserModel.URI, SwitchOnFan.class),
                     new EventSink[] {
@@ -220,6 +359,64 @@ public class			RunHEM_RT_Simulation
                     new EventSink[] {
                             new EventSink(FanElectricityModel.URI,
                                     SetLowFan.class)
+                    });
+
+            //Vacuum Cleaner
+            connections.put(
+                    new EventSource(VacuumCleanerUserModel.URI, SwitchOnVacuumCleaner.class),
+                    new EventSink[] {
+                            new EventSink(VacuumCleanerElectricityModel.URI,
+                                    SwitchOnVacuumCleaner.class)
+                    });
+            connections.put(
+                    new EventSource(VacuumCleanerUserModel.URI, SwitchOffVacuumCleaner.class),
+                    new EventSink[] {
+                            new EventSink(VacuumCleanerElectricityModel.URI,
+                                    SwitchOffVacuumCleaner.class)
+                    });
+            connections.put(
+                    new EventSource(VacuumCleanerUserModel.URI, SetHighVacuumCleaner.class),
+                    new EventSink[] {
+                            new EventSink(VacuumCleanerElectricityModel.URI,
+                                    SetHighVacuumCleaner.class)
+                    });
+            connections.put(
+                    new EventSource(VacuumCleanerUserModel.URI, SetLowVacuumCleaner.class),
+                    new EventSink[] {
+                            new EventSink(VacuumCleanerElectricityModel.URI,
+                                    SetLowVacuumCleaner.class)
+                    });
+
+            //Water heater
+            connections.put(
+                    new EventSource(WaterHeaterUnitTesterModel.URI,
+                            SwitchOnWaterHeater.class),
+                    new EventSink[] {
+                            new EventSink(WaterHeaterElectricityModel.URI,
+                                    SwitchOnWaterHeater.class)
+                    });
+            connections.put(
+                    new EventSource(WaterHeaterUnitTesterModel.URI,
+                            SwitchOffWaterHeater.class),
+                    new EventSink[] {
+                            new EventSink(WaterHeaterElectricityModel.URI,
+                                    SwitchOffWaterHeater.class)
+                    });
+            connections.put(
+                    new EventSource(WaterHeaterUnitTesterModel.URI, HeatWater.class),
+                    new EventSink[] {
+                            new EventSink(WaterHeaterElectricityModel.URI,
+                                    HeatWater.class),
+                            new EventSink(WaterHeaterTemperatureModel.URI,
+                                    HeatWater.class)
+                    });
+            connections.put(
+                    new EventSource(WaterHeaterUnitTesterModel.URI, DoNotHeatWater.class),
+                    new EventSink[] {
+                            new EventSink(WaterHeaterElectricityModel.URI,
+                                    DoNotHeatWater.class),
+                            new EventSink(WaterHeaterTemperatureModel.URI,
+                                    DoNotHeatWater.class)
                     });
 
             //Refrigerator
@@ -270,11 +467,86 @@ public class			RunHEM_RT_Simulation
                                     OpenRefrigeratorDoor.class)
                     });
 
+            //washing machine
+            connections.put(
+                    new EventSource(WashingMachineUnitTesterModel.URI,
+                            SwitchOnWashingMachine.class),
+                    new EventSink[] {
+                            new EventSink(WashingMachineElectricityModel.URI,
+                                    SwitchOnWashingMachine.class)
+                    });
+            connections.put(
+                    new EventSource(WashingMachineUnitTesterModel.URI, Wash.class),
+                    new EventSink[] {
+                            new EventSink(WashingMachineElectricityModel.URI,
+                                    Wash.class),
+                            new EventSink(WashingMachineTemperatureModel.URI,
+                                    fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
+                    });
+            connections.put(
+                    new EventSource(WashingMachineUnitTesterModel.URI,
+                            Rinse.class),
+                    new EventSink[] {
+                            new EventSink(WashingMachineElectricityModel.URI,
+                                    Rinse.class)
+                    });
+            connections.put(
+                    new EventSource(WashingMachineUnitTesterModel.URI, Rinse.class),
+                    new EventSink[] {
+                            new EventSink(WashingMachineElectricityModel.URI,
+                                    Rinse.class),
+                            new EventSink(WashingMachineTemperatureModel.URI,
+                                    StopHeatWater.class)
+                    });
+            connections.put(
+                    new EventSource(WashingMachineUnitTesterModel.URI, Spin.class),
+                    new EventSink[] {
+                            new EventSink(WashingMachineElectricityModel.URI,
+                                    Spin.class),
+                            new EventSink(WashingMachineTemperatureModel.URI,
+                                    StopHeatWater.class)
+                    });
+            connections.put(
+                    new EventSource(WashingMachineUnitTesterModel.URI,
+                            SwitchOffWashingMachine.class),
+                    new EventSink[] {
+                            new EventSink(WashingMachineElectricityModel.URI,
+                                    SwitchOffWashingMachine.class)
+                    });
+            connections.put(
+                    new EventSource(WashingMachineUnitTesterModel.URI, fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class),
+                    new EventSink[] {
+                            new EventSink(WashingMachineElectricityModel.URI,
+                                    fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class),
+                            new EventSink(WashingMachineTemperatureModel.URI,
+                                    fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class)
+                    });
+            connections.put(
+                    new EventSource(WashingMachineUnitTesterModel.URI, fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class),
+                    new EventSink[] {
+                            new EventSink(WashingMachineElectricityModel.URI,
+                                    fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class),
+                            new EventSink(WashingMachineTemperatureModel.URI,
+                                    fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
+                    });
+
+
             // variable bindings between exporting and importing models
             Map<VariableSource,VariableSink[]> bindings =
                     new HashMap<VariableSource,VariableSink[]>();
 
-            // bindings among Refrigerator models
+            // bindings among water heater's models
+            bindings.put(
+                    new VariableSource("externalWaterTemperature",
+                            Double.class,
+                            WaterHeaterExternalTemperatureModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("externalWaterTemperature",
+                                    Double.class,
+                                    WaterHeaterTemperatureModel.URI)
+                    });
+
+            // bindings among Refrigerator's models
             bindings.put(
                     new VariableSource("externalTemperature",
                             Double.class,
@@ -285,9 +557,19 @@ public class			RunHEM_RT_Simulation
                                     RefrigeratorTemperatureModel.URI)
                     });
 
+            // bindings among washing machine's models
+            bindings.put(new VariableSource("externalTemperature",
+                            Double.class,
+                            WashingMachineExternalTemperatureModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("externalWaterTemperature",
+                                    Double.class,
+                                    WashingMachineTemperatureModel.URI)
+                    });
 
-            // bindings between hair dryer and Refrigerator models to the electric
-            // meter model
+
+            // bindings between components models to the electric meter model
+            // Fan
             bindings.put(
                     new VariableSource("currentIntensity",
                             Double.class,
@@ -298,12 +580,46 @@ public class			RunHEM_RT_Simulation
                                     ElectricMeterElectricityModel.URI)
                     });
 
+            // Vacuum Cleaner
+            bindings.put(
+                    new VariableSource("currentIntensity",
+                            Double.class,
+                            VacuumCleanerElectricityModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("currentVacuumCleanerIntensity",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    });
+
+            //Water heater
+            bindings.put(
+                    new VariableSource("currentIntensity",
+                            Double.class,
+                            WaterHeaterElectricityModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("currentWaterHeaterIntensity",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    });
+
+            //Refrigerator
             bindings.put(
                     new VariableSource("currentIntensity",
                             Double.class,
                             RefrigeratorElectricityModel.URI),
                     new VariableSink[] {
                             new VariableSink("currentRefrigeratorIntensity",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    });
+
+            //Washing machine
+            bindings.put(
+                    new VariableSource("currentIntensity",
+                            Double.class,
+                            WashingMachineElectricityModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("currentWashingMachineIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     });
@@ -347,9 +663,9 @@ public class			RunHEM_RT_Simulation
                     FanElectricityModel.HIGH_MODE_CONSUMPTION_RUNPNAME,
                     2200.0);
             simParams.put(FanUserModel.STEP_MEAN_DURATION_RUNPNAME, 2.0);
-            simParams.put(RefrigeratorElectricityModel.NOT_HEATING_POWER_RUNPNAME,
+            simParams.put(RefrigeratorElectricityModel.NOT_freezing_POWER_RUNPNAME,
                     0.0);
-            simParams.put(RefrigeratorElectricityModel.HEATING_POWER_RUNPNAME,
+            simParams.put(RefrigeratorElectricityModel.freezing_POWER_RUNPNAME,
                     4400.0);
 
             se.setSimulationRunParameters(simParams);

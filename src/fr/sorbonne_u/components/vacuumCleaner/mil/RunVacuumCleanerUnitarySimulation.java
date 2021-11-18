@@ -31,7 +31,7 @@ public class RunVacuumCleanerUnitarySimulation
             Map<String, AbstractAtomicModelDescriptor> atomicModelDescriptors =
                     new HashMap<>();
 
-            // the hair dyer model simulating its electricity consumption, an
+            // the vacuumCleaner model simulating its electricity consumption, an
             // atomic HIOA model hence we use an AtomicHIOA_Descriptor
             atomicModelDescriptors.put(
                     VacuumCleanerElectricityModel.URI,

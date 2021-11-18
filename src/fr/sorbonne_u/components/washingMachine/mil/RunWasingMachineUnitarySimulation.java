@@ -54,10 +54,10 @@ public class			RunWasingMachineUnitarySimulation
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
 			atomicModelDescriptors.put(
-					ExternalTemperatureModel.URI,
+					WashingMachineExternalTemperatureModel.URI,
 					AtomicHIOA_Descriptor.create(
-							ExternalTemperatureModel.class,
-							ExternalTemperatureModel.URI,
+							WashingMachineExternalTemperatureModel.class,
+							WashingMachineExternalTemperatureModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -79,7 +79,7 @@ public class			RunWasingMachineUnitarySimulation
 			Set<String> submodels = new HashSet<String>();
 			submodels.add(WashingMachineElectricityModel.URI);
 			submodels.add(WashingMachineTemperatureModel.URI);
-			submodels.add(ExternalTemperatureModel.URI);
+			submodels.add(WashingMachineExternalTemperatureModel.URI);
 			submodels.add(WashingMachineUnitTesterModel.URI);
 			
 			
@@ -161,7 +161,7 @@ public class			RunWasingMachineUnitarySimulation
 
 			bindings.put(new VariableSource("externalTemperature",
 											Double.class,
-											ExternalTemperatureModel.URI),
+							WashingMachineExternalTemperatureModel.URI),
 						 new VariableSink[] {
 								 new VariableSink("externalWaterTemperature",
 										 		  Double.class,
