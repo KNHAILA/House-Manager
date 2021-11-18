@@ -1,5 +1,4 @@
-package fr.sorbonne_u.components.refrigerator.mil;
-
+package fr.sorbonne_u;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,7 +6,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.components.refrigerator.mil.events.*;
+import fr.sorbonne_u.HEM_CoupledModel.HEM_Report;
+import fr.sorbonne_u.components.fan.mil.FanElectricityModel;
+import fr.sorbonne_u.components.fan.mil.FanUserModel;
+import fr.sorbonne_u.components.fan.mil.events.SetHighFan;
+import fr.sorbonne_u.components.fan.mil.events.SetLowFan;
+import fr.sorbonne_u.components.fan.mil.events.SwitchOffFan;
+import fr.sorbonne_u.components.fan.mil.events.SwitchOnFan;
+import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorExternalTemperatureModel;
+import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorElectricityModel;
+import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorTemperatureModel;
+import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorUnitTesterModel;
+import fr.sorbonne_u.components.refrigerator.mil.events.CloseRefrigeratorDoor;
+import fr.sorbonne_u.components.refrigerator.mil.events.Freezing;
+import fr.sorbonne_u.components.refrigerator.mil.events.OffRefrigerator;
+import fr.sorbonne_u.components.refrigerator.mil.events.OnRefrigerator;
+import fr.sorbonne_u.components.refrigerator.mil.events.OpenRefrigeratorDoor;
+import fr.sorbonne_u.components.refrigerator.mil.events.Resting;
+import fr.sorbonne_u.components.meter.mil.ElectricMeterElectricityModel;
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.architectures.ArchitectureI;
 import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
@@ -24,8 +40,8 @@ import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>RunRefrigeratorUnitarySimulation</code> creates a simulator
- * for the Refrigerator and then runs a typical simulation.
+ * The class <code>RunHEM_Simulation</code> creates the simulator for the
+ * household energy management example and then runs a typical simulation.
  *
  * <p><strong>Description</strong></p>
  *
@@ -47,7 +63,12 @@ import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
  * connect them. This method returns the reference on the simulator attached
  * to the root coupled model in the architecture instance, which is then used
  * to perform simulation runs by calling the method
- * {@code doStandAloneSimulation}.
+ * {@code doStandAloneSimulation}. Notice the use of the method
+ * {@code setSimulationRunParameters} to initialise some parameters of
+ * the simulation defined in the different models. This method is implemented
+ * to traverse all of the models, hence each one can get its own parameters by
+ * carefully defining unique names for them. Also, it shows how to get the
+ * simulation reports from the models after the simulation run.
  * </p>
  * <p>
  * The descriptors and maps can be viewed as kinds of nodes in the abstract
@@ -61,13 +82,13 @@ import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
  * invariant	true
  * </pre>
  *
- * <p>Created on : 2021-09-23</p>
+ * <p>Created on : 2021-09-24</p>
  *
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-public class			RunRefrigeratorUnitarySimulation
+public class			RunHEM_Simulation
 {
-    public static void main(String[] args)
+    public static void	main(String[] args)
     {
         try {
             // map that will contain the atomic model descriptors to construct
@@ -75,9 +96,28 @@ public class			RunRefrigeratorUnitarySimulation
             Map<String,AbstractAtomicModelDescriptor> atomicModelDescriptors =
                     new HashMap<>();
 
-            // the Refrigerator models simulating its electricity consumption, its
-            // temperatures and the external temperature are atomic HIOA models
-            // hence we use an AtomicHIOA_Descriptor(s)
+            // atomic HIOA models require AtomicHIOA_Descriptor while
+            // atomic models require AtomicModelDescriptor
+
+            // hair dryer models
+            atomicModelDescriptors.put(
+                    FanElectricityModel.URI,
+                    AtomicHIOA_Descriptor.create(
+                            FanElectricityModel.class,
+                            FanElectricityModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
+            atomicModelDescriptors.put(
+                    FanUserModel.URI,
+                    AtomicModelDescriptor.create(
+                            FanUserModel.class,
+                            FanUserModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+            // the Refrigerator models
             atomicModelDescriptors.put(
                     RefrigeratorElectricityModel.URI,
                     AtomicHIOA_Descriptor.create(
@@ -102,13 +142,22 @@ public class			RunRefrigeratorUnitarySimulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
-            // the Refrigerator unit tester model only exchanges event, an
-            // atomic model hence we use an AtomicModelDescriptor
             atomicModelDescriptors.put(
                     RefrigeratorUnitTesterModel.URI,
                     AtomicModelDescriptor.create(
                             RefrigeratorUnitTesterModel.class,
                             RefrigeratorUnitTesterModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+
+            // the electric meter model
+            atomicModelDescriptors.put(
+                    ElectricMeterElectricityModel.URI,
+                    AtomicHIOA_Descriptor.create(
+                            ElectricMeterElectricityModel.class,
+                            ElectricMeterElectricityModel.URI,
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -120,16 +169,46 @@ public class			RunRefrigeratorUnitarySimulation
 
             // the set of submodels of the coupled model, given by their URIs
             Set<String> submodels = new HashSet<String>();
+            submodels.add(FanElectricityModel.URI);
+            submodels.add(FanUserModel.URI);
             submodels.add(RefrigeratorElectricityModel.URI);
             submodels.add(RefrigeratorTemperatureModel.URI);
             submodels.add(RefrigeratorExternalTemperatureModel.URI);
             submodels.add(RefrigeratorUnitTesterModel.URI);
+
+            submodels.add(ElectricMeterElectricityModel.URI);
 
             // event exchanging connections between exporting and importing
             // models
             Map<EventSource,EventSink[]> connections =
                     new HashMap<EventSource,EventSink[]>();
 
+            connections.put(
+                    new EventSource(FanUserModel.URI, SwitchOnFan.class),
+                    new EventSink[] {
+                            new EventSink(FanElectricityModel.URI,
+                                    SwitchOnFan.class)
+                    });
+            connections.put(
+                    new EventSource(FanUserModel.URI, SwitchOffFan.class),
+                    new EventSink[] {
+                            new EventSink(FanElectricityModel.URI,
+                                    SwitchOffFan.class)
+                    });
+            connections.put(
+                    new EventSource(FanUserModel.URI, SetHighFan.class),
+                    new EventSink[] {
+                            new EventSink(FanElectricityModel.URI,
+                                    SetHighFan.class)
+                    });
+            connections.put(
+                    new EventSource(FanUserModel.URI, SetLowFan.class),
+                    new EventSink[] {
+                            new EventSink(FanElectricityModel.URI,
+                                    SetLowFan.class)
+                    });
+
+            //Refrigerator
             connections.put(
                     new EventSource(RefrigeratorUnitTesterModel.URI,
                             OnRefrigerator.class),
@@ -177,25 +256,59 @@ public class			RunRefrigeratorUnitarySimulation
                                     OpenRefrigeratorDoor.class)
                     });
 
+
             // variable bindings between exporting and importing models
             Map<VariableSource,VariableSink[]> bindings =
                     new HashMap<VariableSource,VariableSink[]>();
 
-            bindings.put(new VariableSource("externalTemperature",
+            // bindings among Refrigerator models
+            VariableSource source1 =
+                    new VariableSource("externalTemperature",
                             Double.class,
-                            RefrigeratorExternalTemperatureModel.URI),
+                            RefrigeratorExternalTemperatureModel.URI);
+            VariableSink[] sinks1 =
                     new VariableSink[] {
                             new VariableSink("externalTemperature",
                                     Double.class,
                                     RefrigeratorTemperatureModel.URI)
-                    });
+                    };
+            bindings.put(source1, sinks1);
 
-            // coupled model descriptor
+
+            // bindings between hair dryer and Refrigerator models to the electric
+            // meter model
+            VariableSource source2 =
+                    new VariableSource("currentIntensity",
+                            Double.class,
+                            FanElectricityModel.URI);
+            VariableSink[] sinks2 =
+                    new VariableSink[] {
+                            new VariableSink("currentFanIntensity",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    };
+
+            VariableSource source3 =
+                    new VariableSource("currentIntensity",
+                            Double.class,
+                            RefrigeratorElectricityModel.URI);
+            VariableSink[] sinks3 =
+                    new VariableSink[] {
+                            new VariableSink("currentRefrigeratorIntensity",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    };
+
+            bindings.put(source2, sinks2);
+            bindings.put(source3, sinks3);
+
+            // coupled model descriptor: an HIOA requires a
+            // CoupledHIOA_Descriptor
             coupledModelDescriptors.put(
-                    RefrigeratorCoupledModel.URI,
+                    HEM_CoupledModel.URI,
                     new CoupledHIOA_Descriptor(
-                            RefrigeratorCoupledModel.class,
-                            RefrigeratorCoupledModel.URI,
+                            HEM_CoupledModel.class,
+                            HEM_CoupledModel.URI,
                             submodels,
                             null,
                             null,
@@ -209,20 +322,42 @@ public class			RunRefrigeratorUnitarySimulation
             // simulation architecture
             ArchitectureI architecture =
                     new Architecture(
-                            RefrigeratorCoupledModel.URI,
+                            HEM_CoupledModel.URI,
                             atomicModelDescriptors,
                             coupledModelDescriptors,
                             TimeUnit.SECONDS);
 
             // create the simulator from the simulation architecture
             SimulationEngine se = architecture.constructSimulator();
+
+            // Optional: how to use simulation run parameters to modify
+            // the behaviour of the models from runs to runs
+          /*  Map<String, Object> simParams = new HashMap<String, Object>();
+            simParams.put(
+                    FanElectricityModel.LOW_MODE_CONSUMPTION_RUNPNAME,
+                    1320.0);
+            simParams.put(
+                    FanElectricityModel.HIGH_MODE_CONSUMPTION_RUNPNAME,
+                    2200.0);
+            simParams.put(FanUserModel.STEP_MEAN_DURATION_RUNPNAME, 0.5);
+            simParams.put(RefrigeratorElectricityModel.NOT_HEATING_POWER_RUNPNAME,
+                    0.0);
+            simParams.put(RefrigeratorElectricityModel.HEATING_POWER_RUNPNAME,
+                    4400.0);
+
+            se.setSimulationRunParameters(simParams);
+           */
+
             // this add additional time at each simulation step in
-            // standard simulations (useful when debugging)
+            // standard simulations (useful for debugging)
             SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 0L;
             // run a simulation with the simulation beginning at 0.0 and
             // ending at 10.0
             se.doStandAloneSimulation(0.0, 10.0);
-            System.exit(0);
+
+            // Optional: simulation report
+            HEM_Report r = (HEM_Report) se.getFinalReport();
+            System.out.println(r.printout(""));
         } catch (Exception e) {
             throw new RuntimeException(e) ;
         }

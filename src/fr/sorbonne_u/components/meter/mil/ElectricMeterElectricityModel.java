@@ -54,10 +54,10 @@ public class			ElectricMeterElectricityModel
 
     /** current intensity of the heater in amperes.							*/
     @ImportedVariable(type = Double.class)
-    protected Value<Double>			currentHeaterIntensity;
+    protected Value<Double>			currentRefrigeratorIntensity;
     /** current intensity of the heater in amperes.							*/
     @ImportedVariable(type = Double.class)
-    protected Value<Double>			currentHairDryerIntensity;
+    protected Value<Double>			currentFanIntensity;
 
     /** evaluation step for the equation (assumed in seconds).				*/
     protected static final double	STEP = 0.1;
@@ -146,10 +146,9 @@ public class			ElectricMeterElectricityModel
     protected void		computeTotalIntensity()
     {
         // simple sum of all incoming intensities
-        this.currentIntensity.v =
-                this.currentHairDryerIntensity.v +
-                        this.currentHeaterIntensity.v;
-        this.currentIntensity.time = this.getCurrentStateTime();
+       this.currentIntensity.v =
+                this.currentFanIntensity.v +
+                        this.currentRefrigeratorIntensity.v;
 
         // Tracing
         StringBuffer message = new StringBuffer("current total consumption: ");

@@ -12,7 +12,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
-public class			ExternalTemperatureModel
+public class			RefrigeratorExternalTemperatureModel
         extends		AtomicHIOA
 {
     // -------------------------------------------------------------------------
@@ -21,7 +21,7 @@ public class			ExternalTemperatureModel
 
     private static final long serialVersionUID = 1L;
     /** URI for a model; works when only one instance is created.			*/
-    public static final String		URI = ExternalTemperatureModel.class.
+    public static final String		URI = RefrigeratorExternalTemperatureModel.class.
             getSimpleName();
 
     /** minimal external temperature.										*/
@@ -67,7 +67,7 @@ public class			ExternalTemperatureModel
      * @param simulationEngine	simulation engine to which the model is attached.
      * @throws Exception		<i>to do</i>.
      */
-    public				ExternalTemperatureModel(
+    public				RefrigeratorExternalTemperatureModel(
             String uri,
             TimeUnit simulatedTimeUnit,
             SimulatorI simulationEngine

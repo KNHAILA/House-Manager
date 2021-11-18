@@ -37,7 +37,7 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
         OnRefrigerator.class,
         OpenRefrigeratorDoor.class,
         Resting.class
-        })
+})
 // -----------------------------------------------------------------------------
 public class			RefrigeratorUnitTesterModel
         extends		AtomicModel

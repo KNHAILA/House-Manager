@@ -19,7 +19,7 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
 // -----------------------------------------------------------------------------
-@ModelExternalEvents(imported = {Freezing.class, Resting.class, OpenRefrigeratorDoor.class, CloseRefrigeratorDoor.class})
+@ModelExternalEvents(imported = {Freezing.class, Resting.class, OpenRefrigeratorDoor.class, CloseRefrigeratorDoor.class, OffRefrigerator.class})
 // -----------------------------------------------------------------------------
 public class			RefrigeratorTemperatureModel
         extends		AtomicHIOAwithDE
@@ -41,8 +41,10 @@ public class			RefrigeratorTemperatureModel
         FREEZE,
         /** Refrigerator is RESTING.											*/
         REST,
-        /** Refrigerator is WARMING.											*/
-        OFFSET
+        /** Refrigerator is WARMING in open door case.											*/
+        OFFSET,
+        /** Refrigerator is WARMING in off case.											*/
+        OFF
     }
 
     // -------------------------------------------------------------------------
@@ -213,14 +215,15 @@ public class			RefrigeratorTemperatureModel
             if(currentTemperature.v < MIN_TEMPERATURE) {
                 this.currentTemperature.v = MIN_TEMPERATURE;
             }
-         //   this.logMessage("hereeeeeeee" + STEP + "      ");
-
-        } else if(currentState == State.REST) {
-            this.currentTemperature.v = this.currentTemperature.v;
-
         } else if(currentState == State.OFFSET) {
             this.currentTemperature.v += 5*STEP;
-            if(currentTemperature.v > MAX_TEMPERATURE) {
+            if(currentTemperature.v > externalTemperature.v) {
+                this.currentTemperature.v = externalTemperature.v;
+            }
+        } else if(currentState == State.REST) {
+            if(currentTemperature.v < MIN_TEMPERATURE) {
+                this.currentTemperature.v = MIN_TEMPERATURE;
+            } else if(currentTemperature.v > MAX_TEMPERATURE) {
                 this.currentTemperature.v = MAX_TEMPERATURE;
             }
         }
@@ -255,7 +258,7 @@ public class			RefrigeratorTemperatureModel
 
         Event ce = (Event) currentEvents.get(0);
         assert	ce instanceof RefrigeratorEventI;
-        assert	ce instanceof Freezing || ce instanceof Resting || ce instanceof CloseRefrigeratorDoor || ce instanceof OpenRefrigeratorDoor;
+        assert	ce instanceof Freezing || ce instanceof Resting || ce instanceof CloseRefrigeratorDoor || ce instanceof OpenRefrigeratorDoor || ce instanceof OffRefrigerator;
 
         StringBuffer sb = new StringBuffer("executing the external event: ");
         sb.append(ce.eventAsString());
