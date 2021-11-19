@@ -15,8 +15,8 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>HeaterUnitTesterModel</code> defines a model that is used
- * to test the models defining the heater simulator.
+ * The class <code>RefrigeratorUnitTesterModel</code> defines a model that is used
+ * to test the models defining the Refrigerator simulator.
  *
  * <p><strong>Description</strong></p>
  *
@@ -59,7 +59,7 @@ public class			RefrigeratorUnitTesterModel
     // -------------------------------------------------------------------------
 
     /**
-     * create a <code>HeaterUnitTesterModel</code> instance.
+     * create a <code>RefrigeratorUnitTesterModel</code> instance.
      *
      * <p><strong>Contract</strong></p>
      *

@@ -11,7 +11,7 @@ import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 // -----------------------------------------------------------------------------
 /**
  * The class <code>DoNotHeat</code> defines the simulation event of the
- * heater stopping to heat.
+ * Refrigerator stopping to heat.
  *
  * <p><strong>Description</strong></p>
  *
@@ -69,8 +69,8 @@ public class			Resting
     @Override
     public boolean		hasPriorityOver(EventI e)
     {
-        // if many heater events occur at the same time, the DoNotHeat one
-        // will be executed first except for SwitchOnHeater ones.
+        // if many Refrigerator events occur at the same time, the DoNotHeat one
+        // will be executed first except for SwitchOnRefrigerator ones.
         if (e instanceof OnRefrigerator) {
             return false;
         } else {
@@ -85,7 +85,7 @@ public class			Resting
     public void			executeOn(AtomicModel model)
     {
 
-        // the DoNotHeat event can be executed either on the heater electricity
+        // the DoNotHeat event can be executed either on the Refrigerator electricity
         // or temperature models
         assert	model instanceof RefrigeratorElectricityModel ||
                 model instanceof RefrigeratorTemperatureModel;

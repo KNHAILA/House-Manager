@@ -75,8 +75,8 @@ public class SwitchOffFan extends AbstractFanEvent
         assert	model instanceof FanElectricityModel;
 
         FanElectricityModel m = ((FanElectricityModel)model);
-        // a SwitchOff event can be executed when the state of the hair
-        // dryer model is *not* in the state OFF
+        // a SwitchOff event can be executed when the state of the fan
+        // model is *not* in the state OFF
         if (m.getState() != FanElectricityModel.State.OFF) {
             // then put it in the state OFF
             m.setState(FanElectricityModel.State.OFF);

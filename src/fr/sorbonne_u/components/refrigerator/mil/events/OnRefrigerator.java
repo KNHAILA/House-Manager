@@ -9,8 +9,8 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>SwitchOnHeater</code> defines the simulation event of the
- * heater being switched on.
+ * The class <code>SwitchOnRefrigerator</code> defines the simulation event of the
+ * Refrigerator being switched on.
  *
  * <p><strong>Description</strong></p>
  *

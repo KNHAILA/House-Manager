@@ -16,9 +16,9 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>HeaterCoupledModel</code> defines a simple coupled
- * model used to assemble the models defined for the heater in order to
- * execute unit tests on the heater simulator.
+ * The class <code>RefrigeratorCoupledModel</code> defines a simple coupled
+ * model used to assemble the models defined for the Refrigerator in order to
+ * execute unit tests on the Refrigerator simulator.
  *
  * <p><strong>Description</strong></p>
  *

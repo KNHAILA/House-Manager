@@ -75,7 +75,7 @@ public class SwitchOffVacuumCleaner extends AbstractVacuumCleanerEvent
         assert	model instanceof VacuumCleanerElectricityModel;
 
         VacuumCleanerElectricityModel m = ((VacuumCleanerElectricityModel)model);
-        // a SwitchOff event can be executed when the state of the hair
+        // a SwitchOff event can be executed when the state of the
         // dryer model is *not* in the state OFF
         if (m.getState() != VacuumCleanerElectricityModel.State.OFF) {
             // then put it in the state OFF

@@ -1,14 +1,15 @@
-package fr.sorbonne_u.components.fan.mil.events;
+package fr.sorbonne_u.storageUnit.battery.mil.events;
 
+import fr.sorbonne_u.storageUnit.battery.mil.events.AbstractBatteryEvent;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import fr.sorbonne_u.components.fan.mil.FanElectricityModel;
+import fr.sorbonne_u.storageUnit.battery.mil.BatteryElectricityModel;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>SwitchOnFan</code> defines the simulation event of the
- * fan being switched on.
+ * The class <code>SwitchOnBattery</code> defines the simulation event of the
+ * Battery being switched on.
  *
  * <p><strong>Description</strong></p>
  *
@@ -20,9 +21,9 @@ import fr.sorbonne_u.components.fan.mil.FanElectricityModel;
  *
  * <p>Created on : 2021-09-20</p>
  *
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ * @author	<a href="mailto:Jacques.MalenBatteryt@lip6.fr">Jacques MalenBatteryt</a>
  */
-public class SwitchOnFan extends AbstractFanEvent
+public class ChargeBattery extends AbstractBatteryEvent
 {
     // -------------------------------------------------------------------------
     // Constants and variables
@@ -35,7 +36,7 @@ public class SwitchOnFan extends AbstractFanEvent
     // -------------------------------------------------------------------------
 
     /**
-     * create a <code>SwitchOnFan</code> event.
+     * create a <code>SwitchOnBattery</code> event.
      *
      * <p><strong>Contract</strong></p>
      *
@@ -46,7 +47,7 @@ public class SwitchOnFan extends AbstractFanEvent
      *
      * @param timeOfOccurrence	time of occurrence of the event.
      */
-    public	SwitchOnFan(Time timeOfOccurrence)
+    public	ChargeBattery(Time timeOfOccurrence)
     {
         super(timeOfOccurrence, null);
     }
@@ -61,8 +62,8 @@ public class SwitchOnFan extends AbstractFanEvent
     @Override
     public boolean	hasPriorityOver(EventI e)
     {
-        // if many fan events occur at the same time, the
-        // SwitchOnFan one will be executed first.
+        // if many Battery events occur at the same time, the
+        // ChargeBattery one will be executed first.
         return true;
     }
 
@@ -72,14 +73,14 @@ public class SwitchOnFan extends AbstractFanEvent
     @Override
     public void				executeOn(AtomicModel model)
     {
-        assert	model instanceof FanElectricityModel;
+        assert	model instanceof BatteryElectricityModel;
 
         // a SwitchOn event can be executed when the state of the
-        // fan model is in the state OFF
-        FanElectricityModel m = (FanElectricityModel)model;
-        if (m.getState() == FanElectricityModel.State.OFF) {
+        // Battery model is in the state OFF
+        BatteryElectricityModel m = (BatteryElectricityModel)model;
+        if (m.getState() == BatteryElectricityModel.State.OFF) {
             // then put it in the state LOW
-            m.setState(FanElectricityModel.State.LOW);
+            m.setState(BatteryElectricityModel.State.LOW);
             // trigger an internal transition by toggling the electricity
             // consumption changed boolean to true
             m.toggleConsumptionHasChanged();
@@ -87,3 +88,5 @@ public class SwitchOnFan extends AbstractFanEvent
     }
 }
 // -----------------------------------------------------------------------------
+
+
