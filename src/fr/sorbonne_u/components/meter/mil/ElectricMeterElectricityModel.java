@@ -67,18 +67,32 @@ public class			ElectricMeterElectricityModel
     /** current intensity of the Washing machine in amperes.							*/
     @ImportedVariable(type = Double.class)
     protected Value<Double>			currentWashingMachineIntensity;
+    /** current intensity of the Battery in amperes.							*/
+    @ImportedVariable(type = Double.class)
+    protected Value<Double>			currentBatteryIntensity_consumption;
+    /** current intensity of the Battery in amperes.							*/
+    @ImportedVariable(type = Double.class)
+    protected Value<Double>			currentBatteryIntensity_production;
     /** evaluation step for the equation (assumed in seconds).				*/
     protected static final double	STEP = 0.1;
     /** evaluation step as a duration, including the time unit.				*/
     protected final Duration		evaluationStep;
 
-    /** current total intensity of the house in amperes.					*/
+    /** current total consumption intensity of the house in amperes.					*/
     @InternalVariable(type = Double.class)
-    protected final Value<Double>	currentIntensity =
+    protected final Value<Double>	currentIntensity_consumption =
+            new Value<Double>(this, 0.0, 0);
+    /** current total production intensity of the house in amperes.					*/
+    @InternalVariable(type = Double.class)
+    protected final Value<Double>	currentIntensity_production =
             new Value<Double>(this, 0.0, 0);
     /** current total consumption of the house in kwh.						*/
     @InternalVariable(type = Double.class)
     protected final Value<Double>	currentConsumption =
+            new Value<Double>(this, 0.0, 0);
+    /** current total production of the house in kwh.						*/
+    @InternalVariable(type = Double.class)
+    protected final Value<Double>	currentProduction =
             new Value<Double>(this, 0.0, 0);
 
     // -------------------------------------------------------------------------
@@ -135,9 +149,18 @@ public class			ElectricMeterElectricityModel
     {
         this.currentConsumption.v +=
                 Electricity.computeConsumption(
-                        d, TENSION*this.currentIntensity.v);
+                        d, TENSION*this.currentIntensity_consumption.v);
         this.currentConsumption.time =
                 this.currentConsumption.time.add(d);
+    }
+
+    protected void		updateProduction(Duration d)
+    {
+        this.currentProduction.v +=
+                Electricity.computeProduction(
+                        d, TENSION*this.currentIntensity_production.v);
+        this.currentProduction.time =
+                this.currentProduction.time.add(d);
     }
 
     /**
@@ -154,20 +177,30 @@ public class			ElectricMeterElectricityModel
     protected void		computeTotalIntensity()
     {
         // simple sum of all incoming intensities
-       this.currentIntensity.v =
+       this.currentIntensity_consumption.v =
                 this.currentFanIntensity.v +
                         this.currentRefrigeratorIntensity.v +
                              this.currentVacuumCleanerIntensity.v +
                                   this.currentWaterHeaterIntensity.v +
-                                       this.currentWashingMachineIntensity.v ;
+                                       this.currentWashingMachineIntensity.v +
+                                            this.currentBatteryIntensity_consumption.v ;
+
+        this.currentIntensity_production.v = this.currentBatteryIntensity_production.v;
 
         // Tracing
         StringBuffer message = new StringBuffer("current total consumption: ");
-        message.append(this.currentIntensity.v);
+        message.append(this.currentIntensity_consumption.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());
         message.append('\n');
         this.logMessage(message.toString());
+
+        StringBuffer message_ = new StringBuffer("current total production: ");
+        message_.append(this.currentIntensity_production.v);
+        message_.append(" at ");
+        message_.append(this.getCurrentStateTime());
+        message_.append('\n');
+        this.logMessage(message_.toString());
     }
 
     // -------------------------------------------------------------------------
@@ -187,6 +220,7 @@ public class			ElectricMeterElectricityModel
 
         this.computeTotalIntensity();
         this.currentConsumption.v = 0.0;
+        this.currentProduction.v = 0.0;
     }
 
     /**
@@ -220,6 +254,7 @@ public class			ElectricMeterElectricityModel
         // update the current consumption since the last consumption update.
         // must be done before recomputing the instantaneous intensity.
         this.updateConsumption(elapsedTime);
+        this.updateProduction(elapsedTime);
         // recompute the current total intensity
         this.computeTotalIntensity();
     }
@@ -231,6 +266,7 @@ public class			ElectricMeterElectricityModel
     public void			endSimulation(Time endTime) throws Exception
     {
         this.updateConsumption(endTime.subtract(this.currentConsumption.time));
+        this.updateProduction(endTime.subtract(this.currentProduction.time));
 
         this.logMessage("simulation ends.\n");
         super.endSimulation(endTime);
@@ -262,15 +298,18 @@ public class			ElectricMeterElectricityModel
         private static final long serialVersionUID = 1L;
         protected String	modelURI;
         protected double	totalConsumption; // in kwh
+        protected double	totalProduction; // in kwh
 
         public			ElectricMeterElectricityReport(
                 String modelURI,
-                double totalConsumption
+                double totalConsumption,
+                double totalProduction
         )
         {
             super();
             this.modelURI = modelURI;
             this.totalConsumption = totalConsumption;
+            this.totalProduction = totalProduction;
         }
 
         @Override
@@ -294,7 +333,21 @@ public class			ElectricMeterElectricityModel
             ret.append(this.totalConsumption);
             ret.append(".\n");
             ret.append(indent);
+
+            ret.append("\n");
+
+            ret.append(indent);
+            ret.append('|');
+            ret.append(this.modelURI);
+            ret.append(" report\n");
+            ret.append(indent);
+            ret.append('|');
+            ret.append("total production in kwh = ");
+            ret.append(this.totalProduction);
+            ret.append(".\n");
+            ret.append(indent);
             ret.append("---\n");
+
             return ret.toString();
         }
     }
@@ -306,7 +359,7 @@ public class			ElectricMeterElectricityModel
     public SimulationReportI	getFinalReport() throws Exception
     {
         return new ElectricMeterElectricityReport(URI,
-                this.currentConsumption.v);
+                this.currentConsumption.v, this.currentProduction.v);
     }
 }
 // -----------------------------------------------------------------------------

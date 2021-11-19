@@ -338,6 +338,7 @@ public class FanElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
 
     /** run parameter name for {@code LOW_MODE_CONSUMPTION}.				*/
+
     public static final String		LOW_MODE_CONSUMPTION_RUNPNAME =
             URI + ":LOW_MODE_CONSUMPTION";
     /** run parameter name for {@code HIGH_MODE_CONSUMPTION}.				*/
@@ -368,6 +369,8 @@ public class FanElectricityModel extends AtomicHIOA
             TENSION = (double) simParams.get(TENSION_RUNPNAME);
         }
     }
+
+
 
     // -------------------------------------------------------------------------
     // Optional DEVS simulation protocol: simulation report

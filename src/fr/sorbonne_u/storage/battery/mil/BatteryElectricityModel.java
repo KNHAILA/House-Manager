@@ -1,13 +1,13 @@
-package fr.sorbonne_u.storageUnit.battery.mil;
+package fr.sorbonne_u.storage.battery.mil;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.HEM_ReportI;
-import fr.sorbonne_u.components.refrigerator.mil.events.OnRefrigerator;
-import fr.sorbonne_u.components.refrigerator.mil.events.Resting;
-import fr.sorbonne_u.storageUnit.battery.mil.events.*;
+import fr.sorbonne_u.storage.battery.mil.events.AbstractBatteryEvent;
+import fr.sorbonne_u.storage.battery.mil.events.ChargeBattery;
+import fr.sorbonne_u.storage.battery.mil.events.UseBattery;
 import fr.sorbonne_u.utils.Electricity;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
@@ -66,17 +66,21 @@ public class BatteryElectricityModel extends AtomicHIOA
     public static final String		URI = BatteryElectricityModel.class.getSimpleName();
 
     /** energy consumption (in Watts) of the Battery in charge mode.		*/
-    public static double			CHARGE_MODE_CONSUMPTION = 660.0; // Watts
+    public static double			CHARGE_MODE_CONSUMPTION = 1000.0; // Watts
     /** energy consumption (in Watts) of the Battery in HIGH mode.		*/
-    public static double			DISCHARGE_MODE_PRODUCTION = 1100.0; // Watts
+    public static double			DISCHARGE_MODE_PRODUCTION = 200000.0; // Watts
     /** nominal tension (in Volts) of the Battery.						*/
     public static double			TENSION = 220.0; // Volts
 
     /** current intensity in amperes; intensity is power/tension.			*/
     @ExportedVariable(type = Double.class)
-    protected final Value<Double>	currentIntensity =
+    protected final Value<Double>	currentIntensity_consumption =
             new Value<Double>(this, 0.0, 0);
-    /** current state (OFF, LOW, HIGH) of the Battery.					*/
+    /** current intensity in amperes; intensity is power/tension.			*/
+    @ExportedVariable(type = Double.class)
+    protected final Value<Double>	currentIntensity_production =
+            new Value<Double>(this, 0.0, 0);
+    /** current state of the Battery.					*/
     protected State currentState = State.REST;
     /** true when the electricity consumption of the BATTERY has changed
      *  after executing an external event; the external event changes the
@@ -91,6 +95,8 @@ public class BatteryElectricityModel extends AtomicHIOA
     protected double				totalProduction;
 
     protected double				capacity = 300.0; //    ampere/h
+
+    protected double				charge_time = 1; //    h
 
     // -------------------------------------------------------------------------
     // Constructors
@@ -199,8 +205,9 @@ public class BatteryElectricityModel extends AtomicHIOA
     {
         super.initialiseVariables(startTime);
 
-        // initially, the Battery is off, so its consumption is zero.
-        this.currentIntensity.v = 0.0;
+        // initially, the Battery is REST, so its consumption and production are zero.
+        this.currentIntensity_consumption.v = 0.0;
+        this.currentIntensity_production.v = 0.0;
     }
 
     /**
@@ -211,11 +218,12 @@ public class BatteryElectricityModel extends AtomicHIOA
     {
         super.initialiseState(startTime);
 
-        // initially the Battery is off and its electricity consumption is
+        // initially the Battery is off and its electricity consumption and production are
         // not about to change.
         this.currentState = State.REST;
         this.consumptionHasChanged = false;
         this.totalConsumption = 0.0;
+        this.totalProduction = 0.0;
 
         this.toggleDebugMode();
         this.logMessage("simulation begins.\n");
@@ -262,22 +270,36 @@ public class BatteryElectricityModel extends AtomicHIOA
         // set the current electricity consumption from the current state
         switch (this.currentState)
         {
-            case REST : this.currentIntensity.v = 0.0; break;
+            case REST :
+                this.currentIntensity_production.v = 0.0;
+                this.currentIntensity_consumption.v = 0.0;
+                break;
             case CHARGE:
-                this.currentIntensity.v = CHARGE_MODE_CONSUMPTION/TENSION;
+                this.currentIntensity_consumption.v = CHARGE_MODE_CONSUMPTION/TENSION;
                 break;
             case DISCHARGE:
-                this.currentIntensity.v = DISCHARGE_MODE_PRODUCTION/TENSION;
+                this.currentIntensity_production.v = DISCHARGE_MODE_PRODUCTION/TENSION;
         }
-        this.currentIntensity.time = this.getCurrentStateTime();
+        this.currentIntensity_production.time = this.getCurrentStateTime();
+        this.currentIntensity_consumption.time = this.getCurrentStateTime();
 
         // Tracing
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
-        message.append("with current consumption ");
-        message.append(this.currentIntensity.v);
-        message.append(" at ");
-        message.append(this.currentIntensity.time);
+        if (this.currentState == State.CHARGE) {
+            message.append("with current consumption ");
+            message.append(this.currentIntensity_consumption.v);
+            message.append(" at ");
+            message.append(this.currentIntensity_consumption.time);
+        }
+
+        else if (this.currentState == State.DISCHARGE) {
+            message.append("with current production ");
+            message.append(this.currentIntensity_production.v);
+            message.append(" at ");
+            message.append(this.currentIntensity_production.time);
+        }
+
         message.append(".\n");
         this.logMessage(message.toString());
     }
@@ -301,11 +323,11 @@ public class BatteryElectricityModel extends AtomicHIOA
         if(ce instanceof ChargeBattery) {
             this.totalConsumption +=
                     Electricity.computeConsumption(elapsedTime,
-                            TENSION*this.currentIntensity.v);
+                            TENSION*this.currentIntensity_consumption.v);
         } else if(ce instanceof UseBattery) {
             this.totalProduction +=
-                    Electricity.computeConsumption(elapsedTime,
-                            TENSION*this.currentIntensity.v);
+                    Electricity.computeProduction(elapsedTime,
+                            TENSION*this.currentIntensity_production.v);
         }
 
         // Tracing
@@ -334,10 +356,10 @@ public class BatteryElectricityModel extends AtomicHIOA
         Duration d = endTime.subtract(this.getCurrentStateTime());
         this.totalConsumption +=
                 Electricity.computeConsumption(d,
-                        TENSION*this.currentIntensity.v);
+                        TENSION*this.currentIntensity_consumption.v);
         this.totalProduction +=
-                Electricity.computeConsumption(d,
-                        TENSION*this.currentIntensity.v);
+                Electricity.computeProduction(d,
+                        TENSION*this.currentIntensity_production.v);
 
         this.logMessage("simulation ends.\n");
         super.endSimulation(endTime);
@@ -347,18 +369,19 @@ public class BatteryElectricityModel extends AtomicHIOA
     // Optional DEVS simulation protocol: simulation run parameters
     // -------------------------------------------------------------------------
 
-    /** run parameter name for {@code LOW_MODE_CONSUMPTION}.				*/
-    public static final String		LOW_MODE_CONSUMPTION_RUNPNAME =
-            URI + ":LOW_MODE_CONSUMPTION";
-    /** run parameter name for {@code HIGH_MODE_CONSUMPTION}.				*/
-    public static final String		HIGH_MODE_CONSUMPTION_RUNPNAME =
-            URI + ":HIGH_MODE_CONSUMPTION";
+    /** run parameter name for {@code CHARGE_MODE_CONSUMPTION}.				*/
+    public static final String		CHARGE_MODE_CONSUMPTION_RUNPNAME =
+            URI + ":CHARGE_MODE_CONSUMPTION";
+    /** run parameter name for {@code DISCHARGE_MODE_PRODUCTION}.				*/
+    public static final String		DISCHARGE_MODE_PRODUCTION_RUNPNAME =
+            URI + ":DISCHARGE_MODE_PRODUCTION";
     /** run parameter name for {@code TENSION}.								*/
     public static final String		TENSION_RUNPNAME = URI + ":TENSION";
 
     /**
      * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
      */
+
     @Override
     public void	setSimulationRunParameters(
             Map<String, Object> simParams
@@ -366,18 +389,19 @@ public class BatteryElectricityModel extends AtomicHIOA
     {
         super.setSimulationRunParameters(simParams);
 
-        if (simParams.containsKey(LOW_MODE_CONSUMPTION_RUNPNAME)) {
-            LOW_MODE_CONSUMPTION =
-                    (double) simParams.get(LOW_MODE_CONSUMPTION_RUNPNAME);
+        if (simParams.containsKey(CHARGE_MODE_CONSUMPTION_RUNPNAME)) {
+            CHARGE_MODE_CONSUMPTION =
+                    (double) simParams.get(CHARGE_MODE_CONSUMPTION_RUNPNAME);
         }
-        if (simParams.containsKey(HIGH_MODE_CONSUMPTION_RUNPNAME)) {
-            HIGH_MODE_CONSUMPTION =
-                    (double) simParams.get(HIGH_MODE_CONSUMPTION_RUNPNAME);
+        if (simParams.containsKey(DISCHARGE_MODE_PRODUCTION_RUNPNAME)) {
+            DISCHARGE_MODE_PRODUCTION =
+                    (double) simParams.get(DISCHARGE_MODE_PRODUCTION_RUNPNAME);
         }
         if (simParams.containsKey(TENSION_RUNPNAME)) {
             TENSION = (double) simParams.get(TENSION_RUNPNAME);
         }
     }
+
 
     // -------------------------------------------------------------------------
     // Optional DEVS simulation protocol: simulation report
@@ -405,15 +429,18 @@ public class BatteryElectricityModel extends AtomicHIOA
         private static final long serialVersionUID = 1L;
         protected String	modelURI;
         protected double	totalConsumption; // in kwh
+        protected double	totalProduction; // in kwh
 
         public				BatteryElectricityReport(
                 String modelURI,
-                double totalConsumption
+                double totalConsumption,
+                double totalProduction
         )
         {
             super();
             this.modelURI = modelURI;
             this.totalConsumption = totalConsumption;
+            this.totalProduction = totalProduction;
         }
 
         @Override
@@ -437,6 +464,19 @@ public class BatteryElectricityModel extends AtomicHIOA
             ret.append(this.totalConsumption);
             ret.append(".\n");
             ret.append(indent);
+
+            ret.append("\n");
+
+            ret.append(indent);
+            ret.append('|');
+            ret.append(this.modelURI);
+            ret.append(" report\n");
+            ret.append(indent);
+            ret.append('|');
+            ret.append("total production in kwh = ");
+            ret.append(this.totalProduction);
+            ret.append(".\n");
+            ret.append(indent);
             ret.append("---\n");
             return ret.toString();
         }
@@ -448,7 +488,7 @@ public class BatteryElectricityModel extends AtomicHIOA
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {
-        return new fr.sorbonne_u.storageUnit.battery.mil.BatteryElectricityModel.BatteryElectricityReport(URI, this.totalConsumption);
+        return new BatteryElectricityReport(URI, this.totalConsumption, this.totalProduction);
     }
 }
 // -----------------------------------------------------------------------------

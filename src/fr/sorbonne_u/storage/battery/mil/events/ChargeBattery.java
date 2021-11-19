@@ -1,10 +1,9 @@
-package fr.sorbonne_u.storageUnit.battery.mil.events;
+package fr.sorbonne_u.storage.battery.mil.events;
 
-import fr.sorbonne_u.storageUnit.battery.mil.events.AbstractBatteryEvent;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import fr.sorbonne_u.storageUnit.battery.mil.BatteryElectricityModel;
+import fr.sorbonne_u.storage.battery.mil.BatteryElectricityModel;
 
 // -----------------------------------------------------------------------------
 /**
@@ -75,14 +74,9 @@ public class ChargeBattery extends AbstractBatteryEvent
     {
         assert	model instanceof BatteryElectricityModel;
 
-        // a SwitchOn event can be executed when the state of the
-        // Battery model is in the state OFF
         BatteryElectricityModel m = (BatteryElectricityModel)model;
-        if (m.getState() == BatteryElectricityModel.State.OFF) {
-            // then put it in the state LOW
-            m.setState(BatteryElectricityModel.State.LOW);
-            // trigger an internal transition by toggling the electricity
-            // consumption changed boolean to true
+        if (m.getState() == BatteryElectricityModel.State.REST || m.getState() == BatteryElectricityModel.State.DISCHARGE) {
+            m.setState(BatteryElectricityModel.State.CHARGE);
             m.toggleConsumptionHasChanged();
         }
     }

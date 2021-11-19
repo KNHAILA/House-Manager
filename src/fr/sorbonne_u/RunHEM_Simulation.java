@@ -45,6 +45,11 @@ import fr.sorbonne_u.components.washingMachine.mil.events.*;
 //meter
 import fr.sorbonne_u.components.meter.mil.ElectricMeterElectricityModel;
 
+//Battery
+import fr.sorbonne_u.storage.battery.mil.BatteryElectricityModel;
+import fr.sorbonne_u.storage.battery.mil.BatteryUserModel;
+import fr.sorbonne_u.storage.battery.mil.events.*;
+
 //devs_simulation
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.architectures.ArchitectureI;
@@ -59,6 +64,7 @@ import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
+
 
 // -----------------------------------------------------------------------------
 /**
@@ -271,6 +277,25 @@ public class			RunHEM_Simulation
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
 
+            //The battery model
+            atomicModelDescriptors.put(
+                    BatteryElectricityModel.URI,
+                    AtomicHIOA_Descriptor.create(
+                            BatteryElectricityModel.class,
+                            BatteryElectricityModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
+            atomicModelDescriptors.put(
+                    BatteryUserModel.URI,
+                    AtomicModelDescriptor.create(
+                            BatteryUserModel.class,
+                            BatteryUserModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+
             // map that will contain the coupled model descriptors to construct
             // the simulation architecture
             Map<String,CoupledModelDescriptor> coupledModelDescriptors =
@@ -306,6 +331,10 @@ public class			RunHEM_Simulation
 
             //meter
             submodels.add(ElectricMeterElectricityModel.URI);
+
+            //battery
+            submodels.add(BatteryElectricityModel.URI);
+            submodels.add(BatteryUserModel.URI);
 
             // event exchanging connections between exporting and importing
             // models
@@ -506,6 +535,19 @@ public class			RunHEM_Simulation
                             new EventSink(WashingMachineTemperatureModel.URI,
                                     fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
                     });
+            //Battery
+            connections.put(
+                    new EventSource(BatteryUserModel.URI, ChargeBattery.class),
+                    new EventSink[] {
+                            new EventSink(BatteryElectricityModel.URI,
+                                    ChargeBattery.class)
+                    });
+            connections.put(
+                    new EventSource(BatteryUserModel.URI, UseBattery.class),
+                    new EventSink[] {
+                            new EventSink(BatteryElectricityModel.URI,
+                                    UseBattery.class)
+                    });
 
 
             // variable bindings between exporting and importing models
@@ -616,6 +658,31 @@ public class			RunHEM_Simulation
                                     ElectricMeterElectricityModel.URI)
                     };
             bindings.put(source8, sinks8);
+
+            //Battery
+            VariableSource source9 =
+                    new VariableSource("currentIntensity_consumption",
+                            Double.class,
+                            BatteryElectricityModel.URI);
+            VariableSink[] sinks9 =
+                    new VariableSink[] {
+                            new VariableSink("currentBatteryIntensity_consumption",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    };
+            bindings.put(source9, sinks9);
+
+            VariableSource source10 =
+                    new VariableSource("currentIntensity_production",
+                            Double.class,
+                            BatteryElectricityModel.URI);
+            VariableSink[] sinks10 =
+                    new VariableSink[] {
+                            new VariableSink("currentBatteryIntensity_production",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    };
+            bindings.put(source10, sinks10);
 
             // coupled model descriptor: an HIOA requires a
             // CoupledHIOA_Descriptor

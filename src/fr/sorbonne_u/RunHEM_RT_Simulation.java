@@ -45,6 +45,11 @@ import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
 //Meter
 import fr.sorbonne_u.components.meter.mil.ElectricMeterElectricityModel;
 
+//Battery
+import fr.sorbonne_u.storage.battery.mil.BatteryElectricityModel;
+import fr.sorbonne_u.storage.battery.mil.BatteryUserModel;
+import fr.sorbonne_u.storage.battery.mil.events.*;
+
 //devs_simulation
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.architectures.ArchitectureI;
@@ -294,6 +299,26 @@ public class			RunHEM_RT_Simulation
                             SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
                             ACCELERATION_FACTOR));
 
+            //Battery
+            atomicModelDescriptors.put(
+                    BatteryElectricityModel.URI,
+                    RTAtomicHIOA_Descriptor.create(
+                            BatteryElectricityModel.class,
+                            BatteryElectricityModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+            atomicModelDescriptors.put(
+                    BatteryUserModel.URI,
+                    RTAtomicModelDescriptor.create(
+                            BatteryUserModel.class,
+                            BatteryUserModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+                            ACCELERATION_FACTOR));
+
             // map that will contain the coupled model descriptors to construct
             // the simulation architecture
             Map<String,CoupledModelDescriptor> coupledModelDescriptors =
@@ -329,6 +354,10 @@ public class			RunHEM_RT_Simulation
 
             //meter
             submodels.add(ElectricMeterElectricityModel.URI);
+
+            //Battery
+            submodels.add(BatteryElectricityModel.URI);
+            submodels.add(BatteryUserModel.URI);
 
             // event exchanging connections between exporting and importing
             // models
@@ -530,6 +559,20 @@ public class			RunHEM_RT_Simulation
                                     fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
                     });
 
+            //Battery
+            connections.put(
+                    new EventSource(BatteryUserModel.URI, UseBattery.class),
+                    new EventSink[] {
+                            new EventSink(BatteryElectricityModel.URI,
+                                    UseBattery.class)
+                    });
+            connections.put(
+                    new EventSource(BatteryUserModel.URI, ChargeBattery.class),
+                    new EventSink[] {
+                            new EventSink(BatteryElectricityModel.URI,
+                                    ChargeBattery.class)
+                    });
+
 
             // variable bindings between exporting and importing models
             Map<VariableSource,VariableSink[]> bindings =
@@ -620,6 +663,26 @@ public class			RunHEM_RT_Simulation
                             WashingMachineElectricityModel.URI),
                     new VariableSink[] {
                             new VariableSink("currentWashingMachineIntensity",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    });
+
+            //Battery
+            bindings.put(
+                    new VariableSource("currentIntensity_consumption",
+                            Double.class,
+                            BatteryElectricityModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("currentBatteryIntensity_consumption",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    });
+            bindings.put(
+                    new VariableSource("currentIntensity_production",
+                            Double.class,
+                            BatteryElectricityModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("currentBatteryIntensity_production",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     });

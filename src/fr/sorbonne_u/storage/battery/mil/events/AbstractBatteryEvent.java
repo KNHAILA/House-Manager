@@ -1,4 +1,4 @@
-package fr.sorbonne_u.storageUnit.battery.mil.events;
+package fr.sorbonne_u.storage.battery.mil.events;
 
 import fr.sorbonne_u.devs_simulation.es.events.ES_Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
