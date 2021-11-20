@@ -214,16 +214,8 @@ public class FanElectricityModel extends AtomicHIOA
         assert	currentEvents != null && currentEvents.size() == 1;
 
         Event ce = (Event) currentEvents.get(0);
-
-        this.logMessage("**********************************************"+"\n");
-        this.logMessage(this.totalConsumption+"\n");
         // compute the total consumption (in kwh) for the simulation report.
         this.totalConsumption += Electricity.computeConsumption(elapsedTime, TENSION*this.currentIntensity.v);
-
-
-        this.logMessage(String.valueOf(this.totalConsumption)+ "\n");
-        this.logMessage(String.valueOf(Electricity.computeConsumption(elapsedTime, TENSION*this.currentIntensity.v))+ "\n");
-        this.logMessage("**********************************************"+"\n");
 
         // Tracing
         StringBuffer message =
