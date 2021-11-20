@@ -42,7 +42,7 @@ extends		AtomicHIOAwithDE
 	protected static final double	STEP = 0.1;
 	protected final Duration		integrationStep;
 	@ImportedVariable(type = Double.class)
-	protected Value<Double>			externalWaterTemperature;
+	protected Value<Double>			externalTemperature;
 	@InternalVariable(type = Double.class)
 	protected final Value<Double>	currentWaterTemperature =
 											new Value<Double>(this, 0.0, 0);
@@ -87,7 +87,7 @@ extends		AtomicHIOAwithDE
 	{
 		super.initialiseVariables(startTime);
 
-		this.currentWaterTemperature.v = this.externalWaterTemperature.v-2;
+		this.currentWaterTemperature.v = this.externalTemperature.v-2;
 	}
 
 	@Override
@@ -116,7 +116,7 @@ extends		AtomicHIOAwithDE
 			this.currentTempDerivative = 40;
 		}
 		this.currentTempDerivative +=
-				(this.externalWaterTemperature.v - this.currentWaterTemperature.v)/
+				(this.externalTemperature.v - this.currentWaterTemperature.v)/
 												INSULATION_TRANSFER_CONSTANT;
 	}
 
@@ -125,11 +125,11 @@ extends		AtomicHIOAwithDE
 	public void			userDefinedInternalTransition(Duration elapsedTime)
 	{
 		this.temperatureAcc +=
-				this.externalWaterTemperature.v * elapsedTime.getSimulatedDuration();
+				this.externalTemperature.v * elapsedTime.getSimulatedDuration();
 
 		// differential equation
 		if(this.currentState == State.NORMAL)
-			this.currentWaterTemperature.v = this.externalWaterTemperature.v-2;
+			this.currentWaterTemperature.v = this.externalTemperature.v-2;
 		else
 			this.currentWaterTemperature.v = this.currentWaterTemperature.v +
 											this.currentTempDerivative*STEP;

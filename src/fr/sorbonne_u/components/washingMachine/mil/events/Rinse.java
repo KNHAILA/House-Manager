@@ -25,7 +25,7 @@ implements	WashingMachineEventI
 	public boolean		hasPriorityOver(EventI e)
 	{
 		if (e instanceof SwitchOnWashingMachine || e instanceof DoNotHeatWater || e instanceof Rinse
-				|| e instanceof Spin || e instanceof HeatWater) {
+				|| e instanceof HeatWater) {
 			return false;
 		} else {
 			return true;

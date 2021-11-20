@@ -33,23 +33,8 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     // Inner classes and types
     // -------------------------------------------------------------------------
 
-    /**
-     * The enumeration <code>State</code> describes the discrete states or
-     * modes of the Battery.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * The Battery can be <code>OFF</code> or on, and then it is either in
-     * <code>LOW</code> mode (less hot and less consuming) or in
-     * <code>HIGH</code> mode (hotter and more consuming).
-     *
-     * <p>Created on : 2019-10-10</p>
-     *
-     * @author	<a href="mailto:Jacques.MalenBatteryt@lip6.fr">Jacques MalenBatteryt</a>
-     */
     public static enum State {
         USE,
-        /** DISCHARGE mode, when manager use battery.						*/
         NOT_USE
     }
 
@@ -59,8 +44,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 
     private static final long		serialVersionUID = 1L;
 
-    /** URI for an instance model; works as long as only one instance is
-     *  created.															*/
     public static final String		URI = MiniHydroelectricDamElectricityModel.class.getSimpleName();
 
     /** energy consumption (in Watts) of the Battery in charge mode.		*/

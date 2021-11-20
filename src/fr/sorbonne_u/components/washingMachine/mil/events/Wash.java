@@ -5,7 +5,6 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.components.washingMachine.mil.WashingMachineElectricityModel;
 import fr.sorbonne_u.components.washingMachine.mil.WashingMachineTemperatureModel;
-import fr.sorbonne_u.components.washingMachine.mil.WashingMachineElectricityModel.State;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 
 public class			Wash
@@ -25,8 +24,7 @@ implements	WashingMachineEventI
 	@Override
 	public boolean		hasPriorityOver(EventI e)
 	{
-		if (e instanceof SwitchOnWashingMachine || e instanceof DoNotHeatWater || e instanceof Rinse
-				|| e instanceof Spin || e instanceof HeatWater) {
+		if (e instanceof SwitchOnWashingMachine || e instanceof DoNotHeatWater || e instanceof HeatWater) {
 			return false;
 		} else {
 			return true;

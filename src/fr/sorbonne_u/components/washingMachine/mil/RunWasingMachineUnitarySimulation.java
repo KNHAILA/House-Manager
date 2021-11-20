@@ -163,7 +163,7 @@ public class			RunWasingMachineUnitarySimulation
 											Double.class,
 							WashingMachineExternalTemperatureModel.URI),
 						 new VariableSink[] {
-								 new VariableSink("externalWaterTemperature",
+								 new VariableSink("externalTemperature",
 										 		  Double.class,
 										 		 WashingMachineTemperatureModel.URI)
 						 });

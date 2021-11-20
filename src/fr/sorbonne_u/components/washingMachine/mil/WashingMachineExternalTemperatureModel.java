@@ -97,7 +97,7 @@ public class			WashingMachineExternalTemperatureModel
 
         // Tracing
         StringBuffer message =
-                new StringBuffer("current external  water temperature: ");
+                new StringBuffer("current external temperature: ");
         message.append(this.externalTemperature.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());

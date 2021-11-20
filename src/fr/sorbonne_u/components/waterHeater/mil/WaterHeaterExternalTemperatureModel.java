@@ -26,7 +26,7 @@ public class			WaterHeaterExternalTemperatureModel
     protected static final double	STEP = 1.0;
     protected final Duration		evaluationStep;
     @ExportedVariable(type = Double.class)
-    protected final Value<Double>	externalWaterTemperature =
+    protected final Value<Double>	externalTemperature =
             new Value<Double>(this, 0.0, 0);
     protected double				cycleTime;
 
@@ -54,13 +54,13 @@ public class			WaterHeaterExternalTemperatureModel
     {
         super.initialiseVariables(startTime);
 
-        this.externalWaterTemperature.v = MIN_EXTERNAL_TEMPERATURE;
+        this.externalTemperature.v = MIN_EXTERNAL_TEMPERATURE;
 
         this.toggleDebugMode();
         this.logMessage("simulation begins.\n");
         StringBuffer message =
                 new StringBuffer("current external water temperature: ");
-        message.append(this.externalWaterTemperature.v);
+        message.append(this.externalTemperature.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());
         message.append("\n");
@@ -89,16 +89,16 @@ public class			WaterHeaterExternalTemperatureModel
             this.cycleTime -= PERIOD;
         }
         double c = Math.cos((1.0 + this.cycleTime/(PERIOD/2.0))*Math.PI);
-        this.externalWaterTemperature.v =
+        this.externalTemperature.v =
                 MIN_EXTERNAL_TEMPERATURE +
                         (MAX_EXTERNAL_TEMPERATURE - MIN_EXTERNAL_TEMPERATURE)*
                                 ((1.0 + c)/2.0);
-        this.externalWaterTemperature.time = this.getCurrentStateTime();
+        this.externalTemperature.time = this.getCurrentStateTime();
 
         // Tracing
         StringBuffer message =
                 new StringBuffer("current external  water temperature: ");
-        message.append(this.externalWaterTemperature.v);
+        message.append(this.externalTemperature.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());
         message.append("\n");

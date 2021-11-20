@@ -116,11 +116,11 @@ public class			RunWaterHeaterUnitarySimulation
 			Map<VariableSource,VariableSink[]> bindings =
 								new HashMap<VariableSource,VariableSink[]>();
 
-			bindings.put(new VariableSource("externalWaterTemperature",
+			bindings.put(new VariableSource("externalTemperature",
 											Double.class,
 							WaterHeaterExternalTemperatureModel.URI),
 						 new VariableSink[] {
-								 new VariableSink("externalWaterTemperature",
+								 new VariableSink("externalTemperature",
 										 		  Double.class,
 										 		  WaterHeaterTemperatureModel.URI)
 						 });
