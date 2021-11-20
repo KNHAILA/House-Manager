@@ -46,11 +46,9 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 
     public static final String		URI = MiniHydroelectricDamElectricityModel.class.getSimpleName();
 
-    /** energy consumption (in Watts) of the Battery in charge mode.		*/
-    public static double			CHARGE_MODE_CONSUMPTION = 1000.0; // Watts
-    /** energy consumption (in Watts) of the Battery in HIGH mode.		*/
-    public static double			DISCHARGE_MODE_PRODUCTION = 200000.0; // Watts
-    /** nominal tension (in Volts) of the Battery.						*/
+    
+    public static double			MODE_CONSUMPTION = 1000.0; // Watts
+    public static double			MODE_PRODUCTION = 200000.0; // Watts
     public static double			TENSION = 220.0; // Volts
 
     /** current intensity in amperes; intensity is power/tension.			*/
@@ -268,12 +266,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         // Tracing
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
-        /*if (this.currentState == State.USE) {
-            message.append("with current consumption ");
-            message.append(this.currentIntensity_consumption.v);
-            message.append(" at ");
-            message.append(this.currentIntensity_consumption.time);
-        }*/
 
             message.append("with current production ");
             message.append(this.currentIntensity_production.v);
@@ -350,12 +342,12 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     // Optional DEVS simulation protocol: simulation run parameters
     // -------------------------------------------------------------------------
 
-    /** run parameter name for {@code CHARGE_MODE_CONSUMPTION}.				*/
-    public static final String		CHARGE_MODE_CONSUMPTION_RUNPNAME =
-            URI + ":CHARGE_MODE_CONSUMPTION";
-    /** run parameter name for {@code DISCHARGE_MODE_PRODUCTION}.				*/
-    public static final String		DISCHARGE_MODE_PRODUCTION_RUNPNAME =
-            URI + ":DISCHARGE_MODE_PRODUCTION";
+    /** run parameter name for {@code MODE_CONSUMPTION}.				*/
+    public static final String		MODE_CONSUMPTION_RUNPNAME =
+            URI + ": MODE_CONSUMPTION";
+    /** run parameter name for {@code MODE_PRODUCTION}.				*/
+    public static final String		MODE_PRODUCTION_RUNPNAME =
+            URI + ":MODE_PRODUCTION";
     /** run parameter name for {@code TENSION}.								*/
     public static final String		TENSION_RUNPNAME = URI + ":TENSION";
 
@@ -370,13 +362,13 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     {
         super.setSimulationRunParameters(simParams);
 
-        if (simParams.containsKey(CHARGE_MODE_CONSUMPTION_RUNPNAME)) {
-            CHARGE_MODE_CONSUMPTION =
-                    (double) simParams.get(CHARGE_MODE_CONSUMPTION_RUNPNAME);
+        if (simParams.containsKey(MODE_CONSUMPTION_RUNPNAME)) {
+           MODE_CONSUMPTION =
+                    (double) simParams.get(MODE_CONSUMPTION_RUNPNAME);
         }
-        if (simParams.containsKey(DISCHARGE_MODE_PRODUCTION_RUNPNAME)) {
-            DISCHARGE_MODE_PRODUCTION =
-                    (double) simParams.get(DISCHARGE_MODE_PRODUCTION_RUNPNAME);
+        if (simParams.containsKey(MODE_PRODUCTION_RUNPNAME)) {
+            MODE_PRODUCTION =
+                    (double) simParams.get(MODE_PRODUCTION_RUNPNAME);
         }
         if (simParams.containsKey(TENSION_RUNPNAME)) {
             TENSION = (double) simParams.get(TENSION_RUNPNAME);
@@ -388,23 +380,8 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     // Optional DEVS simulation protocol: simulation report
     // -------------------------------------------------------------------------
 
-    /**
-     * The class <code>BatteryElectricityReport</code> implements the
-     * simulation report for the <code>BatteryElectricityModel</code>.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * <p><strong>Invariant</strong></p>
-     *
-     * <pre>
-     * invariant	true
-     * </pre>
-     *
-     * <p>Created on : 2021-10-01</p>
-     *
-     * @author	<a href="mailto:Jacques.MalenBatteryt@lip6.fr">Jacques MalenBatteryt</a>
-     */
-    public static class		BatteryElectricityReport
+    
+    public static class		MiniHydroelectricDamElectricityReport
             implements	SimulationReportI, HEM_ReportI
     {
         private static final long serialVersionUID = 1L;
@@ -412,7 +389,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         protected double	totalConsumption; // in kwh
         protected double	totalProduction; // in kwh
 
-        public				BatteryElectricityReport(
+        public				MiniHydroelectricDamElectricityReport(
                 String modelURI,
                 double totalConsumption,
                 double totalProduction
@@ -469,7 +446,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {
-        return new BatteryElectricityReport(URI, this.totalConsumption, this.totalProduction);
+        return new MiniHydroelectricDamElectricityReport(URI, this.totalConsumption, this.totalProduction);
     }
 }
 // -----------------------------------------------------------------------------

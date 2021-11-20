@@ -8,7 +8,6 @@ import fr.sorbonne_u.HEM_ReportI;
 import fr.sorbonne_u.utils.Electricity;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ImportedVariable;
-import fr.sorbonne_u.devs_simulation.hioa.annotations.InternalVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
 import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
@@ -30,27 +29,9 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
 // -----------------------------------------------------------------------------
 public class WindTurbineElectricityModel extends AtomicHIOA
 {
-    // -------------------------------------------------------------------------
-    // Inner classes and types
-    // -------------------------------------------------------------------------
-
-    /**
-     * The enumeration <code>State</code> describes the discrete states or
-     * modes of the Battery.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * The Battery can be <code>OFF</code> or on, and then it is either in
-     * <code>LOW</code> mode (less hot and less consuming) or in
-     * <code>HIGH</code> mode (hotter and more consuming).
-     *
-     * <p>Created on : 2019-10-10</p>
-     *
-     * @author	<a href="mailto:Jacques.MalenBatteryt@lip6.fr">Jacques MalenBatteryt</a>
-     */
+  
     public static enum State {
         USE,
-        /** DISCHARGE mode, when manager use battery.						*/
         NOT_USE
     }
 
@@ -64,10 +45,10 @@ public class WindTurbineElectricityModel extends AtomicHIOA
      *  created.															*/
     public static final String		URI = WindTurbineElectricityModel.class.getSimpleName();
 
-    /** energy consumption (in Watts) of the Battery in charge mode.		*/
-    public static double			CHARGE_MODE_CONSUMPTION = 1000.0; // Watts
-    /** energy consumption (in Watts) of the Battery in HIGH mode.		*/
-    public static double			DISCHARGE_MODE_PRODUCTION = 200000.0; // Watts
+
+    public static double			MODE_CONSUMPTION = 1000.0; // Watts
+    
+    public static double			MODE_PRODUCTION = 200000.0; // Watts
     /** nominal tension (in Volts) of the Battery.						*/
     public static double			TENSION = 220.0; // Volts
 
@@ -85,16 +66,10 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     protected Value<Double>			windSpeed;
     /** current state of the Battery.					*/
     protected State currentState = State.NOT_USE;
-    /** true when the electricity consumption of the BATTERY has changed
-     *  after executing an external event; the external event changes the
-     *  value of <code>currentState</code> and then an internal transition
-     *  will be triggered by putting through in this variable which will
-     *  update the variable <code>currentIntensity</code>.					*/
+   
     protected boolean				consumptionHasChanged = false;
-    /** total consumption of the Battery during the simulation in kwh.	*/
     protected double				totalConsumption;
 
-    /** total Production of the Battery during the simulation in kwh.	*/
     protected double				totalProduction;
 
     protected double				capacity = 300.0; //    ampere/h
@@ -105,26 +80,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     // Constructors
     // -------------------------------------------------------------------------
 
-    /**
-     * create a Battery MIL model instance.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code simulatedTimeUnit != null}
-     * pre	{@code simulationEngine == null || simulationEngine instanceof HIOA_AtomicEngine}
-     * post	{@code getURI() != null}
-     * post	{@code uri != null implies this.getURI().equals(uri)}
-     * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
-     * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
-     * post	{@code !isDebugModeOn()}
-     * </pre>
-     *
-     * @param uri				URI of the model.
-     * @param simulatedTimeUnit	time unit used for the simulation time.
-     * @param simulationEngine	simulation engine to which the model is attached.
-     * @throws Exception		<i>to do</i>.
-     */
+   
     public	WindTurbineElectricityModel(
             String uri,
             TimeUnit simulatedTimeUnit,
@@ -139,54 +95,17 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     // Methods
     // -------------------------------------------------------------------------
 
-    /**
-     * set the state of the Battery.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code s != null}
-     * post	{@code getState() == s}
-     * </pre>
-     *
-     * @param s		the new state.
-     */
     public void	setState(State s)
     {
         this.currentState = s;
     }
 
-    /**
-     * return the state of the Battery.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true		// no precondition.
-     * post	{@code ret != null}
-     * </pre>
-     *
-     * @return	the state of the Battery.
-     */
+  
     public State getState()
     {
         return this.currentState;
     }
 
-    /**
-     * toggle the value of the state of the model telling whether the
-     * electricity consumption level has just changed or not; when it changes
-     * after receiving an external event, an immediate internal transition
-     * is triggered to update the level of electricity consumption.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true		// no precondition.
-     * post	true		// no postcondition.
-     * </pre>
-     *
-     */
     public void	toggleConsumptionHasChanged()
     {
         if (this.consumptionHasChanged) {
@@ -200,29 +119,22 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     // DEVS simulation protocol
     // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     protected void	initialiseVariables(Time startTime)
     {
         super.initialiseVariables(startTime);
 
-        // initially, the Battery is REST, so its consumption and production are zero.
         this.currentIntensity_consumption.v = 0.0;
         this.currentIntensity_production.v = 0.0;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
+   
     @Override
     public void	initialiseState(Time startTime)
     {
         super.initialiseState(startTime);
 
-        // initially the Battery is off and its electricity consumption and production are
-        // not about to change.
+      
         this.currentState = State.NOT_USE;
         this.consumptionHasChanged = false;
         this.totalConsumption = 0.0;
@@ -232,9 +144,6 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         this.logMessage("simulation begins.\n");
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
-     */
     @Override
     public ArrayList<EventI>	output()
     {
@@ -248,13 +157,8 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     @Override
     public Duration	timeAdvance()
     {
-        // to trigger an internal transition after an external transition, the
-        // variable consumptionHasChanged is set to true, hence when it is true
-        // return a zero delay otherwise return an infinite delay (no internal
-        // transition expected)
+       
         if (this.consumptionHasChanged) {
-            // after triggering the internal transition, toggle the boolean
-            // to prepare for the next internal transition.
             this.toggleConsumptionHasChanged();
             return new Duration(0.0, this.getSimulatedTimeUnit());
         } else {
@@ -262,9 +166,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         }
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
-     */
+  
     @Override
     public void	userDefinedInternalTransition(Duration elapsedTime)
     {
@@ -286,12 +188,6 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         // Tracing
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
-        /*if (this.currentState == State.USE) {
-            message.append("with current consumption ");
-            message.append(this.currentIntensity_consumption.v);
-            message.append(" at ");
-            message.append(this.currentIntensity_consumption.time);
-        }*/
 
             message.append("with current production ");
             message.append(this.currentIntensity_production.v);
@@ -308,11 +204,9 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     @Override
     public void	userDefinedExternalTransition(Duration elapsedTime)
     {
-        // get the vector of currently received external events
+   
         ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
-        // when this method is called, there is at least one external event,
-        // and for the current Battery model, there must be exactly one by
-        // construction.
+      
         assert	currentEvents != null && currentEvents.size() == 1;
 
         Event ce = (Event) currentEvents.get(0);
@@ -367,12 +261,12 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     // Optional DEVS simulation protocol: simulation run parameters
     // -------------------------------------------------------------------------
 
-    /** run parameter name for {@code CHARGE_MODE_CONSUMPTION}.				*/
-    public static final String		CHARGE_MODE_CONSUMPTION_RUNPNAME =
-            URI + ":CHARGE_MODE_CONSUMPTION";
-    /** run parameter name for {@code DISCHARGE_MODE_PRODUCTION}.				*/
-    public static final String		DISCHARGE_MODE_PRODUCTION_RUNPNAME =
-            URI + ":DISCHARGE_MODE_PRODUCTION";
+    /** run parameter name for {@code MODE_CONSUMPTION}.				*/
+    public static final String		MODE_CONSUMPTION_RUNPNAME =
+            URI + ":MODE_CONSUMPTION";
+    /** run parameter name for {@code MODE_PRODUCTION}.				*/
+    public static final String		MODE_PRODUCTION_RUNPNAME =
+            URI + ":MODE_PRODUCTION";
     /** run parameter name for {@code TENSION}.								*/
     public static final String		TENSION_RUNPNAME = URI + ":TENSION";
 
@@ -387,13 +281,13 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     {
         super.setSimulationRunParameters(simParams);
 
-        if (simParams.containsKey(CHARGE_MODE_CONSUMPTION_RUNPNAME)) {
-            CHARGE_MODE_CONSUMPTION =
-                    (double) simParams.get(CHARGE_MODE_CONSUMPTION_RUNPNAME);
+        if (simParams.containsKey(MODE_CONSUMPTION_RUNPNAME)) {
+            MODE_CONSUMPTION =
+                    (double) simParams.get(MODE_CONSUMPTION_RUNPNAME);
         }
-        if (simParams.containsKey(DISCHARGE_MODE_PRODUCTION_RUNPNAME)) {
-            DISCHARGE_MODE_PRODUCTION =
-                    (double) simParams.get(DISCHARGE_MODE_PRODUCTION_RUNPNAME);
+        if (simParams.containsKey(MODE_PRODUCTION_RUNPNAME)) {
+            MODE_PRODUCTION =
+                    (double) simParams.get(MODE_PRODUCTION_RUNPNAME);
         }
         if (simParams.containsKey(TENSION_RUNPNAME)) {
             TENSION = (double) simParams.get(TENSION_RUNPNAME);
@@ -405,23 +299,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     // Optional DEVS simulation protocol: simulation report
     // -------------------------------------------------------------------------
 
-    /**
-     * The class <code>BatteryElectricityReport</code> implements the
-     * simulation report for the <code>BatteryElectricityModel</code>.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * <p><strong>Invariant</strong></p>
-     *
-     * <pre>
-     * invariant	true
-     * </pre>
-     *
-     * <p>Created on : 2021-10-01</p>
-     *
-     * @author	<a href="mailto:Jacques.MalenBatteryt@lip6.fr">Jacques MalenBatteryt</a>
-     */
-    public static class		BatteryElectricityReport
+    public static class		WindTurbineElectricityReport
             implements	SimulationReportI, HEM_ReportI
     {
         private static final long serialVersionUID = 1L;
@@ -429,7 +307,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         protected double	totalConsumption; // in kwh
         protected double	totalProduction; // in kwh
 
-        public				BatteryElectricityReport(
+        public				WindTurbineElectricityReport(
                 String modelURI,
                 double totalConsumption,
                 double totalProduction
@@ -486,7 +364,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {
-        return new BatteryElectricityReport(URI, this.totalConsumption, this.totalProduction);
+        return new WindTurbineElectricityReport(URI, this.totalConsumption, this.totalProduction);
     }
 }
 // -----------------------------------------------------------------------------

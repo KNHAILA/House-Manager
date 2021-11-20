@@ -182,14 +182,14 @@ extends		AtomicHIOAwithDE
 		super.endSimulation(endTime);
 	}
 
-	public static class		HeaterTemperatureReport
+	public static class		WashingMachineTemperatureReport
 	implements	SimulationReportI, HEM_ReportI
 	{
 		private static final long serialVersionUID = 1L;
 		protected String	modelURI;
 		protected double	meanTemperature;
 
-		public			HeaterTemperatureReport(
+		public			WashingMachineTemperatureReport(
 			String modelURI,
 			double meanTemperature
 			)
@@ -231,7 +231,7 @@ extends		AtomicHIOAwithDE
 	@Override
 	public SimulationReportI	getFinalReport() throws Exception
 	{
-		return new HeaterTemperatureReport(URI, this.meanTemperature);
+		return new WashingMachineTemperatureReport(URI, this.meanTemperature);
 	}
 }
 // -----------------------------------------------------------------------------

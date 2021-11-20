@@ -33,13 +33,11 @@ public class RunWindTurbineUnitarySimulation
     public static void	main(String[] args)
     {
         try {
-            // map that will contain the atomic model descriptors to construct
-            // the simulation architecture
+        
             Map<String,AbstractAtomicModelDescriptor> atomicModelDescriptors =
                     new HashMap<>();
 
-            // the Battery model simulating its electricity consumption, an
-            // atomic HIOA model hence we use an AtomicHIOA_Descriptor
+         
             atomicModelDescriptors.put(
             		WindTurbineElectricityModel.URI,
                     AtomicHIOA_Descriptor.create(

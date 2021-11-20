@@ -674,12 +674,12 @@ public class			RunHEM_Simulation
 
             // bindings among water heater models
             VariableSource source1 =
-                    new VariableSource("externalWaterTemperature",
+                    new VariableSource("externalTemperature",
                             Double.class,
                             WaterHeaterExternalTemperatureModel.URI);
             VariableSink[] sinks1 =
                     new VariableSink[] {
-                            new VariableSink("externalWaterTemperature",
+                            new VariableSink("externalTemperature",
                                     Double.class,
                                     WaterHeaterTemperatureModel.URI)
                     };
@@ -705,7 +705,7 @@ public class			RunHEM_Simulation
                             WashingMachineExternalTemperatureModel.URI);
             VariableSink[] sinks3 =
                     new VariableSink[] {
-                            new VariableSink("externalWaterTemperature",
+                            new VariableSink("externalTemperature",
                                     Double.class,
                                     WashingMachineTemperatureModel.URI)
                     };

@@ -213,7 +213,7 @@ extends		AtomicHIOA
 		}
 	}
 	
-	public static class		HeaterElectricityReport
+	public static class		WaterHeaterElectricityReport
 	implements	SimulationReportI, HEM_ReportI
 	{
 		private static final long serialVersionUID = 1L;
@@ -221,7 +221,7 @@ extends		AtomicHIOA
 		protected double	totalConsumption; // in kwh
 
 
-		public			HeaterElectricityReport(
+		public			WaterHeaterElectricityReport(
 			String modelURI,
 			double totalConsumption
 			)
@@ -260,7 +260,7 @@ extends		AtomicHIOA
 	@Override
 	public SimulationReportI	getFinalReport() throws Exception
 	{
-		return new HeaterElectricityReport(URI, this.totalConsumption);
+		return new WaterHeaterElectricityReport(URI, this.totalConsumption);
 	}
 }
 // -----------------------------------------------------------------------------
