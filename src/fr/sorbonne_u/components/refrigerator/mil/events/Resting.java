@@ -9,22 +9,6 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 
 // -----------------------------------------------------------------------------
-/**
- * The class <code>DoNotHeat</code> defines the simulation event of the
- * Refrigerator stopping to heat.
- *
- * <p><strong>Description</strong></p>
- *
- * <p><strong>Invariant</strong></p>
- *
- * <pre>
- * invariant	true
- * </pre>
- *
- * <p>Created on : 2021-09-21</p>
- *
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
- */
 public class			Resting
         extends		Event
         implements	RefrigeratorEventI
@@ -38,20 +22,6 @@ public class			Resting
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
-
-    /**
-     * create a <code>DoNotHeat</code> event.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code timeOfOccurrence != null}
-     * post	{@code this.getTimeOfOccurrence().equals(timeOfOccurrence)}
-     * post	{@code this.getEventInformation.equals(content)}
-     * </pre>
-     *
-     * @param timeOfOccurrence	time of occurrence of the event.
-     */
     public				Resting(
             Time timeOfOccurrence
     )
@@ -63,9 +33,6 @@ public class			Resting
     // Methods
     // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.events.Event#hasPriorityOver(fr.sorbonne_u.devs_simulation.models.events.EventI)
-     */
     @Override
     public boolean		hasPriorityOver(EventI e)
     {
@@ -78,9 +45,7 @@ public class			Resting
         }
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.events.Event#executeOn(fr.sorbonne_u.devs_simulation.models.AtomicModel)
-     */
+ 
     @Override
     public void			executeOn(AtomicModel model)
     {

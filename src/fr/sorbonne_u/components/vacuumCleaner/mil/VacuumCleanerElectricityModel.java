@@ -34,21 +34,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
     // Inner classes and types
     // -------------------------------------------------------------------------
-
-    /**
-     * The enumeration <code>State</code> describes the discrete states or
-     * modes of the VacuumCleaner.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * The VacuumCleaner can be <code>OFF</code> or on, and then it is either in
-     * <code>LOW</code> mode (less hot and less consuming) or in
-     * <code>HIGH</code> mode (hotter and more consuming).
-     *
-     * <p>Created on : 2019-10-10</p>
-     *
-     * @author	<a href="mailto:Jacques.MalenVacuumCleanert@lip6.fr">Jacques MalenVacuumCleanert</a>
-     */
     public static enum State {
         OFF,
         /** low mode is less hot and less consuming.						*/
@@ -95,26 +80,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
     // Constructors
     // -------------------------------------------------------------------------
 
-    /**
-     * create a VacuumCleaner MIL model instance.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code simulatedTimeUnit != null}
-     * pre	{@code simulationEngine == null || simulationEngine instanceof HIOA_AtomicEngine}
-     * post	{@code getURI() != null}
-     * post	{@code uri != null implies this.getURI().equals(uri)}
-     * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
-     * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
-     * post	{@code !isDebugModeOn()}
-     * </pre>
-     *
-     * @param uri				URI of the model.
-     * @param simulatedTimeUnit	time unit used for the simulation time.
-     * @param simulationEngine	simulation engine to which the model is attached.
-     * @throws Exception		<i>to do</i>.
-     */
     public	VacuumCleanerElectricityModel(
             String uri,
             TimeUnit simulatedTimeUnit,
@@ -128,55 +93,16 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
     // Methods
     // -------------------------------------------------------------------------
-
-    /**
-     * set the state of the VacuumCleaner.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code s != null}
-     * post	{@code getState() == s}
-     * </pre>
-     *
-     * @param s		the new state.
-     */
     public void	setState(fr.sorbonne_u.components.vacuumCleaner.mil.VacuumCleanerElectricityModel.State s)
     {
         this.currentState = s;
     }
 
-    /**
-     * return the state of the VacuumCleaner.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true		// no precondition.
-     * post	{@code ret != null}
-     * </pre>
-     *
-     * @return	the state of the VacuumCleaner.
-     */
     public fr.sorbonne_u.components.vacuumCleaner.mil.VacuumCleanerElectricityModel.State getState()
     {
         return this.currentState;
     }
 
-    /**
-     * toggle the value of the state of the model telling whether the
-     * electricity consumption level has just changed or not; when it changes
-     * after receiving an external event, an immediate internal transition
-     * is triggered to update the level of electricity consumption.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true		// no precondition.
-     * post	true		// no postcondition.
-     * </pre>
-     *
-     */
     public void	toggleConsumptionHasChanged()
     {
         if (this.consumptionHasChanged) {
@@ -190,9 +116,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
     // DEVS simulation protocol
     // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     protected void	initialiseVariables(Time startTime)
     {
@@ -202,9 +125,7 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
         this.currentIntensity.v = 0.0;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
+    
     @Override
     public void	initialiseState(Time startTime)
     {
@@ -220,9 +141,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
         this.logMessage("simulation begins.\n");
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
-     */
     @Override
     public ArrayList<EventI> output()
     {
@@ -230,9 +148,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
         return null;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
-     */
     @Override
     public Duration timeAdvance()
     {
@@ -250,9 +165,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
         }
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
-     */
     @Override
     public void	userDefinedInternalTransition(Duration elapsedTime)
     {
@@ -281,9 +193,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
         this.logMessage(message.toString());
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedExternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
-     */
     @Override
     public void	userDefinedExternalTransition(Duration elapsedTime)
     {
@@ -318,9 +227,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
         super.userDefinedExternalTransition(elapsedTime);
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     public void	endSimulation(Time endTime) throws Exception
     {
@@ -346,9 +252,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
     /** run parameter name for {@code TENSION}.								*/
     public static final String		TENSION_RUNPNAME = URI + ":TENSION";
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
-     */
     @Override
     public void	setSimulationRunParameters(
             Map<String, Object> simParams
@@ -372,23 +275,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
     // Optional DEVS simulation protocol: simulation report
     // -------------------------------------------------------------------------
-
-    /**
-     * The class <code>VacuumCleanerElectricityReport</code> implements the
-     * simulation report for the <code>VacuumCleanerElectricityModel</code>.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * <p><strong>Invariant</strong></p>
-     *
-     * <pre>
-     * invariant	true
-     * </pre>
-     *
-     * <p>Created on : 2021-10-01</p>
-     *
-     * @author	<a href="mailto:Jacques.MalenVacuumCleanert@lip6.fr">Jacques MalenVacuumCleanert</a>
-     */
     public static class		VacuumCleanerElectricityReport
             implements SimulationReportI, HEM_ReportI
     {
@@ -432,9 +318,6 @@ public class VacuumCleanerElectricityModel extends AtomicHIOA
         }
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
-     */
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {

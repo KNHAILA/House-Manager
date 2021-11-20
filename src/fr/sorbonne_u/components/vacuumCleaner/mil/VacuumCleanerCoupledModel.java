@@ -26,25 +26,6 @@ public class VacuumCleanerCoupledModel extends CoupledModel
     // Constructors
     // -------------------------------------------------------------------------
 
-    /**
-     * creating the coupled model.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true		// no precondition.
-     * post	true		// no postcondition.
-     * </pre>
-     *
-     * @param uri				URI of the coupled model to be created.
-     * @param simulatedTimeUnit	time unit used in the simulation by the model.
-     * @param simulationEngine	simulation engine enacting the model.
-     * @param submodels			array of submodels of the new coupled model.
-     * @param imported			map from imported event types to submodels consuming them.
-     * @param reexported		map from event types exported by submodels that are reexported by this coupled model.
-     * @param connections		map connecting event sources to arrays of event sinks among submodels.
-     * @throws Exception		<i>to do</i>.
-     */
     public	VacuumCleanerCoupledModel(
             String uri,
             TimeUnit simulatedTimeUnit,

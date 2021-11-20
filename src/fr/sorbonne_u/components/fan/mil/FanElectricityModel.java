@@ -22,6 +22,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
+import org.apache.commons.math3.util.Precision;
 
 // -----------------------------------------------------------------------------
 @ModelExternalEvents(imported = {SwitchOnFan.class,
@@ -34,21 +35,6 @@ public class FanElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
     // Inner classes and types
     // -------------------------------------------------------------------------
-
-    /**
-     * The enumeration <code>State</code> describes the discrete states or
-     * modes of the fan.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * The fan can be <code>OFF</code> or on, and then it is either in
-     * <code>LOW</code> mode (less hot and less consuming) or in
-     * <code>HIGH</code> mode (hotter and more consuming).
-     *
-     * <p>Created on : 2019-10-10</p>
-     *
-     * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
-     */
     public static enum State {
         OFF,
         /** low mode is less hot and less consuming.						*/
@@ -81,7 +67,7 @@ public class FanElectricityModel extends AtomicHIOA
             new Value<Double>(this, 0.0, 0);
     /** current state (OFF, LOW, HIGH) of the fan.					*/
     protected State					currentState = State.OFF;
-    /** true when the electricity consumption of the dryer has changed
+    /** true when the electricity consumption of the fan has changed
      *  after executing an external event; the external event changes the
      *  value of <code>currentState</code> and then an internal transition
      *  will be triggered by putting through in this variable which will
@@ -91,30 +77,13 @@ public class FanElectricityModel extends AtomicHIOA
     /** total consumption of the fan during the simulation in kwh.	*/
     protected double				totalConsumption;
 
+    /** current consumption of the fan during the simulation in kwh.	*/
+    protected double				currentConsumption;
+
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
 
-    /**
-     * create a fan MIL model instance.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code simulatedTimeUnit != null}
-     * pre	{@code simulationEngine == null || simulationEngine instanceof HIOA_AtomicEngine}
-     * post	{@code getURI() != null}
-     * post	{@code uri != null implies this.getURI().equals(uri)}
-     * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
-     * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
-     * post	{@code !isDebugModeOn()}
-     * </pre>
-     *
-     * @param uri				URI of the model.
-     * @param simulatedTimeUnit	time unit used for the simulation time.
-     * @param simulationEngine	simulation engine to which the model is attached.
-     * @throws Exception		<i>to do</i>.
-     */
     public	FanElectricityModel(
             String uri,
             TimeUnit simulatedTimeUnit,
@@ -129,54 +98,15 @@ public class FanElectricityModel extends AtomicHIOA
     // Methods
     // -------------------------------------------------------------------------
 
-    /**
-     * set the state of the fan.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code s != null}
-     * post	{@code getState() == s}
-     * </pre>
-     *
-     * @param s		the new state.
-     */
     public void	setState(State s)
     {
         this.currentState = s;
     }
-
-    /**
-     * return the state of the fan.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true		// no precondition.
-     * post	{@code ret != null}
-     * </pre>
-     *
-     * @return	the state of the fan.
-     */
     public State getState()
     {
         return this.currentState;
     }
 
-    /**
-     * toggle the value of the state of the model telling whether the
-     * electricity consumption level has just changed or not; when it changes
-     * after receiving an external event, an immediate internal transition
-     * is triggered to update the level of electricity consumption.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true		// no precondition.
-     * post	true		// no postcondition.
-     * </pre>
-     *
-     */
     public void	toggleConsumptionHasChanged()
     {
         if (this.consumptionHasChanged) {
@@ -190,9 +120,6 @@ public class FanElectricityModel extends AtomicHIOA
     // DEVS simulation protocol
     // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     protected void	initialiseVariables(Time startTime)
     {
@@ -202,9 +129,6 @@ public class FanElectricityModel extends AtomicHIOA
         this.currentIntensity.v = 0.0;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     public void	initialiseState(Time startTime)
     {
@@ -220,9 +144,6 @@ public class FanElectricityModel extends AtomicHIOA
         this.logMessage("simulation begins.\n");
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
-     */
     @Override
     public ArrayList<EventI>	output()
     {
@@ -230,9 +151,6 @@ public class FanElectricityModel extends AtomicHIOA
         return null;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
-     */
     @Override
     public Duration	timeAdvance()
     {
@@ -250,9 +168,6 @@ public class FanElectricityModel extends AtomicHIOA
         }
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
-     */
     @Override
     public void	userDefinedInternalTransition(Duration elapsedTime)
     {
@@ -261,12 +176,17 @@ public class FanElectricityModel extends AtomicHIOA
         // set the current electricity consumption from the current state
         switch (this.currentState)
         {
-            case OFF : this.currentIntensity.v = 0.0; break;
+            case OFF :
+                this.currentIntensity.v = 0.0;
+                this.currentConsumption = 0.0;
+                break;
             case LOW :
                 this.currentIntensity.v = LOW_MODE_CONSUMPTION/TENSION;
+                this.currentConsumption = LOW_MODE_CONSUMPTION/1000;
                 break;
             case HIGH :
                 this.currentIntensity.v = HIGH_MODE_CONSUMPTION/TENSION;
+                this.currentConsumption = HIGH_MODE_CONSUMPTION/1000;
         }
         this.currentIntensity.time = this.getCurrentStateTime();
 
@@ -274,6 +194,8 @@ public class FanElectricityModel extends AtomicHIOA
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
         message.append("with current consumption ");
+        message.append(this.currentConsumption);
+        message.append(" ,and with current Intensity ");
         message.append(this.currentIntensity.v);
         message.append(" at ");
         message.append(this.currentIntensity.time);
@@ -281,9 +203,6 @@ public class FanElectricityModel extends AtomicHIOA
         this.logMessage(message.toString());
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedExternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
-     */
     @Override
     public void	userDefinedExternalTransition(Duration elapsedTime)
     {
@@ -296,10 +215,15 @@ public class FanElectricityModel extends AtomicHIOA
 
         Event ce = (Event) currentEvents.get(0);
 
+        this.logMessage("**********************************************"+"\n");
+        this.logMessage(this.totalConsumption+"\n");
         // compute the total consumption (in kwh) for the simulation report.
-        this.totalConsumption +=
-                Electricity.computeConsumption(elapsedTime,
-                        TENSION*this.currentIntensity.v);
+        this.totalConsumption += Electricity.computeConsumption(elapsedTime, TENSION*this.currentIntensity.v);
+
+
+        this.logMessage(String.valueOf(this.totalConsumption)+ "\n");
+        this.logMessage(String.valueOf(Electricity.computeConsumption(elapsedTime, TENSION*this.currentIntensity.v))+ "\n");
+        this.logMessage("**********************************************"+"\n");
 
         // Tracing
         StringBuffer message =
@@ -318,9 +242,12 @@ public class FanElectricityModel extends AtomicHIOA
         super.userDefinedExternalTransition(elapsedTime);
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
+    public static double	toHours(Duration d)
+    {
+        long factor = d.getTimeUnit().convert(1, TimeUnit.HOURS);
+        double ret = d.getSimulatedDuration()/factor;
+        return ret;
+    }
     @Override
     public void	endSimulation(Time endTime) throws Exception
     {
@@ -347,9 +274,6 @@ public class FanElectricityModel extends AtomicHIOA
     /** run parameter name for {@code TENSION}.								*/
     public static final String		TENSION_RUNPNAME = URI + ":TENSION";
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
-     */
     @Override
     public void	setSimulationRunParameters(
             Map<String, Object> simParams
@@ -376,22 +300,6 @@ public class FanElectricityModel extends AtomicHIOA
     // Optional DEVS simulation protocol: simulation report
     // -------------------------------------------------------------------------
 
-    /**
-     * The class <code>FanElectricityReport</code> implements the
-     * simulation report for the <code>FanElectricityModel</code>.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * <p><strong>Invariant</strong></p>
-     *
-     * <pre>
-     * invariant	true
-     * </pre>
-     *
-     * <p>Created on : 2021-10-01</p>
-     *
-     * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
-     */
     public static class		FanElectricityReport
             implements	SimulationReportI, HEM_ReportI
     {
@@ -435,9 +343,6 @@ public class FanElectricityModel extends AtomicHIOA
         }
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
-     */
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {

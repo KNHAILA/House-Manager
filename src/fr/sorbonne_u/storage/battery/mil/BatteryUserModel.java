@@ -42,27 +42,6 @@ public class BatteryUserModel extends AtomicES_Model
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
-
-    /**
-     * create a Battery user MIL model instance.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code simulatedTimeUnit != null}
-     * pre	{@code simulationEngine == null || simulationEngine instanceof AtomicEngine}
-     * post	{@code getURI() != null}
-     * post	{@code uri != null implies this.getURI().equals(uri)}
-     * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
-     * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
-     * post	{@code !isDebugModeOn()}
-     * </pre>
-     *
-     * @param uri				URI of the model.
-     * @param simulatedTimeUnit	time unit used for the simulation time.
-     * @param simulationEngine	simulation engine to which the model is attached.
-     * @throws Exception		<i>to do.</i>
-     */
     public				BatteryUserModel(
             String uri,
             TimeUnit simulatedTimeUnit,
@@ -110,9 +89,6 @@ public class BatteryUserModel extends AtomicES_Model
     // DEVS simulation protocol
     // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     public void			initialiseState(Time initialTime)
     {
@@ -134,9 +110,6 @@ public class BatteryUserModel extends AtomicES_Model
         this.logMessage("simulation begins.\n");
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
-     */
     @Override
     public ArrayList<EventI>	output()
     {
@@ -148,9 +121,6 @@ public class BatteryUserModel extends AtomicES_Model
         return super.output();
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     public void			endSimulation(Time endTime) throws Exception
     {
@@ -166,9 +136,6 @@ public class BatteryUserModel extends AtomicES_Model
     public static final String		STEP_MEAN_DURATION_RUNPNAME =
             URI + ":STEP_MEAN_DURATION";
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
-     */
     @Override
     public void			setSimulationRunParameters(
             Map<String, Object> simParams
@@ -186,9 +153,6 @@ public class BatteryUserModel extends AtomicES_Model
     // Optional DEVS simulation protocol: simulation report
     // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
-     */
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {

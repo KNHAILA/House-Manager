@@ -17,27 +17,7 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
 // -----------------------------------------------------------------------------
-/**
- * The class <code>ElectricMeterElectricityModel</code> defines the simulation
- * model for the electric meter electricity consumption.
- *
- * <p><strong>Description</strong></p>
- *
- * <p>
- * This model is an HIOA model that imports variables, hence shows how this kind
- * of models are programmed.
- * </p>
- *
- * <p><strong>Invariant</strong></p>
- *
- * <pre>
- * invariant	{@code STEP > 0.0}
- * </pre>
- *
- * <p>Created on : 2021-09-24</p>
- *
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
- */
+
 public class			ElectricMeterElectricityModel
         extends		AtomicHIOA
 {
@@ -147,7 +127,7 @@ public class			ElectricMeterElectricityModel
      */
     protected void		updateConsumption(Duration d)
     {
-        this.currentConsumption.v +=
+        this.currentConsumption.v = this.currentConsumption.v +
                 Electricity.computeConsumption(
                         d, TENSION*this.currentIntensity_consumption.v);
         this.currentConsumption.time =
@@ -156,7 +136,7 @@ public class			ElectricMeterElectricityModel
 
     protected void		updateProduction(Duration d)
     {
-        this.currentProduction.v +=
+        this.currentProduction.v = this.currentProduction.v +
                 Electricity.computeProduction(
                         d, TENSION*this.currentIntensity_production.v);
         this.currentProduction.time =
@@ -188,14 +168,14 @@ public class			ElectricMeterElectricityModel
         this.currentIntensity_production.v = this.currentBatteryIntensity_production.v;
 
         // Tracing
-        StringBuffer message = new StringBuffer("current total consumption: ");
+        StringBuffer message = new StringBuffer("current total intensity of consumption: ");
         message.append(this.currentIntensity_consumption.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());
         message.append('\n');
         this.logMessage(message.toString());
 
-        StringBuffer message_ = new StringBuffer("current total production: ");
+        StringBuffer message_ = new StringBuffer("current total intensity of production: ");
         message_.append(this.currentIntensity_production.v);
         message_.append(" at ");
         message_.append(this.getCurrentStateTime());
@@ -206,10 +186,6 @@ public class			ElectricMeterElectricityModel
     // -------------------------------------------------------------------------
     // DEVS simulation protocol
     // -------------------------------------------------------------------------
-
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     protected void		initialiseVariables(Time startTime)
     {
@@ -223,9 +199,6 @@ public class			ElectricMeterElectricityModel
         this.currentProduction.v = 0.0;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
-     */
     @Override
     public ArrayList<EventI>	output()
     {
@@ -233,9 +206,6 @@ public class			ElectricMeterElectricityModel
         return null;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
-     */
     @Override
     public Duration		timeAdvance()
     {
@@ -243,9 +213,6 @@ public class			ElectricMeterElectricityModel
         return this.evaluationStep;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
-     */
     @Override
     public void			userDefinedInternalTransition(Duration elapsedTime)
     {
@@ -259,9 +226,6 @@ public class			ElectricMeterElectricityModel
         this.computeTotalIntensity();
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     public void			endSimulation(Time endTime) throws Exception
     {
@@ -275,23 +239,6 @@ public class			ElectricMeterElectricityModel
     // -------------------------------------------------------------------------
     // Optional DEVS simulation protocol: simulation report
     // -------------------------------------------------------------------------
-
-    /**
-     * The class <code>ElectricMeterElectricityReport</code> implements the
-     * simulation report for the <code>ElectricMeterElectricityModel</code>.
-     *
-     * <p><strong>Description</strong></p>
-     *
-     * <p><strong>Invariant</strong></p>
-     *
-     * <pre>
-     * invariant	true
-     * </pre>
-     *
-     * <p>Created on : 2021-10-01</p>
-     *
-     * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
-     */
     public static class		ElectricMeterElectricityReport
             implements	SimulationReportI, HEM_ReportI
     {
@@ -352,9 +299,6 @@ public class			ElectricMeterElectricityModel
         }
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
-     */
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {

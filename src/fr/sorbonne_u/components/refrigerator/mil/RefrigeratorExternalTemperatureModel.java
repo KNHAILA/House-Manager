@@ -46,27 +46,6 @@ public class			RefrigeratorExternalTemperatureModel
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
-
-    /**
-     * create an external temperature MIL model instance.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code simulatedTimeUnit != null}
-     * pre	{@code simulationEngine == null || simulationEngine instanceof HIOA_AtomicEngine}
-     * post	{@code getURI() != null}
-     * post	{@code uri != null implies this.getURI().equals(uri)}
-     * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
-     * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
-     * post	{@code !isDebugModeOn()}
-     * </pre>
-     *
-     * @param uri				URI of the model.
-     * @param simulatedTimeUnit	time unit used for the simulation time.
-     * @param simulationEngine	simulation engine to which the model is attached.
-     * @throws Exception		<i>to do</i>.
-     */
     public				RefrigeratorExternalTemperatureModel(
             String uri,
             TimeUnit simulatedTimeUnit,
@@ -81,10 +60,6 @@ public class			RefrigeratorExternalTemperatureModel
     // -------------------------------------------------------------------------
     // DEVS simulation protocol
     // -------------------------------------------------------------------------
-
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     public void			initialiseState(Time initialTime)
     {
@@ -93,9 +68,6 @@ public class			RefrigeratorExternalTemperatureModel
         this.cycleTime = 0.0;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     protected void		initialiseVariables(Time startTime)
     {
@@ -114,9 +86,6 @@ public class			RefrigeratorExternalTemperatureModel
         this.logMessage(message.toString());
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
-     */
     @Override
     public ArrayList<EventI>	output()
     {
@@ -124,9 +93,6 @@ public class			RefrigeratorExternalTemperatureModel
         return null;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
-     */
     @Override
     public Duration		timeAdvance()
     {
@@ -135,9 +101,6 @@ public class			RefrigeratorExternalTemperatureModel
         return this.evaluationStep;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
-     */
     @Override
     public void			userDefinedInternalTransition(Duration elapsedTime)
     {
@@ -167,9 +130,6 @@ public class			RefrigeratorExternalTemperatureModel
         this.logMessage(message.toString());
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
     @Override
     public void			endSimulation(Time endTime) throws Exception
     {
@@ -181,9 +141,6 @@ public class			RefrigeratorExternalTemperatureModel
     // Optional DEVS simulation protocol: simulation report
     // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
-     */
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {

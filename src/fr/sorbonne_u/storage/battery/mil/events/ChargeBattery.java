@@ -33,19 +33,6 @@ public class ChargeBattery extends AbstractBatteryEvent
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
-
-    /**
-     * create a <code>SwitchOnBattery</code> event.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code timeOfOccurrence != null}
-     * post	{@code this.getTimeOfOccurrence().equals(timeOfOccurrence)}
-     * </pre>
-     *
-     * @param timeOfOccurrence	time of occurrence of the event.
-     */
     public	ChargeBattery(Time timeOfOccurrence)
     {
         super(timeOfOccurrence, null);
@@ -55,9 +42,6 @@ public class ChargeBattery extends AbstractBatteryEvent
     // Methods
     // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.es.events.ES_Event#hasPriorityOver(fr.sorbonne_u.devs_simulation.models.events.EventI)
-     */
     @Override
     public boolean	hasPriorityOver(EventI e)
     {
@@ -66,9 +50,7 @@ public class ChargeBattery extends AbstractBatteryEvent
         return true;
     }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.events.Event#executeOn(fr.sorbonne_u.devs_simulation.models.AtomicModel)
-     */
+ 
     @Override
     public void				executeOn(AtomicModel model)
     {
