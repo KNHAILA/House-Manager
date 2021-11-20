@@ -56,14 +56,26 @@ import fr.sorbonne_u.devs_simulation.architectures.ArchitectureI;
 import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
 import fr.sorbonne_u.devs_simulation.hioa.architectures.AtomicHIOA_Descriptor;
 import fr.sorbonne_u.devs_simulation.hioa.architectures.CoupledHIOA_Descriptor;
+import fr.sorbonne_u.devs_simulation.hioa.architectures.RTAtomicHIOA_Descriptor;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.VariableSink;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.VariableSource;
 import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.architectures.AtomicModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor;
+import fr.sorbonne_u.devs_simulation.models.architectures.RTAtomicModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUserModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterSpeedModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotMiniHydroelectricDam;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniHydroelectricDam;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindSpeedModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUserModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.DoNotUseWindTurbine;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
 
 
 // -----------------------------------------------------------------------------
@@ -294,6 +306,65 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
+            // Production Unity : Mini Hydro Electric Dam
+            atomicModelDescriptors.put(
+            		MiniHydroelectricDamElectricityModel.URI,
+            		RTAtomicHIOA_Descriptor.create(
+                    		MiniHydroelectricDamElectricityModel.class,
+                    		MiniHydroelectricDamElectricityModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+            
+            atomicModelDescriptors.put(
+            		MiniHydroelectricDamUserModel.URI,
+                    RTAtomicModelDescriptor.create(
+                    		MiniHydroelectricDamUserModel.class,
+                    		MiniHydroelectricDamUserModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+            
+            atomicModelDescriptors.put(
+            		WaterSpeedModel.URI,
+            		RTAtomicHIOA_Descriptor.create(
+							WaterSpeedModel.class,
+							WaterSpeedModel.URI,
+							TimeUnit.SECONDS,
+							null,
+							SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+
+            
+            // Production Unity : Wind Turbine
+            
+            atomicModelDescriptors.put(
+            		WindTurbineElectricityModel.URI,
+            		RTAtomicHIOA_Descriptor.create(
+            				WindTurbineElectricityModel.class,
+            				WindTurbineElectricityModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+            
+            atomicModelDescriptors.put(
+            		WindTurbineUserModel.URI,
+                    RTAtomicModelDescriptor.create(
+                    		WindTurbineUserModel.class,
+                    		WindTurbineUserModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+            
+            atomicModelDescriptors.put(
+            		WindSpeedModel.URI,
+            		RTAtomicHIOA_Descriptor.create(
+            				WindSpeedModel.class,
+            				WindSpeedModel.URI,
+							TimeUnit.SECONDS,
+							null,
+							SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+            
 
 
             // map that will contain the coupled model descriptors to construct
@@ -335,7 +406,17 @@ public class			RunHEM_Simulation
             //battery
             submodels.add(BatteryElectricityModel.URI);
             submodels.add(BatteryUserModel.URI);
-
+            
+            // Productions unities 
+            
+            submodels.add(MiniHydroelectricDamElectricityModel.URI);
+            submodels.add(WaterSpeedModel.URI);
+            submodels.add(MiniHydroelectricDamUserModel.URI);
+            
+            submodels.add(WindTurbineElectricityModel.URI);
+            submodels.add(WindSpeedModel.URI);
+            submodels.add(WindTurbineUserModel.URI);
+            
             // event exchanging connections between exporting and importing
             // models
             Map<EventSource,EventSink[]> connections =
@@ -415,7 +496,9 @@ public class			RunHEM_Simulation
                                     HeatWater.class),
                             new EventSink(WaterHeaterTemperatureModel.URI,
                                     HeatWater.class)
-                    });
+                            });
+            
+           
             connections.put(
                     new EventSource(WaterHeaterUnitTesterModel.URI, DoNotHeatWater.class),
                     new EventSink[] {
@@ -548,6 +631,41 @@ public class			RunHEM_Simulation
                             new EventSink(BatteryElectricityModel.URI,
                                     UseBattery.class)
                     });
+            
+            // Productions unities
+            connections.put(
+                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotMiniHydroelectricDam.class),
+                    new EventSink[] {
+                            new EventSink(MiniHydroelectricDamElectricityModel.URI,
+                            		DoNotMiniHydroelectricDam.class)
+                    });
+        
+            
+            connections.put(
+					new EventSource(MiniHydroelectricDamUserModel.URI, UseMiniHydroelectricDam.class),
+					new EventSink[] {
+							new EventSink(MiniHydroelectricDamElectricityModel.URI,
+									UseMiniHydroelectricDam.class),
+							new EventSink(WaterSpeedModel.URI,
+									UseMiniHydroelectricDam.class)
+					});
+            
+            connections.put(
+                    new EventSource(WindTurbineUserModel.URI, DoNotUseWindTurbine.class),
+                    new EventSink[] {
+                            new EventSink(WindTurbineElectricityModel.URI,
+                            		DoNotUseWindTurbine.class)
+                    });
+            
+            connections.put(
+					new EventSource(WindTurbineUserModel.URI, UseWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindTurbineElectricityModel.URI,
+									UseWindTurbine.class),
+							new EventSink(WindSpeedModel.URI,
+									UseWindTurbine.class)
+					});
+
 
 
             // variable bindings between exporting and importing models
@@ -683,6 +801,26 @@ public class			RunHEM_Simulation
                                     ElectricMeterElectricityModel.URI)
                     };
             bindings.put(source10, sinks10);
+            
+            
+            // Productions unities
+            bindings.put(new VariableSource("waterSpeed",
+            		Double.class,
+				WaterSpeedModel.URI),
+			 new VariableSink[] {
+					 new VariableSink("waterSpeed",
+							 		  Double.class,
+							 		 MiniHydroelectricDamElectricityModel.URI)
+			 });    
+            
+            bindings.put(new VariableSource("windSpeed",
+            		Double.class,
+				WindSpeedModel.URI),
+			 new VariableSink[] {
+					 new VariableSink("windSpeed",
+							 		  Double.class,
+							 		 WindTurbineElectricityModel.URI)
+			 });     
 
             // coupled model descriptor: an HIOA requires a
             // CoupledHIOA_Descriptor
