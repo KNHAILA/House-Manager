@@ -144,7 +144,7 @@ public class			RefrigeratorTemperatureModel
         this.temperatureAcc +=
                 this.externalTemperature.v * elapsedTime.getSimulatedDuration();
 
-        // update the room temperature using the Euler integration of the
+        // update the refrigerator temperature using the Euler integration of the
         // differential equation
 
         if(externalTemperature.v > this.currentTemperature.v) {

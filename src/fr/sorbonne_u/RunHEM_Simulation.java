@@ -711,116 +711,149 @@ public class			RunHEM_Simulation
                     };
             bindings.put(source3, sinks3);
 
+            // bindings among WindTurbine models
+            VariableSource source4 =
+                    new VariableSource("windSpeed",
+                            Double.class,
+                            WindSpeedModel.URI);
+            VariableSink[] sinks4 =
+                    new VariableSink[] {
+                            new VariableSink("windSpeed",
+                                    Double.class,
+                                    WindTurbineElectricityModel.URI)
+                    };
+            bindings.put(source4, sinks4);
+
+            // bindings among  MiniHydroelectricDam models
+            VariableSource source5 =
+                    new VariableSource("waterSpeed",
+                            Double.class,
+                            WaterSpeedModel.URI);
+            VariableSink[] sinks5 =
+                    new VariableSink[] {
+                            new VariableSink("waterSpeed",
+                                    Double.class,
+                                    MiniHydroelectricDamElectricityModel.URI)
+                    };
+            bindings.put(source5, sinks5);
+
             // bindings between components models to the electric meter model
             //Fan
-            VariableSource source4 =
+            VariableSource source6 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             FanElectricityModel.URI);
-            VariableSink[] sinks4 =
+            VariableSink[] sinks6 =
                     new VariableSink[] {
                             new VariableSink("currentFanIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source4, sinks4);
+            bindings.put(source6, sinks6);
 
             // Vacuum Cleaner
-            VariableSource source5 =
+            VariableSource source7 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             VacuumCleanerElectricityModel.URI);
-            VariableSink[] sinks5 =
+            VariableSink[] sinks7 =
                     new VariableSink[] {
                             new VariableSink("currentVacuumCleanerIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source5, sinks5);
+            bindings.put(source7, sinks7);
 
             //water heater
-            VariableSource source6 =
+            VariableSource source8 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             WaterHeaterElectricityModel.URI);
-            VariableSink[] sinks6 =
+            VariableSink[] sinks8 =
                     new VariableSink[] {
                             new VariableSink("currentWaterHeaterIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source6, sinks6);
+            bindings.put(source8, sinks8);
 
             //Refrigerator
-            VariableSource source7 =
+            VariableSource source9 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             RefrigeratorElectricityModel.URI);
-            VariableSink[] sinks7 =
+            VariableSink[] sinks9 =
                     new VariableSink[] {
                             new VariableSink("currentRefrigeratorIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source7, sinks7);
+            bindings.put(source9, sinks9);
 
             //washing machine
-            VariableSource source8 =
+            VariableSource source10 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             WashingMachineElectricityModel.URI);
-            VariableSink[] sinks8 =
+            VariableSink[] sinks10 =
                     new VariableSink[] {
                             new VariableSink("currentWashingMachineIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source8, sinks8);
+            bindings.put(source10, sinks10);
 
             //Battery
-            VariableSource source9 =
+            VariableSource source11 =
                     new VariableSource("currentIntensity_consumption",
                             Double.class,
                             BatteryElectricityModel.URI);
-            VariableSink[] sinks9 =
+            VariableSink[] sinks11 =
                     new VariableSink[] {
                             new VariableSink("currentBatteryIntensity_consumption",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source9, sinks9);
+            bindings.put(source11, sinks11);
 
-            VariableSource source10 =
+            VariableSource source12 =
                     new VariableSource("currentIntensity_production",
                             Double.class,
                             BatteryElectricityModel.URI);
-            VariableSink[] sinks10 =
+            VariableSink[] sinks12 =
                     new VariableSink[] {
                             new VariableSink("currentBatteryIntensity_production",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source10, sinks10);
-            
-            
-            // Productions unities
-            bindings.put(new VariableSource("waterSpeed",
-            		Double.class,
-				WaterSpeedModel.URI),
-			 new VariableSink[] {
-					 new VariableSink("waterSpeed",
-							 		  Double.class,
-							 		 MiniHydroelectricDamElectricityModel.URI)
-			 });    
-            
-            bindings.put(new VariableSource("windSpeed",
-            		Double.class,
-				WindSpeedModel.URI),
-			 new VariableSink[] {
-					 new VariableSink("windSpeed",
-							 		  Double.class,
-							 		 WindTurbineElectricityModel.URI)
-			 });     
+            bindings.put(source12, sinks12);
+
+            //Wind turbine
+            VariableSource source13 =
+                    new VariableSource("currentIntensity_production",
+                            Double.class,
+                            WindTurbineElectricityModel.URI);
+            VariableSink[] sinks13 =
+                    new VariableSink[] {
+                            new VariableSink("currentWindTurbineIntensity_production",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    };
+            bindings.put(source13, sinks13);
+
+            //MiniHydroelectricDam
+            VariableSource source14 =
+                    new VariableSource("currentIntensity_production",
+                            Double.class,
+                            MiniHydroelectricDamElectricityModel.URI);
+            VariableSink[] sinks14 =
+                    new VariableSink[] {
+                            new VariableSink("currentMiniHydroelectricDamIntensity_production",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    };
+            bindings.put(source14, sinks14);
+
 
             // coupled model descriptor: an HIOA requires a
             // CoupledHIOA_Descriptor

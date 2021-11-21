@@ -68,10 +68,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     protected double				totalConsumption;
     protected double				totalProduction;
 
-    protected double				capacity = 300.0; //    ampere/h
-
-    protected double				charge_time = 1; //    h
-
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
@@ -175,6 +171,9 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         this.currentIntensity_production.time = this.getCurrentStateTime();
         this.currentIntensity_consumption.time = this.getCurrentStateTime();
 
+        this.logMessage("********************************************" + "\n");
+        this.logMessage(this.currentIntensity_production.v + "\n");
+        this.logMessage("********************************************" + "\n");
         // Tracing
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
@@ -202,10 +201,21 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
                     Electricity.computeConsumption(elapsedTime,
                             TENSION*this.currentIntensity_consumption.v);
         } else if(ce instanceof UseMiniHydroelectricDam) {
+            /*
+            this.logMessage(this.totalProduction + "\n");
+            this.logMessage(toHours(elapsedTime) + "\n");
+            */
+
+            this.logMessage("///////////////////////////////********************************************" + "\n");
+            this.logMessage(this.currentIntensity_production.v + "\n");
+            this.logMessage("///////////////////////////////********************************************" + "\n");
+
+
             this.totalProduction +=
                     Electricity.computeProduction(elapsedTime,
                             TENSION*this.currentIntensity_production.v);
         }
+
 
         // Tracing
         StringBuffer message =
@@ -222,6 +232,13 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         super.userDefinedExternalTransition(elapsedTime);
     }
 
+
+    public static double	toHours(Duration d)
+    {
+        long factor = d.getTimeUnit().convert(1, TimeUnit.HOURS);
+        double ret = d.getSimulatedDuration()/factor;
+        return ret;
+    }
 
     @Override
     public void	endSimulation(Time endTime) throws Exception

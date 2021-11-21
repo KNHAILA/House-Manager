@@ -53,6 +53,12 @@ public class			ElectricMeterElectricityModel
     /** current intensity of the Battery in amperes.							*/
     @ImportedVariable(type = Double.class)
     protected Value<Double>			currentBatteryIntensity_production;
+    /** current intensity of the wind turbine in amperes.							*/
+    @ImportedVariable(type = Double.class)
+    protected Value<Double>			currentWindTurbineIntensity_production;
+    /** current intensity of the MiniHydroelectricDam in amperes.							*/
+    @ImportedVariable(type = Double.class)
+    protected Value<Double>			currentMiniHydroelectricDamIntensity_production;
     /** evaluation step for the equation (assumed in seconds).				*/
     protected static final double	STEP = 0.1;
     /** evaluation step as a duration, including the time unit.				*/
@@ -165,7 +171,9 @@ public class			ElectricMeterElectricityModel
                                        this.currentWashingMachineIntensity.v +
                                             this.currentBatteryIntensity_consumption.v ;
 
-        this.currentIntensity_production.v = this.currentBatteryIntensity_production.v;
+        this.currentIntensity_production.v = this.currentBatteryIntensity_production.v +
+                                                  this.currentMiniHydroelectricDamIntensity_production.v +
+                                                       this.currentWindTurbineIntensity_production.v;
 
         // Tracing
         StringBuffer message = new StringBuffer("current total intensity of consumption: ");
