@@ -6,12 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterCoupledModel;
-import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterElectricityModel;
-import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterExternalTemperatureModel;
-import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterTemperatureModel;
-import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterUnitTesterModel;
-import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
+
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.architectures.ArchitectureI;
 import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;

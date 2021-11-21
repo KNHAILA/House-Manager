@@ -46,10 +46,9 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     public static final String		URI = WindTurbineElectricityModel.class.getSimpleName();
 
 
-    public static double			MODE_CONSUMPTION = 1000.0; // Watts
+    public static double			MODE_CONSUMPTION = 0.0; // Watts
     
-    public static double			MODE_PRODUCTION = 200000.0; // Watts
-    /** nominal tension (in Volts) of the Battery.						*/
+    public static double			MODE_PRODUCTION = 200000.0; // Watts						*/
     public static double			TENSION = 220.0; // Volts
 
     /** current intensity in amperes; intensity is power/tension.			*/
@@ -180,7 +179,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
                 this.currentIntensity_consumption.v = 0.0;
                 break;
             case USE:
-            	this.currentIntensity_production.v = windSpeed.v*5000/TENSION;
+            	this.currentIntensity_production.v = windSpeed.v*MODE_PRODUCTION/TENSION;
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
         this.currentIntensity_consumption.time = this.getCurrentStateTime();

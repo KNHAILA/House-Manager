@@ -28,13 +28,9 @@ public class RunMiniHydroelectricDamUnitarySimulation
     public static void	main(String[] args)
     {
         try {
-            // map that will contain the atomic model descriptors to construct
-            // the simulation architecture
             Map<String,AbstractAtomicModelDescriptor> atomicModelDescriptors =
                     new HashMap<>();
 
-            // the Battery model simulating its electricity consumption, an
-            // atomic HIOA model hence we use an AtomicHIOA_Descriptor
             atomicModelDescriptors.put(
             		MiniHydroelectricDamElectricityModel.URI,
                     AtomicHIOA_Descriptor.create(
