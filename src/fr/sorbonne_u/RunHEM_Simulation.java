@@ -315,7 +315,7 @@ public class			RunHEM_Simulation
                     		MiniHydroelectricDamElectricityModel.URI,
                             TimeUnit.SECONDS,
                             null,
-                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
             		MiniHydroelectricDamUserModel.URI,
@@ -324,7 +324,7 @@ public class			RunHEM_Simulation
                     		MiniHydroelectricDamUserModel.URI,
                             TimeUnit.SECONDS,
                             null,
-                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
             		WaterSpeedModel.URI,
@@ -333,7 +333,7 @@ public class			RunHEM_Simulation
 							WaterSpeedModel.URI,
 							TimeUnit.SECONDS,
 							null,
-							SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+							SimulationEngineCreationMode.ATOMIC_ENGINE));
 
             
             // Production Unity : Wind Turbine
@@ -345,7 +345,7 @@ public class			RunHEM_Simulation
             				WindTurbineElectricityModel.URI,
                             TimeUnit.SECONDS,
                             null,
-                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
             		WindTurbineUserModel.URI,
@@ -354,7 +354,7 @@ public class			RunHEM_Simulation
                     		WindTurbineUserModel.URI,
                             TimeUnit.SECONDS,
                             null,
-                            SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
             		WindSpeedModel.URI,
@@ -363,7 +363,7 @@ public class			RunHEM_Simulation
             				WindSpeedModel.URI,
 							TimeUnit.SECONDS,
 							null,
-							SimulationEngineCreationMode.ATOMIC_RT_ENGINE));
+							SimulationEngineCreationMode.ATOMIC_ENGINE));
             
 
 
