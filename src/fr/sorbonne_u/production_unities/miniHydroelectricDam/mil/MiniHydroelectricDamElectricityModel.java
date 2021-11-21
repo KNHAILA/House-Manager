@@ -162,9 +162,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
 
-        this.logMessage("********************************************" + "\n");
-        this.logMessage(this.currentIntensity_production.v + "\n");
-        this.logMessage("********************************************" + "\n");
         // Tracing
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
@@ -191,10 +188,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
             this.totalProduction +=
                     Electricity.computeProduction(elapsedTime,
                             TENSION*this.currentIntensity_production.v);
-
-            this.logMessage("///////////////////////////////********************************************" + "\n");
-            this.logMessage(this.currentIntensity_production.v + "\n");
-            this.logMessage("///////////////////////////////********************************************" + "\n");
         }
 
         // Tracing
@@ -210,14 +203,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         ce.executeOn(this);
 
         super.userDefinedExternalTransition(elapsedTime);
-    }
-
-
-    public static double	toHours(Duration d)
-    {
-        long factor = d.getTimeUnit().convert(1, TimeUnit.HOURS);
-        double ret = d.getSimulatedDuration()/factor;
-        return ret;
     }
 
     @Override
