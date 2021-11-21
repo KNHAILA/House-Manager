@@ -47,14 +47,10 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     public static final String		URI = MiniHydroelectricDamElectricityModel.class.getSimpleName();
 
     
-    public static double			MODE_CONSUMPTION = 0.0; // Watts
     public static double			MODE_PRODUCTION = 200000.0; // Watts
     public static double			TENSION = 220.0; // Volts
 
-    /** current intensity in amperes; intensity is power/tension.			*/
-    @ExportedVariable(type = Double.class)
-    protected final Value<Double>	currentIntensity_consumption =
-            new Value<Double>(this, 0.0, 0);
+    
     /** current intensity in amperes; intensity is power/tension.			*/
     @ExportedVariable(type = Double.class)
     protected final Value<Double>	currentIntensity_production =
@@ -65,7 +61,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     protected Value<Double>			waterSpeed;
     protected State currentState = State.NOT_USE;
     protected boolean				consumptionHasChanged = false;
-    protected double				totalConsumption;
     protected double				totalProduction;
 
     // -------------------------------------------------------------------------
@@ -117,7 +112,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     {
         super.initialiseVariables(startTime);
 
-        this.currentIntensity_consumption.v = 0.0;
         this.currentIntensity_production.v = 0.0;
     }
 
@@ -128,7 +122,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 
         this.currentState = State.NOT_USE;
         this.consumptionHasChanged = false;
-        this.totalConsumption = 0.0;
         this.totalProduction = 0.0;
 
         this.toggleDebugMode();
@@ -163,13 +156,11 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         {
             case NOT_USE :
                 this.currentIntensity_production.v = 0.0;
-                this.currentIntensity_consumption.v = 0.0;
                 break;
             case USE:
             	this.currentIntensity_production.v = waterSpeed.v*MODE_PRODUCTION/TENSION;
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
-        this.currentIntensity_consumption.time = this.getCurrentStateTime();
 
         this.logMessage("********************************************" + "\n");
         this.logMessage(this.currentIntensity_production.v + "\n");
@@ -196,26 +187,15 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 
         Event ce = (Event) currentEvents.get(0);
 
-        if(ce instanceof DoNotMiniHydroelectricDam) {
-            this.totalConsumption +=
-                    Electricity.computeConsumption(elapsedTime,
-                            TENSION*this.currentIntensity_consumption.v);
-        } else if(ce instanceof UseMiniHydroelectricDam) {
-            /*
-            this.logMessage(this.totalProduction + "\n");
-            this.logMessage(toHours(elapsedTime) + "\n");
-            */
+        if(ce instanceof UseMiniHydroelectricDam) {
+            this.totalProduction +=
+                    Electricity.computeProduction(elapsedTime,
+                            TENSION*this.currentIntensity_production.v);
 
             this.logMessage("///////////////////////////////********************************************" + "\n");
             this.logMessage(this.currentIntensity_production.v + "\n");
             this.logMessage("///////////////////////////////********************************************" + "\n");
-
-
-            this.totalProduction +=
-                    Electricity.computeProduction(elapsedTime,
-                            TENSION*this.currentIntensity_production.v);
         }
-
 
         // Tracing
         StringBuffer message =
@@ -244,9 +224,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     public void	endSimulation(Time endTime) throws Exception
     {
         Duration d = endTime.subtract(this.getCurrentStateTime());
-        this.totalConsumption +=
-                Electricity.computeConsumption(d,
-                        TENSION*this.currentIntensity_consumption.v);
+     
         this.totalProduction +=
                 Electricity.computeProduction(d,
                         TENSION*this.currentIntensity_production.v);
@@ -260,9 +238,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     // Optional DEVS simulation protocol: simulation run parameters
     // -------------------------------------------------------------------------
 
-    /** run parameter name for {@code MODE_CONSUMPTION}.				*/
-    public static final String		MODE_CONSUMPTION_RUNPNAME =
-            URI + ": MODE_CONSUMPTION";
+   
     /** run parameter name for {@code MODE_PRODUCTION}.				*/
     public static final String		MODE_PRODUCTION_RUNPNAME =
             URI + ":MODE_PRODUCTION";
@@ -276,11 +252,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     ) throws Exception
     {
         super.setSimulationRunParameters(simParams);
-
-        if (simParams.containsKey(MODE_CONSUMPTION_RUNPNAME)) {
-           MODE_CONSUMPTION =
-                    (double) simParams.get(MODE_CONSUMPTION_RUNPNAME);
-        }
+      
         if (simParams.containsKey(MODE_PRODUCTION_RUNPNAME)) {
             MODE_PRODUCTION =
                     (double) simParams.get(MODE_PRODUCTION_RUNPNAME);
@@ -301,18 +273,15 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     {
         private static final long serialVersionUID = 1L;
         protected String	modelURI;
-        protected double	totalConsumption; // in kwh
         protected double	totalProduction; // in kwh
 
         public				MiniHydroelectricDamElectricityReport(
                 String modelURI,
-                double totalConsumption,
                 double totalProduction
         )
         {
             super();
             this.modelURI = modelURI;
-            this.totalConsumption = totalConsumption;
             this.totalProduction = totalProduction;
         }
 
@@ -333,19 +302,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
             ret.append(" report\n");
             ret.append(indent);
             ret.append('|');
-            ret.append("total consumption in kwh = ");
-            ret.append(this.totalConsumption);
-            ret.append(".\n");
-            ret.append(indent);
-
-            ret.append("\n");
-
-            ret.append(indent);
-            ret.append('|');
-            ret.append(this.modelURI);
-            ret.append(" report\n");
-            ret.append(indent);
-            ret.append('|');
             ret.append("total production in kwh = ");
             ret.append(this.totalProduction);
             ret.append(".\n");
@@ -358,7 +314,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {
-        return new MiniHydroelectricDamElectricityReport(URI, this.totalConsumption, this.totalProduction);
+        return new MiniHydroelectricDamElectricityReport(URI, this.totalProduction);
     }
 }
 // -----------------------------------------------------------------------------

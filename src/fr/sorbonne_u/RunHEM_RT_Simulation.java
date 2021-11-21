@@ -729,6 +729,25 @@ public class			RunHEM_RT_Simulation
                                     WashingMachineTemperatureModel.URI)
                     });
 
+            // Productions unities
+            bindings.put(new VariableSource("waterSpeed",
+                            Double.class,
+                            WaterSpeedModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("waterSpeed",
+                                    Double.class,
+                                    MiniHydroelectricDamElectricityModel.URI)
+                    });
+
+            bindings.put(new VariableSource("windSpeed",
+                            Double.class,
+                            WindSpeedModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("windSpeed",
+                                    Double.class,
+                                    WindTurbineElectricityModel.URI)
+                    });
+
 
             // bindings between components models to the electric meter model
             // Fan
@@ -805,25 +824,29 @@ public class			RunHEM_RT_Simulation
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     });
+
+            //MiniHydroelectricDam
+            bindings.put(
+                    new VariableSource("currentIntensity_production",
+                            Double.class,
+                            MiniHydroelectricDamElectricityModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("currentMiniHydroelectricDamIntensity_production",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    });
+            //Wind turbine
+            bindings.put(
+                    new VariableSource("currentIntensity_production",
+                            Double.class,
+                            MiniHydroelectricDamElectricityModel.URI),
+                    new VariableSink[] {
+                            new VariableSink("currentWindTurbineIntensity_production",
+                                    Double.class,
+                                    ElectricMeterElectricityModel.URI)
+                    });
             
-            // Productions unities
-            bindings.put(new VariableSource("waterSpeed",
-            		Double.class,
-				WaterSpeedModel.URI),
-			 new VariableSink[] {
-					 new VariableSink("waterSpeed",
-							 		  Double.class,
-							 		 MiniHydroelectricDamElectricityModel.URI)
-			 });    
-            
-            bindings.put(new VariableSource("windSpeed",
-            		Double.class,
-				WindSpeedModel.URI),
-			 new VariableSink[] {
-					 new VariableSink("windSpeed",
-							 		  Double.class,
-							 		 WindTurbineElectricityModel.URI)
-			 });      
+
 
             // coupled model descriptor: an HIOA requires a
             // RTCoupledHIOA_Descriptor

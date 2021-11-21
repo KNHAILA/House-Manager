@@ -46,15 +46,10 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     public static final String		URI = WindTurbineElectricityModel.class.getSimpleName();
 
 
-    public static double			MODE_CONSUMPTION = 0.0; // Watts
-    
     public static double			MODE_PRODUCTION = 200000.0; // Watts						*/
     public static double			TENSION = 220.0; // Volts
 
-    /** current intensity in amperes; intensity is power/tension.			*/
-    @ExportedVariable(type = Double.class)
-    protected final Value<Double>	currentIntensity_consumption =
-            new Value<Double>(this, 0.0, 0);
+  
     /** current intensity in amperes; intensity is power/tension.			*/
     @ExportedVariable(type = Double.class)
     protected final Value<Double>	currentIntensity_production =
@@ -67,8 +62,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     protected State currentState = State.NOT_USE;
    
     protected boolean				consumptionHasChanged = false;
-    protected double				totalConsumption;
-
+    
     protected double				totalProduction;
 
     protected double				capacity = 300.0; //    ampere/h
@@ -122,8 +116,6 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     protected void	initialiseVariables(Time startTime)
     {
         super.initialiseVariables(startTime);
-
-        this.currentIntensity_consumption.v = 0.0;
         this.currentIntensity_production.v = 0.0;
     }
 
@@ -136,7 +128,6 @@ public class WindTurbineElectricityModel extends AtomicHIOA
       
         this.currentState = State.NOT_USE;
         this.consumptionHasChanged = false;
-        this.totalConsumption = 0.0;
         this.totalProduction = 0.0;
 
         this.toggleDebugMode();
@@ -176,13 +167,11 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         {
             case NOT_USE :
                 this.currentIntensity_production.v = 0.0;
-                this.currentIntensity_consumption.v = 0.0;
                 break;
             case USE:
             	this.currentIntensity_production.v = windSpeed.v*MODE_PRODUCTION/TENSION;
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
-        this.currentIntensity_consumption.time = this.getCurrentStateTime();
 
         // Tracing
         StringBuffer message =
@@ -211,11 +200,8 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         Event ce = (Event) currentEvents.get(0);
 
         // compute the total consumption (in kwh) for the simulation report.
-        if(ce instanceof DoNotUseWindTurbine) {
-            this.totalConsumption +=
-                    Electricity.computeConsumption(elapsedTime,
-                            TENSION*this.currentIntensity_consumption.v);
-        } else if(ce instanceof UseWindTurbine) {
+      
+        if(ce instanceof UseWindTurbine) {
             this.totalProduction +=
                     Electricity.computeProduction(elapsedTime,
                             TENSION*this.currentIntensity_production.v);
@@ -245,9 +231,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     public void	endSimulation(Time endTime) throws Exception
     {
         Duration d = endTime.subtract(this.getCurrentStateTime());
-        this.totalConsumption +=
-                Electricity.computeConsumption(d,
-                        TENSION*this.currentIntensity_consumption.v);
+      
         this.totalProduction +=
                 Electricity.computeProduction(d,
                         TENSION*this.currentIntensity_production.v);
@@ -260,9 +244,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     // Optional DEVS simulation protocol: simulation run parameters
     // -------------------------------------------------------------------------
 
-    /** run parameter name for {@code MODE_CONSUMPTION}.				*/
-    public static final String		MODE_CONSUMPTION_RUNPNAME =
-            URI + ":MODE_CONSUMPTION";
+   
     /** run parameter name for {@code MODE_PRODUCTION}.				*/
     public static final String		MODE_PRODUCTION_RUNPNAME =
             URI + ":MODE_PRODUCTION";
@@ -279,11 +261,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     ) throws Exception
     {
         super.setSimulationRunParameters(simParams);
-
-        if (simParams.containsKey(MODE_CONSUMPTION_RUNPNAME)) {
-            MODE_CONSUMPTION =
-                    (double) simParams.get(MODE_CONSUMPTION_RUNPNAME);
-        }
+        
         if (simParams.containsKey(MODE_PRODUCTION_RUNPNAME)) {
             MODE_PRODUCTION =
                     (double) simParams.get(MODE_PRODUCTION_RUNPNAME);
@@ -303,18 +281,15 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     {
         private static final long serialVersionUID = 1L;
         protected String	modelURI;
-        protected double	totalConsumption; // in kwh
         protected double	totalProduction; // in kwh
 
         public				WindTurbineElectricityReport(
                 String modelURI,
-                double totalConsumption,
                 double totalProduction
         )
         {
             super();
             this.modelURI = modelURI;
-            this.totalConsumption = totalConsumption;
             this.totalProduction = totalProduction;
         }
 
@@ -329,19 +304,6 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         {
             StringBuffer ret = new StringBuffer(indent);
             ret.append("---\n");
-            ret.append(indent);
-            ret.append('|');
-            ret.append(this.modelURI);
-            ret.append(" report\n");
-            ret.append(indent);
-            ret.append('|');
-            ret.append("total consumption in kwh = ");
-            ret.append(this.totalConsumption);
-            ret.append(".\n");
-            ret.append(indent);
-
-            ret.append("\n");
-
             ret.append(indent);
             ret.append('|');
             ret.append(this.modelURI);
@@ -363,7 +325,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {
-        return new WindTurbineElectricityReport(URI, this.totalConsumption, this.totalProduction);
+        return new WindTurbineElectricityReport(URI, this.totalProduction);
     }
 }
 // -----------------------------------------------------------------------------
