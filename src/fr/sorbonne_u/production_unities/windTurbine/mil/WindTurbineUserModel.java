@@ -17,7 +17,22 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.DoNotUseWindTurbine;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
 
-
+/**
+ * The class <code>HeaterUnitTesterModel</code> defines a model that is used
+ * to test the models defining the heater simulator.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant	{@code step >= 0}
+ * </pre>
+ * 
+ * <p>Created on : 2021-09-23</p>
+ * 
+ * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ */
 @ModelExternalEvents(exported = {DoNotUseWindTurbine.class,
         UseWindTurbine.class
         })

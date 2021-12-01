@@ -25,7 +25,39 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.Electricity;
 
-
+/**
+ * The class <code>HeaterElectricityModel</code> defines a simulation model
+ * for the electricity consumption of the heater.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p>
+ * The model is a simple state-based one: the electricity consumption is
+ * assumed to be constant in each possible state of the heater
+ * ({@code State.OFF => 0.0}, {@code State.ON => NOT_HEATING_POWER} and
+ * {@code State.HEATING => HEATING_POWER}). The state of the heater is
+ * modified by the reception of external events ({@code SwitchOnHeater},
+ * {@code SwitchOffHeater}, {@code Heat} and {@code DoNotHeat}). The
+ * electricity consumption is stored in the exported variable
+ * {@code currentIntensity}.
+ * </p>
+ * <p>
+ * Initially, the mode is in state {@code State.OFF} and the electricity
+ * consumption at 0.0.
+ * </p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant	{@code NOT_HEATING_POWER >= 0.0}
+ * invariant	{@code HEATING_POWER > NOT_HEATING_POWER}
+ * invariant	{@code TENSION > 0.0}
+ * </pre>
+ * 
+ * <p>Created on : 2021-09-20</p>
+ * 
+ * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ */
 @ModelExternalEvents(imported = {SwitchOnWaterHeater.class,
 								 SwitchOffWaterHeater.class,
 								 HeatWater.class,
@@ -34,29 +66,66 @@ import fr.sorbonne_u.utils.Electricity;
 public class			WaterHeaterElectricityModel
 extends		AtomicHIOA
 {
-	
+
+	/**
+	 * The enumeration <code>State</code> defines the state in which the
+	 * heater can be.
+	 *
+	 * <p>Created on : 2021-09-24</p>
+	 * 
+	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+	 */
 	public static enum	State {
+		/** heater is on but not heating.									*/
 		ON,
+		/** heater is on but not heating.									*/
 		HEATING,
+		/** heater is on but not heating.									*/
 		OFF
 	}
 	
 	private static final long	serialVersionUID = 1L;
+	/** URI for a model; works when only one instance is created.			*/
 	public static final String	URI = WaterHeaterElectricityModel.class.
 															getSimpleName();
-
+	/** power of the heater in watts.										*/
 	public static double		NOT_HEATING_POWER = 22.0;
+	/** power of the heater in watts.										*/
 	public static double		HEATING_POWER = 2200.0;
+	/** power of the heater in watts.										*/
 	public static double		TENSION = 220.0;
 
+	/** power of the heater in watts.										*/
 	@ExportedVariable(type = Double.class)
 	protected final Value<Double>	currentIntensity =
 											new Value<Double>(this, 0.0, 0);
+	/** power of the heater in watts.										*/
 	protected State					currentState = State.OFF;
+	/** power of the heater in watts.										*/
 	protected boolean				consumptionHasChanged = false;
+	/** power of the heater in watts.										*/
 	protected double				totalConsumption;
 
-	
+	/**
+	 * create a heater MIL model instance.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code simulatedTimeUnit != null}
+	 * pre	{@code simulationEngine == null || simulationEngine instanceof HIOA_AtomicEngine}
+	 * post	{@code getURI() != null}
+	 * post	{@code uri != null implies this.getURI().equals(uri)}
+	 * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
+	 * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
+	 * post	{@code !isDebugModeOn()}
+	 * </pre>
+	 *
+	 * @param uri				URI of the model.
+	 * @param simulatedTimeUnit	time unit used for the simulation time.
+	 * @param simulationEngine	simulation engine to which the model is attached.
+	 * @throws Exception		<i>to do</i>.
+	 */
 	public				WaterHeaterElectricityModel(
 		String uri,
 		TimeUnit simulatedTimeUnit,
@@ -67,6 +136,18 @@ extends		AtomicHIOA
 		this.setLogger(new StandardLogger());
 	}
 
+	/**
+	 * set the state of the heater.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	s != null
+	 * post	true		// no postcondition.
+	 * </pre>
+	 *
+	 * @param s		the new state.
+	 */
 	public void			setState(State s)
 	{
 		State old = this.currentState;
@@ -76,11 +157,26 @@ extends		AtomicHIOA
 		}
 	}
 
+	/**
+	 * return the state of the heater.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	true		// no precondition.
+	 * post	{@code ret != null}
+	 * </pre>
+	 *
+	 * @return	the current state.
+	 */
 	public State		getState()
 	{
 		return this.currentState;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
+	 */
 	@Override
 	public void			initialiseState(Time initialTime)
 	{
@@ -94,6 +190,9 @@ extends		AtomicHIOA
 		this.logMessage("simulation begins.\n");
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseVariables(fr.sorbonne_u.devs_simulation.models.time.Time)
+	 */
 	@Override
 	protected void		initialiseVariables(Time startTime)
 	{
@@ -110,12 +209,18 @@ extends		AtomicHIOA
 		this.logMessage(sb.toString());
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
+	 */
 	@Override
 	public ArrayList<EventI>	output()
 	{
 		return null;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
+	 */
 	@Override
 	public Duration		timeAdvance()
 	{
@@ -127,6 +232,9 @@ extends		AtomicHIOA
 		}
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
+	 */
 	@Override
 	public void			userDefinedInternalTransition(Duration elapsedTime)
 	{
@@ -154,6 +262,9 @@ extends		AtomicHIOA
 		this.logMessage(sb.toString());
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedExternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
+	 */
 	@Override
 	public void userDefinedExternalTransition(Duration elapsedTime)
 	{
@@ -177,6 +288,9 @@ extends		AtomicHIOA
 		super.userDefinedExternalTransition(elapsedTime);
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
+	 */
 	@Override
 	public void			endSimulation(Time endTime) throws Exception
 	{
@@ -189,10 +303,16 @@ extends		AtomicHIOA
 		super.endSimulation(endTime);
 	}
 
+	/** power of the heater in watts.										*/
 	public static final String	NOT_HEATING_POWER_RUNPNAME = "NOT_HEATING_POWER";
+	/** power of the heater in watts.										*/
 	public static final String	HEATING_POWER_RUNPNAME = "HEATING_POWER";
+	/** power of the heater in watts.										*/
 	public static final String	TENSION_RUNPNAME = "TENSION";
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
+	 */
 	@Override
 	public void			setSimulationRunParameters(
 		Map<String, Object> simParams
@@ -213,6 +333,23 @@ extends		AtomicHIOA
 		}
 	}
 	
+	
+	/**
+	 * The class <code>HeaterElectricityReport</code> implements the
+	 * simulation report for the <code>HeaterElectricityModel</code>.
+	 *
+	 * <p><strong>Description</strong></p>
+	 * 
+	 * <p><strong>Invariant</strong></p>
+	 * 
+	 * <pre>
+	 * invariant	true
+	 * </pre>
+	 * 
+	 * <p>Created on : 2021-10-01</p>
+	 * 
+	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+	 */
 	public static class		WaterHeaterElectricityReport
 	implements	SimulationReportI, HEM_ReportI
 	{
@@ -257,6 +394,9 @@ extends		AtomicHIOA
 		}		
 	}
 
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
+	 */
 	@Override
 	public SimulationReportI	getFinalReport() throws Exception
 	{

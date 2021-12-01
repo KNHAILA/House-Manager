@@ -25,6 +25,48 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 
+/**
+ * The class <code>RunHeaterUnitarySimulation</code> creates a simulator
+ * for the heater and then runs a typical simulation.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p>
+ * This class shows how to use simulation model descriptors to create the
+ * description of a simulation architecture and then create an instance of this
+ * architecture by instantiating and connecting the models. Note how models
+ * are described by atomic model descriptors and coupled model descriptors and
+ * then the connections between coupled models and their submodels as well as
+ * exported events and variables to imported ones are described by different
+ * maps. In this example, only connections of events and bindings of variables
+ * between models within this architecture are necessary, but when creating
+ * coupled models, they can also import and export events and variables
+ * consumed and produced by their submodels.
+ * </p>
+ * <p>
+ * The architecture object is the root of this description and it provides
+ * the method {@code constructSimulator} that instantiate the models and
+ * connect them. This method returns the reference on the simulator attached
+ * to the root coupled model in the architecture instance, which is then used
+ * to perform simulation runs by calling the method
+ * {@code doStandAloneSimulation}.
+ * </p>
+ * <p>
+ * The descriptors and maps can be viewed as kinds of nodes in the abstract
+ * syntax tree of an architectural language that does not have a concrete
+ * syntax yet.
+ * </p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant	true
+ * </pre>
+ * 
+ * <p>Created on : 2021-09-23</p>
+ * 
+ * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ */
 public class			RunWaterHeaterUnitarySimulation
 {
 	public static void main(String[] args)
