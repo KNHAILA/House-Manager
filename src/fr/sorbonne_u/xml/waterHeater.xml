@@ -1,0 +1,57 @@
+<control-adapter
+    xmlns="http://www.sorbonne-universite.fr/alasca/control-adapter"
+    uid="1A10001"
+    offered="fr.sorbonne_u.components.waterHeater.WaterHeaterCI"
+    type="suspension">
+  <consumption nominal="2000"/>
+  <required>java.lang.Math</required>
+  <instance-var type="boolean" name="isSuspended" static-init="false"/>
+  <on>
+    <body equipmentRef="waterHeater">
+      return isSuspended || waterHeater.isRunning();
+    </body>
+  </on>
+  <switchOn>
+    <body equipmentRef="waterHeater">
+      waterHeater.startWaterHeater();
+      return true;
+    </body>
+  </switchOn>
+  <switchOff>
+    <body equipmentRef="waterHeater">
+      waterHeater.stopWaterHeater();
+      return true;
+    </body>
+  </switchOff>
+<mode-control>
+  <maxMode><body>return 1;</body></maxMode>
+  <upMode><body>return false;</body></upMode>
+  <downMode><body>return false;</body></downMode>
+  <setMode><parameter name="modeIndex"/><body>return false;</body></setMode>
+  <currentMode><body>return 1;</body></currentMode>
+</mode-control>
+  <suspension-control>
+    <suspended><body>return isSuspended;</body></suspended>
+    <suspend><body equipmentRef="waterHeater">
+	waterHeater.stopWaterHeater();
+	isSuspended = true;
+        return true;
+      </body></suspend>
+    <resume><body equipmentRef="waterHeater">
+	waterHeater.startWaterHeater();
+	isSuspended = false;
+        return true;</body></resume>
+    <emergency>
+      <body equipmentRef="waterHeater">
+        double currentTemperature = waterHeater.getCurrentTemperature();
+        double targetTemperature = waterHeater.getTargetTemperature();
+        double delta = Math.abs(targetTemperature - currentTemperature);
+        if (currentTemperature &lt; 12.0 || delta &gt;= 10.0) {
+        return 1.0;
+        } else {
+        return delta/10.0;
+        }
+      </body>
+    </emergency>
+  </suspension-control>
+</control-adapter>

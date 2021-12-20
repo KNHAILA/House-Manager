@@ -1,0 +1,70 @@
+<control-adapter
+	xmlns="http://www.sorbonne-universite.fr/alasca/control-adapter"
+	uid="1A10002"
+	offered="fr.sorbonne_u.components.washingMachine.WashingMachineCI"
+	type="planning">
+	<consumption nominal="2000"/>
+	<required>java.lang.Math</required>
+	<required>java.time.Duration</required>
+	<required>java.time.LocalTime</required>
+	<instance-var type="boolean" name="isPlanned" static-init="false"/>
+	<on>
+		<body equipmentRef="washingMachine">
+		return isPlanned || washingMachine.isRunning();
+		</body>
+	</on>
+	<switchOn>
+		<body equipmentRef="washingMachine">
+		washingMachine.startWashingMachine();
+		return true;
+		</body>
+	</switchOn>
+	<switchOff>
+		<body equipmentRef="washingMachine">
+		washingMachine.stopWashingMachine();
+		return true;
+		</body>
+	</switchOff>
+	<mode-control>
+		<maxMode><body>return 1;</body></maxMode>
+		<upMode><body>return false;</body></upMode>
+		<downMode><body>return false;</body></downMode>
+		<setMode><parameter name="modeIndex"/><body>return false;</body></setMode>
+		<currentMode><body>return 1;</body></currentMode>
+	</mode-control>
+	<planning-control>
+		<hasPlan>
+			<body>return isPlanned;</body>
+		</hasPlan>
+		<startTime>
+			<body>
+			if (isPlanned)
+				return LocalTime.now();
+			return null;
+			</body>
+		</startTime>
+		<duration>
+			<body>
+			if (isPlanned)
+				return Duration.ofHours((long)1);
+			return null;
+			</body></duration>
+    	<deadline>
+    		<body>
+    			if (isPlanned)
+					return LocalTime.now();
+				return null;
+			</body>
+		</deadline>
+		<postpone><parameter name="d"/>
+    		<body>
+    			return true;
+			</body>
+		</postpone>
+		<cancel>
+    		<body>
+    			return true;
+			</body>
+		</cancel>
+	</planning-control>
+</control-adapter>

@@ -43,7 +43,7 @@ import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
 import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
 
 //Meter
-import fr.sorbonne_u.components.meter.mil.ElectricMeterElectricityModel;
+import fr.sorbonne_u.meter.mil.ElectricMeterElectricityModel;
 
 //Battery
 import fr.sorbonne_u.storage.battery.mil.BatteryElectricityModel;
