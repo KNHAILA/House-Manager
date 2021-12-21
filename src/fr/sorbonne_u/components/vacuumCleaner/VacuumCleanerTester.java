@@ -27,7 +27,7 @@ public class VacuumCleanerTester extends AbstractComponent {
 
 	protected VacuumCleanerTester() throws Exception
 		{
-			this(VacuumCleaner.vacuumCleanerIP_URL);
+			this(VacuumCleaner.INBOUND_PORT_URI);
 		}
 
 	protected VacuumCleanerTester(String vacuumCleanerInboundPortURI)
