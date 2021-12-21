@@ -297,7 +297,7 @@ extends		RTAtomicSimulatorPlugin
 								   Double.class,
 								   HAIR_DRYER_ELECTRICITY_MODEL_URI),
 				new VariableSink[] {
-						new VariableSink("currentHairDryerIntensity",
+						new VariableSink("currentFanIntensity",
 										 Double.class,
 										 ElectricMeterElectricityModel.URI)
 				});
@@ -306,7 +306,7 @@ extends		RTAtomicSimulatorPlugin
 								   Double.class,
 								   HEATER_ELECTRICITY_MODEL_URI),
 				new VariableSink[] {
-						new VariableSink("currentHeaterIntensity",
+						new VariableSink("currentWaterHeaterIntensity",
 										 Double.class,
 										 ElectricMeterElectricityModel.URI)
 				});

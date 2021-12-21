@@ -59,7 +59,7 @@ public interface WashingMachineCI extends OfferedCI, WashingMachineImplementatio
 	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getCurrentTemperature()
 	 */
 	@Override
-	public int		getCurrentTemperature() throws Exception;
+	public double		getCurrentTemperature() throws Exception;
 	
 	/**
 	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#setSpinningNumber(int)

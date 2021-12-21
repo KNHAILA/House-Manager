@@ -86,7 +86,7 @@ public class WashingMachineOutboundPort extends AbstractOutboundPort implements 
 	 */
 	
 	@Override
-	public int getCurrentTemperature() throws Exception {
+	public double getCurrentTemperature() throws Exception {
 		return ((WashingMachineCI)this.getConnector()).getCurrentTemperature();
 	}
 	

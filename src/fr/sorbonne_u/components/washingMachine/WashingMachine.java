@@ -336,7 +336,7 @@ implements	WashingMachineImplementationI {
 	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getCurrentTemperature()
 	 */
 	@Override
-	public int		getCurrentTemperature() throws Exception
+	public double		getCurrentTemperature() throws Exception
 	{
 		// Temporary implementation; would need a temperature sensor.
 		int currentTemperature = FAKE_CURRENT_TEMPERATURE;

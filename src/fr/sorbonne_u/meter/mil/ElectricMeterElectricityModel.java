@@ -165,15 +165,15 @@ public class			ElectricMeterElectricityModel
         // simple sum of all incoming intensities
        this.currentIntensity_consumption.v =
                 this.currentFanIntensity.v +
-                        this.currentRefrigeratorIntensity.v +
-                             this.currentVacuumCleanerIntensity.v +
-                                  this.currentWaterHeaterIntensity.v +
-                                       this.currentWashingMachineIntensity.v +
-                                            this.currentBatteryIntensity_consumption.v ;
+                      //  this.currentRefrigeratorIntensity.v +
+                        //     this.currentVacuumCleanerIntensity.v +
+                                  this.currentWaterHeaterIntensity.v;
+                          //             this.currentWashingMachineIntensity.v +
+                            //                this.currentBatteryIntensity_consumption.v ;
 
-        this.currentIntensity_production.v = this.currentBatteryIntensity_production.v +
-                                                  this.currentMiniHydroelectricDamIntensity_production.v +
-                                                       this.currentWindTurbineIntensity_production.v;
+        this.currentIntensity_production.v = 0.0;// this.currentBatteryIntensity_production.v +
+                                                 // this.currentMiniHydroelectricDamIntensity_production.v +
+                                                   //    this.currentWindTurbineIntensity_production.v;
 
         // Tracing
         StringBuffer message = new StringBuffer("current total intensity of consumption: ");

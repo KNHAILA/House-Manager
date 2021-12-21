@@ -1,7 +1,5 @@
 package fr.sorbonne_u.meter;
 
-import fr.sorbonne_u.components.AbstractComponent;
-
 // Copyright Jacques Malenfant, Sorbonne Universite.
 // Jacques.Malenfant@lip6.fr
 //
@@ -35,11 +33,12 @@ import fr.sorbonne_u.components.AbstractComponent;
 // knowledge of the CeCILL-C license and that you accept its terms.
 
 import fr.sorbonne_u.components.cvm.AbstractCVM;
+import fr.sorbonne_u.components.AbstractComponent;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>CVMUnitTest</code> performs unit tests on the electric
- * meter component.
+ * The class <code>CVMUnitTest</code> executes a unit test for the electric
+ * meter component as a SIL simulation.
  *
  * <p><strong>Description</strong></p>
  * 
@@ -49,7 +48,7 @@ import fr.sorbonne_u.components.cvm.AbstractCVM;
  * invariant	true
  * </pre>
  * 
- * <p>Created on : 2021-09-13</p>
+ * <p>Created on : 2021-10-04</p>
  * 
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
@@ -69,11 +68,12 @@ extends		AbstractCVM
 	{
 		AbstractComponent.createComponent(
 				ElectricMeter.class.getCanonicalName(),
-				new Object[]{});
-
-		AbstractComponent.createComponent(
-				ElectricMeterUnitTester.class.getCanonicalName(),
-				new Object[]{});
+				// the first actual parameter tells the component to create
+				// a SIL simulation architecture for unit test and the second
+				// to execute the component as a unit test.
+				new Object[]{ElectricMeterRTAtomicSimulatorPlugin.
+												UNIT_TEST_SIM_ARCHITECTURE_URI,
+							 true});
 
 		super.deploy();
 	}
@@ -82,8 +82,8 @@ extends		AbstractCVM
 	{
 		try {
 			CVMUnitTest cvm = new CVMUnitTest();
-			cvm.startStandardLifeCycle(1000L);
-			Thread.sleep(10000L);
+			cvm.startStandardLifeCycle(15000L);
+			Thread.sleep(15000L);
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();

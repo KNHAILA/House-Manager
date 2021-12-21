@@ -111,7 +111,7 @@ public interface WashingMachineImplementationI {
 	 * @return				the current temperature measured by the thermostat.
 	 * @throws Exception	<i>to do</i>.
 	 */
-	public int getCurrentTemperature() throws Exception;
+	public double getCurrentTemperature() throws Exception;
 	
 	/**
 	 * set the target spinning number for controlling the washing machine.

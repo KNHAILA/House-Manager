@@ -99,7 +99,7 @@ public class WashingMachineInboundPort extends AbstractInboundPort implements Wa
 	 */
 	
 	@Override
-	public int getCurrentTemperature() throws Exception {
+	public double getCurrentTemperature() throws Exception {
 		return this.getOwner().handleRequest(
 				o -> ((WashingMachineImplementationI)o).getCurrentTemperature());
 	}
