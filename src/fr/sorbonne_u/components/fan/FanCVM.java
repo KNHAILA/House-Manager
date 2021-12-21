@@ -5,26 +5,38 @@ import fr.sorbonne_u.components.cvm.AbstractCVM;
 
 public class FanCVM extends AbstractCVM {
 
-	public FanCVM() throws Exception {
-	
+	public				FanCVM() throws Exception
+	{
+
 	}
 
-	public static void main(String[] args) {
+	/**
+	 * @see fr.sorbonne_u.components.cvm.AbstractCVM#deploy()
+	 */
+	@Override
+	public void			deploy() throws Exception
+	{
+		AbstractComponent.createComponent(
+				Fan.class.getCanonicalName(),
+				// the first actual parameter tells the component to create
+				// a SIL simulation for unit test and the second to execute
+				// as a unit test.
+				new Object[]{FanRTAtomicSimulatorPlugin.
+											UNIT_TEST_SIM_ARCHITECTURE_URI,
+							 true});
+
+		super.deploy();
+	}
+
+	public static void	main(String[] args)
+	{
 		try {
 			FanCVM cvm = new FanCVM();
-			cvm.startStandardLifeCycle(1000L);
-			Thread.sleep(10000L);
+			cvm.startStandardLifeCycle(15000L);
+			Thread.sleep(5000L);
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void deploy() throws Exception {
-		AbstractComponent.createComponent(Fan.class.getCanonicalName(), new Object[] {});
-		AbstractComponent.createComponent(FanTester.class.getCanonicalName(), new Object[] {});
-		
-		super.deploy();
 	}
 }

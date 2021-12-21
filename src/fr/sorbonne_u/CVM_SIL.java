@@ -35,10 +35,10 @@ import fr.sorbonne_u.components.AbstractComponent;
 // knowledge of the CeCILL-C license and that you accept its terms.
 
 import fr.sorbonne_u.components.cvm.AbstractCVM;
-import fr.sorbonne_u.components.cyphy.hem2021e3.equipments.hairdryer.HairDryer;
-import fr.sorbonne_u.components.cyphy.hem2021e3.equipments.heater.ThermostatedHeater;
-import fr.sorbonne_u.components.cyphy.hem2021e3.equipments.hem.HEM;
-import fr.sorbonne_u.components.cyphy.hem2021e3.equipments.meter.ElectricMeter;
+import fr.sorbonne_u.components.fan.Fan;
+import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
+import fr.sorbonne_u.hem.HEM;
+import fr.sorbonne_u.meter.ElectricMeter;
 
 // -----------------------------------------------------------------------------
 /**
@@ -91,13 +91,13 @@ extends		AbstractCVM
 	public void			deploy() throws Exception
 	{
 		AbstractComponent.createComponent(
-				HairDryer.class.getCanonicalName(),
+				Fan.class.getCanonicalName(),
 				// the first actual parameter tells the component to create
 				// a SIL simulation architecture for integration test and the
 				// second 'false' that it must *not* be executed as a unit test.
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
 		AbstractComponent.createComponent(
-				ThermostatedHeater.class.getCanonicalName(),
+				ThermostatedWaterHeater.class.getCanonicalName(),
 				// the first actual parameter tells the component to create
 				// a SIL simulation architecture for integration test and the
 				// second 'true' that it must be executed as a unit test.

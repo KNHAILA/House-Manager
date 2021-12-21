@@ -33,21 +33,22 @@ package fr.sorbonne_u;
 // knowledge of the CeCILL-C license and that you accept its terms.
 
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
-import fr.sorbonne_u.components.cyphy.hem2021e2.HEM_CoupledModel;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.hairdryer.mil.HairDryerCoupledModel;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.hairdryer.mil.events.SetHighHairDryer;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.hairdryer.mil.events.SetLowHairDryer;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.hairdryer.mil.events.SwitchOffHairDryer;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.hairdryer.mil.events.SwitchOnHairDryer;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.heater.mil.HeaterCoupledModel;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.heater.mil.events.DoNotHeat;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.heater.mil.events.Heat;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.heater.mil.events.SwitchOffHeater;
-import fr.sorbonne_u.components.cyphy.hem2021e2.equipments.heater.mil.events.SwitchOnHeater;
-import fr.sorbonne_u.components.cyphy.hem2021e3.equipments.hairdryer.HairDryer;
-import fr.sorbonne_u.components.cyphy.hem2021e3.equipments.heater.ThermostatedHeater;
-import fr.sorbonne_u.components.cyphy.hem2021e3.equipments.meter.ElectricMeter;
-import fr.sorbonne_u.components.cyphy.hem2021e3.equipments.meter.sil.ElectricMeterCoupledModel;
+import fr.sorbonne_u.HEM_CoupledModel;
+import fr.sorbonne_u.components.fan.Fan;
+import fr.sorbonne_u.components.fan.mil.FanCoupledModel;
+import fr.sorbonne_u.components.fan.mil.events.SetHighFan;
+import fr.sorbonne_u.components.fan.mil.events.SetLowFan;
+import fr.sorbonne_u.components.fan.mil.events.SwitchOffFan;
+import fr.sorbonne_u.components.fan.mil.events.SwitchOnFan;
+import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterCoupledModel;
+import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
+import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
+import fr.sorbonne_u.components.waterHeater.WaterHeater;
+import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
+import fr.sorbonne_u.meter.ElectricMeter;
+import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
 import fr.sorbonne_u.components.cyphy.plugins.devs.RTCoordinatorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.SupervisorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.architectures.ComponentModelArchitecture;
@@ -243,28 +244,28 @@ extends		AbstractCyPhyComponent
 
 		// The hair dryer simulation model held by the HairDryer component.
 		atomicModelDescriptors.put(
-				HairDryerCoupledModel.URI,
+				FanCoupledModel.URI,
 				RTComponentAtomicModelDescriptor.create(
-						HairDryerCoupledModel.URI,
+						FanCoupledModel.URI,
 						new Class[]{},
 						new Class[]{
-								SwitchOnHairDryer.class,
-								SwitchOffHairDryer.class,
-								SetHighHairDryer.class, SetLowHairDryer.class},
+								SwitchOnFan.class,
+								SwitchOffFan.class,
+								SetHighFan.class, SetLowFan.class},
 						TimeUnit.SECONDS,
-						HairDryer.REFLECTION_INBOUND_PORT_URI));
+						Fan.REFLECTION_INBOUND_PORT_URI));
 
 		// The heater simulation model held by the ThermostatedHeater component.
 		atomicModelDescriptors.put(
-				HeaterCoupledModel.URI,
+				WaterHeaterCoupledModel.URI,
 				RTComponentAtomicModelDescriptor.create(
-						HeaterCoupledModel.URI,
+						WaterHeaterCoupledModel.URI,
 						new Class[]{},
 						new Class[]{
-								SwitchOnHeater.class, SwitchOffHeater.class,
-								Heat.class, DoNotHeat.class},
+								SwitchOnWaterHeater.class, SwitchOffWaterHeater.class,
+								HeatWater.class, DoNotHeatWater.class},
 						TimeUnit.SECONDS,
-						ThermostatedHeater.REFLECTION_INBOUND_PORT_URI));
+						ThermostatedWaterHeater.REFLECTION_INBOUND_PORT_URI));
 
 		// The electric meter simulation model held by the ElectricMeter
 		// component.
@@ -273,18 +274,18 @@ extends		AbstractCyPhyComponent
 				RTComponentAtomicModelDescriptor.create(
 						ElectricMeterCoupledModel.URI,
 						new Class[]{
-								SwitchOnHeater.class, SwitchOffHeater.class,
-								Heat.class, DoNotHeat.class,
-								SwitchOnHairDryer.class,
-								SwitchOffHairDryer.class,
-								SetHighHairDryer.class, SetLowHairDryer.class},
+								SwitchOnWaterHeater.class, SwitchOffWaterHeater.class,
+								HeatWater.class, DoNotHeatWater.class,
+								SwitchOnFan.class,
+								SwitchOffFan.class,
+								SetHighFan.class, SetLowFan.class},
 						new Class[]{},
 						TimeUnit.SECONDS,
 						ElectricMeter.REFLECTION_INBOUND_PORT_URI));
 
 		Set<String> submodels = new HashSet<String>();
-		submodels.add(HairDryerCoupledModel.URI);
-		submodels.add(HeaterCoupledModel.URI);
+		submodels.add(FanCoupledModel.URI);
+		submodels.add(WaterHeaterCoupledModel.URI);
 		submodels.add(ElectricMeterCoupledModel.URI);
 
 		Map<EventSource,EventSink[]> connections =
@@ -297,61 +298,61 @@ extends		AbstractCyPhyComponent
 		// must pass from their components to the ElectricMeter component as
 		// shown in the next connections.
 		connections.put(
-				new EventSource(HairDryerCoupledModel.URI,
-								SwitchOnHairDryer.class),
+				new EventSource(FanCoupledModel.URI,
+								SwitchOnFan.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-									  SwitchOnHairDryer.class)
+									  SwitchOnFan.class)
 				});
 		connections.put(
-				new EventSource(HairDryerCoupledModel.URI,
-								SwitchOffHairDryer.class),
+				new EventSource(FanCoupledModel.URI,
+								SwitchOffFan.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-									  SwitchOffHairDryer.class)
+									  SwitchOffFan.class)
 				});
 		connections.put(
-				new EventSource(HairDryerCoupledModel.URI,
-								SetHighHairDryer.class),
+				new EventSource(FanCoupledModel.URI,
+								SetHighFan.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-									  SetHighHairDryer.class)
+									  SetHighFan.class)
 				});
 		connections.put(
-				new EventSource(HairDryerCoupledModel.URI,
-								SetLowHairDryer.class),
+				new EventSource(FanCoupledModel.URI,
+								SetLowFan.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-									  SetLowHairDryer.class)
+									  SetLowFan.class)
 				});
 
 		connections.put(
-				new EventSource(HeaterCoupledModel.URI,
-								SwitchOnHeater.class),
+				new EventSource(WaterHeaterCoupledModel.URI,
+								SwitchOnWaterHeater.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-									  SwitchOnHeater.class)
+									  SwitchOnWaterHeater.class)
 				});
 		connections.put(
-				new EventSource(HeaterCoupledModel.URI,
-								SwitchOffHeater.class),
+				new EventSource(WaterHeaterCoupledModel.URI,
+								SwitchOffWaterHeater.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-									  SwitchOffHeater.class)
+									  SwitchOffWaterHeater.class)
 				});
 		connections.put(
-				new EventSource(HeaterCoupledModel.URI,
-								Heat.class),
+				new EventSource(WaterHeaterCoupledModel.URI,
+								HeatWater.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-									  Heat.class)
+									  HeatWater.class)
 				});
 		connections.put(
-				new EventSource(HeaterCoupledModel.URI,
-								DoNotHeat.class),
+				new EventSource(WaterHeaterCoupledModel.URI,
+								DoNotHeatWater.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-									  DoNotHeat.class)
+									  DoNotHeatWater.class)
 				});
 
 		Map<String,CoupledModelDescriptor> coupledModelDescriptors =

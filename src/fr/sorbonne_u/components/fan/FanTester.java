@@ -28,7 +28,7 @@ public class FanTester extends AbstractComponent {
 
 	protected FanTester() throws Exception
 		{
-			this(Fan.fanIP_URL);
+			this(Fan.INBOUND_PORT_URI);
 		}
 
 	protected FanTester(String fanInboundPortURI)

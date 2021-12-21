@@ -32,14 +32,31 @@ package fr.sorbonne_u.meter;
 // The fact that you are presently reading this means that you have had
 // knowledge of the CeCILL-C license and that you accept its terms.
 
-import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
+import fr.sorbonne_u.meter.ElectricMeterCI;
+import fr.sorbonne_u.meter.ElectricMeterImplementationI;
+import fr.sorbonne_u.meter.ElectricMeterInboundPort;
+import fr.sorbonne_u.components.fan.mil.events.SetHighFan;
+import fr.sorbonne_u.components.fan.mil.events.SetLowFan;
+import fr.sorbonne_u.components.fan.mil.events.SwitchOffFan;
+import fr.sorbonne_u.components.fan.mil.events.SwitchOnFan;
+import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
+import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
+import fr.sorbonne_u.CVM_SIL;
+import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+import fr.sorbonne_u.components.AbstractComponent;
 
 // -----------------------------------------------------------------------------
 /**
  * The class <code>ElectricMeter</code> implements a simplified electric meter
- * component.
+ * component using a SIL simulation for testing.
  *
  * <p><strong>Description</strong></p>
  * 
@@ -55,13 +72,16 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
  */
 @OfferedInterfaces(offered={ElectricMeterCI.class})
 public class			ElectricMeter
-extends		AbstractComponent
+extends		AbstractCyPhyComponent
 implements	ElectricMeterImplementationI
 {
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
+	/** URI of the electric meter reflection inbound port.					*/
+	public static final String	REFLECTION_INBOUND_PORT_URI =
+														"ELECTRIC-METER-rip";
 	/** URI of the electric meter inbound port used in tests.				*/
 	public static final String	ELECTRIC_METER_INBOUND_PORT_URI =
 															"ELECTRIC-METER";
@@ -70,6 +90,23 @@ implements	ElectricMeterImplementationI
 
 	/** inbound port offering the <code>ElectricMeterCI</code> interface.	*/
 	protected ElectricMeterInboundPort	emip;
+
+	// SIL simulation
+
+	/** URI of the simulation architecture to be created or the empty string
+	 *  if the component does not execute as a SIL simulation.				*/
+	protected String				simArchitectureURI;
+	/** URI of the executor service used to execute the real time
+	 *  simulation.															*/
+	protected static final String	SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
+	/** simulator plug-in that holds the SIL simulator for this component.	*/
+	protected ElectricMeterRTAtomicSimulatorPlugin	simulatorPlugin;
+	/** true if the component executes as a SIL simulation, false otherwise.*/
+	protected boolean				isSILsimulated;
+	/** true if the component executes as a unit test, false otherwise.		*/
+	protected boolean				executesAsUnitTest;
+	/** acceleration factor used when executing as a unit test.				*/
+	protected static final double	ACC_FACTOR = 1.0;
 
 	// -------------------------------------------------------------------------
 	// Constructors
@@ -83,14 +120,22 @@ implements	ElectricMeterImplementationI
 	 * <pre>
 	 * pre	{@code ELECTRIC_METER_INBOUND_PORT_URI != null}
 	 * pre	{@code !ELECTRIC_METER_INBOUND_PORT_URI.isEmpty()}
+	 * pre	{@code simArchitectureURI != null}
+	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 * 
-	 * @throws Exception	<i>to do</i>.
+	 * @param simArchitectureURI	URI of the simulation architecture to be created or the empty string if the component does not execute as a SIL simulation.
+	 * @param executesAsUnitTest	true if the component executes as a unit test, false otherwise.
+	 * @throws Exception			<i>to do</i>.
 	 */
-	protected			ElectricMeter() throws Exception
+	protected			ElectricMeter(
+		String simArchitectureURI,
+		boolean executesAsUnitTest
+		) throws Exception
 	{
-		this(ELECTRIC_METER_INBOUND_PORT_URI);
+		this(ELECTRIC_METER_INBOUND_PORT_URI, simArchitectureURI,
+			 executesAsUnitTest);
 	}
 
 	/**
@@ -101,17 +146,24 @@ implements	ElectricMeterImplementationI
 	 * <pre>
 	 * pre	{@code electricMeterInboundPortURI != null}
 	 * pre	{@code !electricMeterInboundPortURI.isEmpty()}
+	 * pre	{@code simArchitectureURI != null}
+	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
 	 * @param electricMeterInboundPortURI	URI of the electric meter inbound port.
+	 * @param simArchitectureURI			URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
+	 * @param executesAsUnitTest			true if the component executes as a unit test, false otherwise.
 	 * @throws Exception					<i>to do</i>.
 	 */
 	protected			ElectricMeter(
-		String electricMeterInboundPortURI
+		String electricMeterInboundPortURI,
+		String simArchitectureURI,
+		boolean executesAsUnitTest
 		) throws Exception
 	{
-		this(electricMeterInboundPortURI, 1, 0);
+		this(electricMeterInboundPortURI, simArchitectureURI,
+			 executesAsUnitTest, 1, 1);
 	}
 
 	/**
@@ -122,22 +174,29 @@ implements	ElectricMeterImplementationI
 	 * <pre>
 	 * pre	{@code electricMeterInboundPortURI != null}
 	 * pre	{@code !electricMeterInboundPortURI.isEmpty()}
+	 * pre	{@code simArchitectureURI != null}
+	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
 	 * @param electricMeterInboundPortURI	URI of the electric meter inbound port.
+	 * @param simArchitectureURI			URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
+	 * @param executesAsUnitTest			true if the component executes as a unit test, false otherwise.
 	 * @param nbThreads						number of standard threads.
 	 * @param nbSchedulableThreads			number of schedulable threads.
 	 * @throws Exception					<i>to do</i>.
 	 */
 	protected			ElectricMeter(
 		String electricMeterInboundPortURI,
+		String simArchitectureURI,
+		boolean executesAsUnitTest,
 		int nbThreads,
 		int nbSchedulableThreads
 		) throws Exception
 	{
-		super(nbThreads, nbSchedulableThreads);
-		this.initialise(electricMeterInboundPortURI);
+		super(REFLECTION_INBOUND_PORT_URI, nbThreads, nbSchedulableThreads);
+		this.initialise(electricMeterInboundPortURI, simArchitectureURI,
+						executesAsUnitTest);
 	}
 
 	/**
@@ -146,13 +205,20 @@ implements	ElectricMeterImplementationI
 	 * <p><strong>Contract</strong></p>
 	 * 
 	 * <pre>
+	 * pre	{@code reflectionInboundPortURI != null}
+	 * pre	{@code !reflectionInboundPortURI.isEmpty()}
 	 * pre	{@code electricMeterInboundPortURI != null}
 	 * pre	{@code !electricMeterInboundPortURI.isEmpty()}
+	 * pre	{@code simArchitectureURI != null}
+	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
+	 * pre	{@code nbThreads >= 0 && nbSchedulableThreads >= 0}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
 	 * @param reflectionInboundPortURI		URI of the reflection innbound port of the component.
 	 * @param electricMeterInboundPortURI	URI of the electric meter inbound port.
+	 * @param simArchitectureURI			URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
+	 * @param executesAsUnitTest			true if the component executes as a unit test, false otherwise.
 	 * @param nbThreads						number of standard threads.
 	 * @param nbSchedulableThreads			number of schedulable threads.
 	 * @throws Exception					<i>to do</i>.
@@ -160,12 +226,15 @@ implements	ElectricMeterImplementationI
 	protected			ElectricMeter(
 		String reflectionInboundPortURI,
 		String electricMeterInboundPortURI,
+		String simArchitectureURI,
+		boolean executesAsUnitTest,
 		int nbThreads,
 		int nbSchedulableThreads
 		) throws Exception
 	{
 		super(reflectionInboundPortURI, nbThreads, nbSchedulableThreads);
-		this.initialise(electricMeterInboundPortURI);
+		this.initialise(electricMeterInboundPortURI, simArchitectureURI,
+						executesAsUnitTest);
 	}
 
 	/**
@@ -176,17 +245,30 @@ implements	ElectricMeterImplementationI
 	 * <pre>
 	 * pre	{@code electricMeterInboundPortURI != null}
 	 * pre	{@code !electricMeterInboundPortURI.isEmpty()}
+	 * pre	{@code simArchitectureURI != null}
+	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
 	 * @param electricMeterInboundPortURI	URI of the electric meter inbound port.
+	 * @param simArchitectureURI			URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
+	 * @param executesAsUnitTest			true if the component executes as a unit test, false otherwise.
 	 * @throws Exception					<i>to do</i>.
 	 */
-	protected void	initialise(String electricMeterInboundPortURI)
-	throws Exception
+	protected void		initialise(
+		String electricMeterInboundPortURI,
+		String simArchitectureURI,
+		boolean executesAsUnitTest
+		) throws Exception
 	{
 		assert	electricMeterInboundPortURI != null;
 		assert	!electricMeterInboundPortURI.isEmpty();
+		assert	simArchitectureURI != null;
+		assert	!simArchitectureURI.isEmpty() || !executesAsUnitTest;
+
+		this.simArchitectureURI = simArchitectureURI;
+		this.executesAsUnitTest = executesAsUnitTest;
+		this.isSILsimulated = !simArchitectureURI.isEmpty();
 
 		this.emip =
 				new ElectricMeterInboundPort(electricMeterInboundPortURI, this);
@@ -194,7 +276,7 @@ implements	ElectricMeterImplementationI
 
 		if (VERBOSE) {
 			this.tracer.get().setTitle("Electric meter component");
-			this.tracer.get().setRelativePosition(0, 2);
+			this.tracer.get().setRelativePosition(1, 1);
 			this.toggleTracing();
 		}
 	}
@@ -204,11 +286,235 @@ implements	ElectricMeterImplementationI
 	// -------------------------------------------------------------------------
 
 	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#start()
+	 */
+	@Override
+	public synchronized void	start() throws ComponentStartException
+	{
+		super.start();
+
+		this.traceMessage("Electric meter starts.\n");
+
+		if (this.isSILsimulated) {
+			// create the simulator plug-in instance, attaching to it a
+			// scheduled executor service allowing it to perform the
+			// simulation steps in real time
+			this.createNewExecutorService(
+								SCHEDULED_EXECUTOR_SERVICE_URI, 1, true);
+			this.simulatorPlugin =
+					new ElectricMeterRTAtomicSimulatorPlugin();
+			this.simulatorPlugin.setPluginURI(ElectricMeterCoupledModel.URI);
+			this.simulatorPlugin.setSimulationExecutorService(
+											SCHEDULED_EXECUTOR_SERVICE_URI);
+			try {
+				// the plug-in is programmed to be able to create the
+				// simulation architecture and initialise itself to be able
+				// to perform the simulations
+				this.simulatorPlugin.initialiseSimulationArchitecture(
+								this.simArchitectureURI,
+								this.executesAsUnitTest ?
+									ACC_FACTOR
+								:	CVM_SIL.ACC_FACTOR);
+				// lastly, install the plug-in on the component
+				this.installPlugin(this.simulatorPlugin);
+			} catch (Exception e) {
+				throw new ComponentStartException(e) ;
+			}
+		}
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 */
+	@Override
+	public synchronized void	execute() throws Exception
+	{
+		if (this.executesAsUnitTest) {
+			this.simulatorPlugin.setSimulationRunParameters(
+												new HashMap<String, Object>());
+			long simStart = System.currentTimeMillis() + 1000L;
+			this.simulatorPlugin.startRTSimulation(simStart, 0.0, 10.0);
+			this.traceMessage("real time if start = " + simStart + "\n");
+
+			// test scenario: code executions are scheduled to happen during
+			// the simulation; SIL simulations execute in real time
+			// (possibly accelerated) so that, when correctly scheduled, code
+			// execution can occur on the same time reference in order to get
+			// coherent exchanges between the two
+			final ElectricMeterRTAtomicSimulatorPlugin sp =
+														this.simulatorPlugin;
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SwitchOnHeater event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												HEATER_ELECTRICITY_MODEL_URI,
+									t -> new SwitchOnWaterHeater(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 1 second, possibly accelerated
+					(long)(1.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the Heat event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												HEATER_ELECTRICITY_MODEL_URI,
+									t -> new HeatWater(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 3 second, possibly accelerated
+					(long)(3.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the DoNotHeat event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												HEATER_ELECTRICITY_MODEL_URI,
+									t -> new DoNotHeatWater(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 7 second, possibly accelerated
+					(long)(7.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SwitchOffHeater event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												HEATER_ELECTRICITY_MODEL_URI,
+									t -> new SwitchOffWaterHeater(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 9 second, possibly accelerated
+					(long)(9.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SwitchOnHairDryer event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+											HAIR_DRYER_ELECTRICITY_MODEL_URI,
+									t -> new SwitchOnFan(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 2 second, possibly accelerated
+					(long)(2.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SetHighHairDryer event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+											HAIR_DRYER_ELECTRICITY_MODEL_URI,
+									t -> new SetHighFan(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 4 second, possibly accelerated
+					(long)(4.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SetLowHairDryer event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+											HAIR_DRYER_ELECTRICITY_MODEL_URI,
+									t -> new SetLowFan(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 5 second, possibly accelerated
+					(long)(5.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SwitchOffHairDryer event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+											HAIR_DRYER_ELECTRICITY_MODEL_URI,
+									t -> new SwitchOffFan(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 8 second, possibly accelerated
+					(long)(8.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+		}
+	}
+
+	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
 	 */
 	@Override
 	public synchronized void	shutdown() throws ComponentShutdownException
 	{
+		this.traceMessage("Electric meter stops.\n");
+
 		try {
 			this.emip.unpublishPort();
 		} catch (Exception e) {
@@ -228,10 +534,11 @@ implements	ElectricMeterImplementationI
 	public double		getCurrentConsumption() throws Exception
 	{
 		if (VERBOSE) {
-			this.traceMessage("Electric meter returns is current consumption.\n");
+			this.traceMessage(
+					"Electric meter returns is current consumption.\n");
 		}
 
-		// TODO will need a computation.
+		// TODO will need to be implemented for the project.
 		return 0;
 	}
 
@@ -242,10 +549,11 @@ implements	ElectricMeterImplementationI
 	public double		getCurrentProduction() throws Exception
 	{
 		if (VERBOSE) {
-			this.traceMessage("Electric meter returns is current production.\n");
+			this.traceMessage(
+					"Electric meter returns is current production.\n");
 		}
 
-		// TODO will need a computation.
+		// TODO will need to be implemented for the project.
 		return 0;
 	}
 }
