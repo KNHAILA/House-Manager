@@ -1,0 +1,62 @@
+<control-adapter
+	xmlns="http://www.sorbonne-universite.fr/alasca/control-adapter"
+	uid="1A10003"
+	offered="fr.sorbonne_u.components.refrigerator.RefrigeratorCI"
+	type="suspension">
+	<consumption nominal="2000"/>
+	<required>java.lang.Math</required>
+	<instance-var type="boolean" name="isSuspended" static-init="false"/>
+	<on>
+		<body equipmentRef="refrigerator">
+		return isSuspended || refrigerator.isRunning();
+		</body>
+	</on>
+	<switchOn>
+		<body equipmentRef="refrigerator">
+		refrigerator.startRefrigerator();
+		return true;
+		</body>
+	</switchOn>
+	<switchOff>
+		<body equipmentRef="refrigerator">
+		refrigerator.stopRefrigerator();
+		return true;
+		</body>
+	</switchOff>
+	<mode-control>
+		<maxMode><body>return 1;</body></maxMode>
+		<upMode><body>return false;</body></upMode>
+		<downMode><body>return false;</body></downMode>
+		<setMode><parameter name="modeIndex"/><body>return false;</body></setMode>
+		<currentMode><body>return 1;</body></currentMode>
+	</mode-control>
+	<suspension-control>
+		<suspended>
+			<body>return isSuspended;</body>
+		</suspended>
+		<suspend>
+			<body equipmentRef="refrigerator">
+			refrigerator.stopRefrigerator();
+			isSuspended = true;
+			return true;
+			</body>
+		</suspend>
+		<resume>
+			<body equipmentRef="refrigerator">
+			refrigerator.startRefrigerator();
+			isSuspended = false;
+			return true;</body></resume>
+    	<emergency>
+    		<body equipmentRef="refrigerator">
+    			double currentTemperature = refrigerator.getCurrentTemperature();
+    			double targetTemperature = refrigerator.getTargetTemperature();
+    			double delta = Math.abs(targetTemperature - currentTemperature);
+    			if (currentTemperature &lt; 12.0 || delta &gt;= 10.0) {
+    				return 1.0;
+    			} else {
+    			return delta/10.0;
+    			}
+			</body>
+		</emergency>
+	</suspension-control>
+</control-adapter>
