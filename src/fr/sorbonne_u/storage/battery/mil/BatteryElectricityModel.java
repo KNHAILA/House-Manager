@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.HEM_ReportI;
 import fr.sorbonne_u.storage.battery.mil.events.AbstractBatteryEvent;
-import fr.sorbonne_u.storage.battery.mil.events.ChargeBattery;
+import fr.sorbonne_u.storage.battery.mil.events.DonNotUseBattery;
 import fr.sorbonne_u.storage.battery.mil.events.UseBattery;
 import fr.sorbonne_u.utils.Electricity;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
@@ -22,7 +22,7 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
 // -----------------------------------------------------------------------------
-@ModelExternalEvents(imported = {ChargeBattery.class,
+@ModelExternalEvents(imported = { DonNotUseBattery.class,
         UseBattery.class,
         })
 // -----------------------------------------------------------------------------
@@ -32,12 +32,10 @@ public class BatteryElectricityModel extends AtomicHIOA
     // Inner classes and types
     // -------------------------------------------------------------------------
     public static enum State {
-        DISCHARGE,
-        /** DISCHARGE mode, when manager use battery.						*/
-        CHARGE,
-        /** CHARGE mode, when manager charge battery.						*/
+        USE,
+        /** USE mode, when manager use battery.						*/
         REST
-        /** When battery do nothing!						*/
+        /** Manager don't use battery!						*/
     }
 
     // -------------------------------------------------------------------------
@@ -53,7 +51,7 @@ public class BatteryElectricityModel extends AtomicHIOA
     /** energy consumption (in Watts) of the Battery in charge mode.		*/
     public static double			CHARGE_MODE_CONSUMPTION = 1000.0; // Watts
     /** energy consumption (in Watts) of the Battery in HIGH mode.		*/
-    public static double			DISCHARGE_MODE_PRODUCTION = 200000.0; // Watts
+    public static double			USE_MODE_PRODUCTION = 200000.0; // Watts
     /** nominal tension (in Volts) of the Battery.						*/
     public static double			TENSION = 220.0; // Volts
 
@@ -182,14 +180,12 @@ public class BatteryElectricityModel extends AtomicHIOA
         switch (this.currentState)
         {
             case REST :
-                this.currentIntensity_production.v = 0.0;
-                this.currentIntensity_consumption.v = 0.0;
+            	this.currentIntensity_consumption.v = CHARGE_MODE_CONSUMPTION/TENSION;
                 break;
-            case CHARGE:
-                this.currentIntensity_consumption.v = CHARGE_MODE_CONSUMPTION/TENSION;
+            case USE:
+            	this.currentIntensity_consumption.v = CHARGE_MODE_CONSUMPTION/TENSION;
+                this.currentIntensity_production.v = USE_MODE_PRODUCTION/TENSION;
                 break;
-            case DISCHARGE:
-                this.currentIntensity_production.v = DISCHARGE_MODE_PRODUCTION/TENSION;
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
         this.currentIntensity_consumption.time = this.getCurrentStateTime();
@@ -197,18 +193,23 @@ public class BatteryElectricityModel extends AtomicHIOA
         // Tracing
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
-        if (this.currentState == State.CHARGE) {
+        if (this.currentState == State.REST) {
             message.append("with current consumption ");
             message.append(this.currentIntensity_consumption.v);
             message.append(" at ");
             message.append(this.currentIntensity_consumption.time);
         }
 
-        else if (this.currentState == State.DISCHARGE) {
+        else if (this.currentState == State.USE) {
             message.append("with current production ");
             message.append(this.currentIntensity_production.v);
             message.append(" at ");
             message.append(this.currentIntensity_production.time);
+            
+            message.append("with current consumption ");
+            message.append(this.currentIntensity_consumption.v);
+            message.append(" at ");
+            message.append(this.currentIntensity_consumption.time);
         }
 
         message.append(".\n");
@@ -228,7 +229,7 @@ public class BatteryElectricityModel extends AtomicHIOA
         Event ce = (Event) currentEvents.get(0);
 
         // compute the total consumption (in kwh) for the simulation report.
-        if(ce instanceof ChargeBattery) {
+        if(ce instanceof DonNotUseBattery) {
             this.totalConsumption +=
                     Electricity.computeConsumption(elapsedTime,
                             TENSION*this.currentIntensity_consumption.v);
@@ -236,6 +237,9 @@ public class BatteryElectricityModel extends AtomicHIOA
             this.totalProduction +=
                     Electricity.computeProduction(elapsedTime,
                             TENSION*this.currentIntensity_production.v);
+            this.totalConsumption +=
+                    Electricity.computeConsumption(elapsedTime,
+                            TENSION*this.currentIntensity_consumption.v);
         }
 
         // Tracing
@@ -277,9 +281,9 @@ public class BatteryElectricityModel extends AtomicHIOA
     /** run parameter name for {@code CHARGE_MODE_CONSUMPTION}.				*/
     public static final String		CHARGE_MODE_CONSUMPTION_RUNPNAME =
             URI + ":CHARGE_MODE_CONSUMPTION";
-    /** run parameter name for {@code DISCHARGE_MODE_PRODUCTION}.				*/
-    public static final String		DISCHARGE_MODE_PRODUCTION_RUNPNAME =
-            URI + ":DISCHARGE_MODE_PRODUCTION";
+    /** run parameter name for {@code USE_MODE_PRODUCTION}.				*/
+    public static final String		USE_MODE_PRODUCTION_RUNPNAME =
+            URI + ":USE_MODE_PRODUCTION";
     /** run parameter name for {@code TENSION}.								*/
     public static final String		TENSION_RUNPNAME = URI + ":TENSION";
 
@@ -295,9 +299,9 @@ public class BatteryElectricityModel extends AtomicHIOA
             CHARGE_MODE_CONSUMPTION =
                     (double) simParams.get(CHARGE_MODE_CONSUMPTION_RUNPNAME);
         }
-        if (simParams.containsKey(DISCHARGE_MODE_PRODUCTION_RUNPNAME)) {
-            DISCHARGE_MODE_PRODUCTION =
-                    (double) simParams.get(DISCHARGE_MODE_PRODUCTION_RUNPNAME);
+        if (simParams.containsKey(USE_MODE_PRODUCTION_RUNPNAME)) {
+            USE_MODE_PRODUCTION =
+                    (double) simParams.get(USE_MODE_PRODUCTION_RUNPNAME);
         }
         if (simParams.containsKey(TENSION_RUNPNAME)) {
             TENSION = (double) simParams.get(TENSION_RUNPNAME);

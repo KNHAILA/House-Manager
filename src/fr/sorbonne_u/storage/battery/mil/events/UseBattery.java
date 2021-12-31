@@ -29,11 +29,7 @@ public class UseBattery extends AbstractBatteryEvent
     @Override
     public boolean	hasPriorityOver(EventI e)
     {
-        if (e instanceof ChargeBattery) {
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
 
  
@@ -43,8 +39,8 @@ public class UseBattery extends AbstractBatteryEvent
         assert	model instanceof BatteryElectricityModel;
 
         BatteryElectricityModel m = (BatteryElectricityModel)model;
-        if (m.getState() == BatteryElectricityModel.State.REST || m.getState() == BatteryElectricityModel.State.CHARGE) {
-            m.setState(BatteryElectricityModel.State.DISCHARGE);
+        if (m.getState() == BatteryElectricityModel.State.REST) {
+            m.setState(BatteryElectricityModel.State.USE);
             m.toggleConsumptionHasChanged();
         }
     }

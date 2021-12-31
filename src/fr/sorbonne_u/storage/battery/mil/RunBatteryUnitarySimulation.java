@@ -65,10 +65,10 @@ public class RunBatteryUnitarySimulation
                     new HashMap<EventSource,EventSink[]>();
 
             connections.put(
-                    new EventSource(BatteryUserModel.URI, ChargeBattery.class),
+                    new EventSource(BatteryUserModel.URI, DonNotUseBattery.class),
                     new EventSink[] {
                             new EventSink(BatteryElectricityModel.URI,
-                                    ChargeBattery.class)
+                                    DonNotUseBattery.class)
                     });
             connections.put(
                     new EventSource(BatteryUserModel.URI, UseBattery.class),
