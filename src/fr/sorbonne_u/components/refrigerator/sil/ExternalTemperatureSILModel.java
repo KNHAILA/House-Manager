@@ -34,8 +34,8 @@ package fr.sorbonne_u.components.refrigerator.sil;
 
 import java.util.concurrent.TimeUnit;
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorExternalTemperatureModel;
-import fr.sorbonne_u.components.refrigerator.ThermostatedHeater;
-import fr.sorbonne_u.components.refrigerator.ThermostatedHeaterRTAtomicSimulatorPlugin;
+import fr.sorbonne_u.components.refrigerator.ThermostatedRefrigerator;
+import fr.sorbonne_u.components.refrigerator.ThermostatedRefrigeratorRTAtomicSimulatorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.utils.StandardComponentLogger;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import java.util.Map;
@@ -79,7 +79,7 @@ extends		RefrigeratorExternalTemperatureModel
 	private static final long serialVersionUID = 1L;
 
 	/** owner component.													*/
-	protected ThermostatedHeater	owner;
+	protected ThermostatedRefrigerator	owner;
 
 	// -------------------------------------------------------------------------
 	// Constructors
@@ -131,11 +131,11 @@ extends		RefrigeratorExternalTemperatureModel
 		// retrieve the reference to the owner component that must be passed
 		// as a simulation run parameter
 		assert	simParams.containsKey(
-						ThermostatedHeaterRTAtomicSimulatorPlugin.
+						ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 														OWNER_REFERENCE_NAME);
 		this.owner =
-				(ThermostatedHeater) simParams.get(
-						ThermostatedHeaterRTAtomicSimulatorPlugin.
+				(ThermostatedRefrigerator) simParams.get(
+						ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 														OWNER_REFERENCE_NAME);
 		// replace the logger set in the superclass by the one directing
 		// logs to the owner component logger

@@ -92,7 +92,7 @@ import fr.sorbonne_u.components.refrigerator.sil.RefrigeratorTemperatureSILModel
  * 
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-public class			ThermostatedHeaterRTAtomicSimulatorPlugin
+public class			ThermostatedRefrigeratorRTAtomicSimulatorPlugin
 extends		RTAtomicSimulatorPlugin
 {
 	// -------------------------------------------------------------------------

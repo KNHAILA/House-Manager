@@ -44,8 +44,8 @@ import fr.sorbonne_u.components.refrigerator.mil.events.RefrigeratorEventI;
 import fr.sorbonne_u.components.refrigerator.mil.events.OffRefrigerator;
 import fr.sorbonne_u.components.refrigerator.mil.events.OnRefrigerator;
 import fr.sorbonne_u.components.refrigerator.mil.events.OpenRefrigeratorDoor;
-import fr.sorbonne_u.components.refrigerator.ThermostatedHeater;
-import fr.sorbonne_u.components.refrigerator.ThermostatedHeaterRTAtomicSimulatorPlugin;
+import fr.sorbonne_u.components.refrigerator.ThermostatedRefrigerator;
+import fr.sorbonne_u.components.refrigerator.ThermostatedRefrigeratorRTAtomicSimulatorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.utils.StandardComponentLogger;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
@@ -121,7 +121,7 @@ extends		AtomicModel
 	protected RefrigeratorEventI				lastReceived;
 
 	/** owner component.													*/
-	protected ThermostatedHeater		owner;
+	protected ThermostatedRefrigerator		owner;
 
 	// -------------------------------------------------------------------------
 	// Constructors
@@ -173,10 +173,10 @@ extends		AtomicModel
 		// retrieve the reference to the owner component that must be passed
 		// as a simulation run parameter
 		assert	simParams.containsKey(
-						ThermostatedHeaterRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME);
+						ThermostatedRefrigeratorRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME);
 		this.owner =
-				(ThermostatedHeater) simParams.get(
-						ThermostatedHeaterRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME);
+				(ThermostatedRefrigerator) simParams.get(
+						ThermostatedRefrigeratorRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME);
 		this.setLogger(new StandardComponentLogger(this.owner));
 	}
 
