@@ -5,39 +5,27 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
 
 public interface BatteryCI extends BatteryImplementation, RequiredCI, OfferedCI {
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.HeaterImplementationI#isRunning()
+	 */
 	@Override
-	default void activeBattery() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+	public boolean		isRunning() throws Exception;
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryImplementation#startHeater()
+	 */
 	@Override
-	default void desactiveBattery() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+	public void			startBattery() throws Exception;
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryImplementation#stopHeater()
+	 */
 	@Override
-	default boolean isUsing() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public void			stopBattery() throws Exception;
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryImplementation#getCurrentTemperature()
+	 */
 	@Override
-	default double remainingChargePercentage() throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	default void chargeBattery() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	default void dechargeBattery() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+	public double		getCurrentPercentage() throws Exception;
 }

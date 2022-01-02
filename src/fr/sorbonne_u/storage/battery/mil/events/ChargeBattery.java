@@ -1,15 +1,32 @@
 package fr.sorbonne_u.storage.battery.mil.events;
 
 
-import fr.sorbonne_u.devs_simulation.models.AtomicModel;
+import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.storage.battery.mil.BatteryElectricityModel;
 import fr.sorbonne_u.storage.battery.mil.BatteryPercentageModel;
-import fr.sorbonne_u.devs_simulation.es.events.ES_Event;
+import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 
-public class			UseBattery
-extends		ES_Event
+// -----------------------------------------------------------------------------
+/**
+ * The class <code>ChargeBattery</code> defines the simulation event of the Battery
+ * starting to ChargeBattery.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant	true
+ * </pre>
+ * 
+ * <p>Created on : 2021-09-21</p>
+ * 
+ * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ */
+public class			ChargeBattery
+extends		Event
 implements	BatteryEventI
 {
 	// -------------------------------------------------------------------------
@@ -23,7 +40,7 @@ implements	BatteryEventI
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create a <code>UseBattery</code> event.
+	 * create a <code>ChargeBattery</code> event.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -35,7 +52,7 @@ implements	BatteryEventI
 	 *
 	 * @param timeOfOccurrence	time of occurrence of the event.
 	 */
-	public				UseBattery(
+	public				ChargeBattery(
 		Time timeOfOccurrence
 		)
 	{
@@ -47,14 +64,16 @@ implements	BatteryEventI
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.devs_simulation.es.events.ES_Event#hasPriorityOver(fr.sorbonne_u.devs_simulation.models.events.EventI)
+	 * @see fr.sorbonne_u.devs_simulation.models.events.Event#hasPriorityOver(fr.sorbonne_u.devs_simulation.models.events.EventI)
 	 */
 	@Override
 	public boolean		hasPriorityOver(EventI e)
 	{
-		// if many Battery events occur at the same time, the
-		// UseBattery one will be executed first.
-		return true;
+		if (e instanceof UseBattery || e instanceof DoNotChargeBattery) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -62,29 +81,27 @@ implements	BatteryEventI
 	 */
 	@Override
 	public void			executeOn(AtomicModel model)
-	{        
-		assert model instanceof BatteryElectricityModel || model instanceof BatteryPercentageModel;
+	{
+		assert	model instanceof BatteryElectricityModel ||	model instanceof BatteryPercentageModel;
 
 		if (model instanceof BatteryElectricityModel) {
+			
 			BatteryElectricityModel m = (BatteryElectricityModel)model;
-	        if (m.getState() == BatteryElectricityModel.State.REST) {
-	            m.setState(BatteryElectricityModel.State.USE);
-	            m.toggleConsumptionHasChanged();
-	        } else if (m.getState() == BatteryElectricityModel.State.CHARGE) {
-	            m.setState(BatteryElectricityModel.State.USE_CHARGE);
-	            m.toggleConsumptionHasChanged();
-	        }
+		    if (m.getState() == BatteryElectricityModel.State.REST) {
+		        m.setState(BatteryElectricityModel.State.CHARGE);
+		        m.toggleConsumptionHasChanged();
+		    } 
+		    else if (m.getState() == BatteryElectricityModel.State.USE) {
+		        m.setState(BatteryElectricityModel.State.USE_CHARGE);
+		        m.toggleConsumptionHasChanged();
+		    }
 		}
 
 		else if (model instanceof BatteryPercentageModel) {
-			BatteryPercentageModel batteryPercentage = (BatteryPercentageModel) model;
-			if(batteryPercentage.electricityState.v == BatteryElectricityModel.State.USE_CHARGE) {
-				batteryPercentage.setState(BatteryPercentageModel.State.NOT_CHARGING);
-			}else {
-				batteryPercentage.setState(BatteryPercentageModel.State.DISCHARGING);
-			}
+			BatteryPercentageModel batteryPercentage =
+							(BatteryPercentageModel)model;
+			batteryPercentage.setState(BatteryPercentageModel.State.CHARGING);
+			
 		}
 	}
 }
-
-

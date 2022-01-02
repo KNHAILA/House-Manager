@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.storage.battery.mil.events.DonNotUseBattery;
+import fr.sorbonne_u.storage.battery.mil.events.ChargeBattery;
+import fr.sorbonne_u.storage.battery.mil.events.DoNotChargeBattery;
+import fr.sorbonne_u.storage.battery.mil.events.DoNotUseBattery;
 import fr.sorbonne_u.storage.battery.mil.events.UseBattery;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import fr.sorbonne_u.devs_simulation.es.events.ES_EventI;
@@ -18,8 +20,10 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
 
-@ModelExternalEvents(exported = {DonNotUseBattery.class,
-        UseBattery.class
+@ModelExternalEvents(exported = {ChargeBattery.class, 
+		DoNotChargeBattery.class, 
+		UseBattery.class, 
+		DoNotUseBattery.class
         })
 // -----------------------------------------------------------------------------
 public class BatteryUserModel extends AtomicES_Model
@@ -65,8 +69,8 @@ public class BatteryUserModel extends AtomicES_Model
         // compute the next event type given the current event
         ES_EventI nextEvent = null;
         if (current instanceof UseBattery) {
-            nextEvent = new DonNotUseBattery(t);
-        } else if (current instanceof DonNotUseBattery) {
+            nextEvent = new DoNotUseBattery(t);
+        } else if (current instanceof DoNotUseBattery) {
             nextEvent = new UseBattery(t);
         }
         // schedule the event to be executed by this model
@@ -99,7 +103,7 @@ public class BatteryUserModel extends AtomicES_Model
         // compute the time of occurrence for the first event
         Time t = this.computeTimeOfNextEvent(this.getCurrentStateTime());
         // schedule the first event
-        this.scheduleEvent(new DonNotUseBattery(t));
+        this.scheduleEvent(new DoNotUseBattery(t));
         // re-initialisation of the time of occurrence of the next event
         // required here after adding a new event in the schedule.
         this.nextTimeAdvance = this.timeAdvance();

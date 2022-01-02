@@ -2,70 +2,62 @@ package fr.sorbonne_u.storage.battery;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI;
 
 
 public class BatteryInboundPort
 extends		AbstractInboundPort
 implements	BatteryCI {
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	
-	public BatteryInboundPort(ComponentI owner) throws Exception
+
+	public				BatteryInboundPort(ComponentI owner) throws Exception
 	{
 		super(BatteryCI.class, owner);
 	}
 
-	public	BatteryInboundPort(String uri, ComponentI owner)
+	public				BatteryInboundPort(String uri, ComponentI owner)
 	throws Exception
 	{
 		super(uri, BatteryCI.class, owner);
 	}
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#isRunning()
+	 */
 	@Override
-	public void activeBattery() throws Exception {
-		this.getOwner().handleRequest(
-				o -> {	((BatteryImplementation)o).activeBattery();
-						return null;
-					 });
-	}
-
-	@Override
-	public void desactiveBattery() throws Exception {
-		this.getOwner().handleRequest(
-				o -> {	((BatteryImplementation)o).desactiveBattery();
-						return null;
-					 });
-	}
-
-	@Override
-	public boolean isUsing() throws Exception {
+	public boolean		isRunning() throws Exception
+	{
 		return this.getOwner().handleRequest(
-				o -> ((BatteryImplementation)o).isUsing());
+				o -> ((BatteryImplementation)o).isRunning());
+	}
+
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#startBattery()
+	 */
+	@Override
+	public void			startBattery() throws Exception
+	{
+		this.getOwner().handleRequest(
+				o -> {	((BatteryImplementation)o).startBattery();
+						return null;
+					 });
+	}
+
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#stopBattery()
+	 */
+	@Override
+	public void			stopBattery() throws Exception
+	{
+		this.getOwner().handleRequest(
+				o -> {	((BatteryImplementation)o).stopBattery();
+						return null;
+					 });
 	}
 
 	@Override
-	public double remainingChargePercentage() throws Exception {
+	public double		getCurrentPercentage() throws Exception
+	{
 		return this.getOwner().handleRequest(
-				o -> ((BatteryImplementation)o).remainingChargePercentage());
-	}
-
-	@Override
-	public void chargeBattery() throws Exception {
-		this.getOwner().handleRequest(
-				o -> {	((BatteryImplementation)o).chargeBattery();
-						return null;
-					 });
-	}
-
-	@Override
-	public void dechargeBattery() throws Exception {
-		this.getOwner().handleRequest(
-				o -> {	((BatteryImplementation)o).dechargeBattery();
-						return null;
-					 });
+				o -> ((BatteryImplementation)o).getCurrentPercentage());
 	}
 }

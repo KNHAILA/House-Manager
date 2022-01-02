@@ -4,33 +4,38 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 
 public class BatteryConnector extends AbstractConnector implements BatteryCI {
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#isRunning()
+	 */
 	@Override
-	public void activeBattery() throws Exception {
-		((BatteryCI)this.offering).activeBattery();
+	public boolean		isRunning() throws Exception
+	{
+		return ((BatteryCI)this.offering).isRunning();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#startBattery()
+	 */
 	@Override
-	public void desactiveBattery() throws Exception {
-		((BatteryCI)this.offering).desactiveBattery();
+	public void			startBattery() throws Exception
+	{
+		((BatteryCI)this.offering).startBattery();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#stopBattery()
+	 */
 	@Override
-	public boolean isUsing() throws Exception {
-		return ((BatteryCI)this.offering).isUsing();
+	public void			stopBattery() throws Exception
+	{
+		((BatteryCI)this.offering).stopBattery();
 	}
-
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#getCurrentTemperature()
+	 */
 	@Override
-	public double remainingChargePercentage() throws Exception {
-		return ((BatteryCI)this.offering).remainingChargePercentage();
-	}
-
-	@Override
-	public void chargeBattery() throws Exception {
-		((BatteryCI)this.offering).chargeBattery();
-	}
-
-	@Override
-	public void dechargeBattery() throws Exception {
-		((BatteryCI)this.offering).dechargeBattery();
+	public double		getCurrentPercentage() throws Exception
+	{
+		return ((BatteryCI)this.offering).getCurrentPercentage();
 	}
 }

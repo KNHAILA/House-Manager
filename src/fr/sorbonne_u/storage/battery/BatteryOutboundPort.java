@@ -7,43 +7,50 @@ public class BatteryOutboundPort extends AbstractOutboundPort implements Battery
 
 	private static final long serialVersionUID = 1L;
 
-	public BatteryOutboundPort(ComponentI owner)
-			throws Exception {
+	public				BatteryOutboundPort(ComponentI owner) throws Exception
+	{
 		super(BatteryCI.class, owner);
 	}
 
-	public BatteryOutboundPort(String uri, ComponentI owner)
-			throws Exception {
+	public				BatteryOutboundPort(String uri, ComponentI owner)
+	throws Exception
+	{
 		super(uri, BatteryCI.class, owner);
 	}
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#isRunning()
+	 */
 	@Override
-	public void activeBattery() throws Exception {
-		((BatteryCI)this.getConnector()).activeBattery();
+	public boolean		isRunning() throws Exception
+	{
+		return ((BatteryCI)this.getConnector()).isRunning();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#startBattery()
+	 */
 	@Override
-	public void desactiveBattery() throws Exception {
-		((BatteryCI)this.getConnector()).desactiveBattery();
+	public void			startBattery() throws Exception
+	{
+		((BatteryCI)this.getConnector()).startBattery();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#stopBattery()
+	 */
 	@Override
-	public boolean isUsing() throws Exception {
-		return ((BatteryCI)this.getConnector()).isUsing();
+	public void			stopBattery() throws Exception
+	{
+		((BatteryCI)this.getConnector()).stopBattery();
 	}
 
+	/**
+	 * @see fr.sorbonne_u.storage.battery.BatteryCI#getCurrentPercentage()
+	 */
 	@Override
-	public double remainingChargePercentage() throws Exception {
-		return ((BatteryCI)this.getConnector()).remainingChargePercentage();
-	}
-
-	@Override
-	public void chargeBattery() throws Exception {
-		((BatteryCI)this.getConnector()).chargeBattery();
-	}
-
-	@Override
-	public void dechargeBattery() throws Exception {
-		((BatteryCI)this.getConnector()).dechargeBattery();
+	public double		getCurrentPercentage() throws Exception
+	{
+		return ((BatteryCI)this.getConnector()).getCurrentPercentage();
 	}
 }

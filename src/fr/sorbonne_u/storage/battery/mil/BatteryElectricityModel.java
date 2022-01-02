@@ -6,8 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.HEM_ReportI;
 import fr.sorbonne_u.storage.battery.mil.events.AbstractBatteryEvent;
-import fr.sorbonne_u.storage.battery.mil.events.DonNotUseBattery;
-import fr.sorbonne_u.storage.battery.mil.events.UseBattery;
+import fr.sorbonne_u.storage.battery.mil.events.*;
 import fr.sorbonne_u.utils.Electricity;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA;
@@ -22,8 +21,10 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
 // -----------------------------------------------------------------------------
-@ModelExternalEvents(imported = { DonNotUseBattery.class,
+@ModelExternalEvents(imported = { DoNotUseBattery.class,
         UseBattery.class,
+        ChargeBattery.class,
+        DoNotChargeBattery.class
         })
 // -----------------------------------------------------------------------------
 public class BatteryElectricityModel extends AtomicHIOA
@@ -32,10 +33,14 @@ public class BatteryElectricityModel extends AtomicHIOA
     // Inner classes and types
     // -------------------------------------------------------------------------
     public static enum State {
-        USE,
-        /** USE mode, when manager use battery.						*/
-        REST
+        USE_CHARGE,
+        /** when manager use battery and battery is charging too.						*/
+        REST,
         /** Manager don't use battery!						*/
+        CHARGE,
+        /** Battery is charging!						*/
+        USE
+        /** Manager use battery!						*/
     }
 
     // -------------------------------------------------------------------------
@@ -51,7 +56,7 @@ public class BatteryElectricityModel extends AtomicHIOA
     /** energy consumption (in Watts) of the Battery in charge mode.		*/
     public static double			CHARGE_MODE_CONSUMPTION = 1000.0; // Watts
     /** energy consumption (in Watts) of the Battery in HIGH mode.		*/
-    public static double			USE_MODE_PRODUCTION = 200000.0; // Watts
+    public static double			USE_MODE_PRODUCTION = 20000.0; // Watts
     /** nominal tension (in Volts) of the Battery.						*/
     public static double			TENSION = 220.0; // Volts
 
@@ -78,8 +83,11 @@ public class BatteryElectricityModel extends AtomicHIOA
     protected double				totalProduction;
 
     protected double				capacity = 300.0; //    ampere/h
+    
+    /** battery electricityState.							*/
+	@ExportedVariable(type = State.class)
+    public final Value<State>	electricityState = new Value<State>(this, State.REST);
 
-    protected double				charge_time = 1; //    h
 
     // -------------------------------------------------------------------------
     // Constructors
@@ -100,6 +108,7 @@ public class BatteryElectricityModel extends AtomicHIOA
     public void	setState(State s)
     {
         this.currentState = s;
+        this.electricityState.v = this.currentState;
     }
 
     public State getState()
@@ -139,6 +148,7 @@ public class BatteryElectricityModel extends AtomicHIOA
         // initially the Battery is off and its electricity consumption and production are
         // not about to change.
         this.currentState = State.REST;
+        this.electricityState.v = this.currentState;
         this.consumptionHasChanged = false;
         this.totalConsumption = 0.0;
         this.totalProduction = 0.0;
@@ -180,13 +190,23 @@ public class BatteryElectricityModel extends AtomicHIOA
         switch (this.currentState)
         {
             case REST :
-            	this.currentIntensity_consumption.v = CHARGE_MODE_CONSUMPTION/TENSION;
+            	this.currentIntensity_production.v = 0.0;
+                this.currentIntensity_consumption.v = 0.0;
                 break;
-            case USE:
+            case CHARGE:
+                this.currentIntensity_consumption.v = CHARGE_MODE_CONSUMPTION/TENSION;
+                this.currentIntensity_production.v = 0.0;
+                break;
+            case USE_CHARGE:
             	this.currentIntensity_consumption.v = CHARGE_MODE_CONSUMPTION/TENSION;
                 this.currentIntensity_production.v = USE_MODE_PRODUCTION/TENSION;
                 break;
+            case USE:
+            	this.currentIntensity_production.v = USE_MODE_PRODUCTION/TENSION;
+            	this.currentIntensity_consumption.v = 0.0;
+                break;
         }
+        
         this.currentIntensity_production.time = this.getCurrentStateTime();
         this.currentIntensity_consumption.time = this.getCurrentStateTime();
 
@@ -198,10 +218,39 @@ public class BatteryElectricityModel extends AtomicHIOA
             message.append(this.currentIntensity_consumption.v);
             message.append(" at ");
             message.append(this.currentIntensity_consumption.time);
+            
+            message.append("with current production ");
+            message.append(this.currentIntensity_production.v);
+            message.append(" at ");
+            message.append(this.currentIntensity_production.time);
         }
 
-        else if (this.currentState == State.USE) {
+        else if (this.currentState == State.USE_CHARGE) {
             message.append("with current production ");
+            message.append(this.currentIntensity_production.v);
+            message.append(" at ");
+            message.append(this.currentIntensity_production.time);
+            
+            message.append("with current consumption ");
+            message.append(this.currentIntensity_consumption.v);
+            message.append(" at ");
+            message.append(this.currentIntensity_consumption.time);
+        }
+        
+        else if (this.currentState == State.USE) {
+        	message.append("with current production ");
+            message.append(this.currentIntensity_production.v);
+            message.append(" at ");
+            message.append(this.currentIntensity_production.time);
+            
+            message.append("with current consumption ");
+            message.append(this.currentIntensity_consumption.v);
+            message.append(" at ");
+            message.append(this.currentIntensity_consumption.time);
+        }
+        
+        else if (this.currentState == State.CHARGE) {
+        	message.append("with current production ");
             message.append(this.currentIntensity_production.v);
             message.append(" at ");
             message.append(this.currentIntensity_production.time);
@@ -229,7 +278,7 @@ public class BatteryElectricityModel extends AtomicHIOA
         Event ce = (Event) currentEvents.get(0);
 
         // compute the total consumption (in kwh) for the simulation report.
-        if(ce instanceof DonNotUseBattery) {
+        if(ce instanceof DoNotUseBattery) {
             this.totalConsumption +=
                     Electricity.computeConsumption(elapsedTime,
                             TENSION*this.currentIntensity_consumption.v);
