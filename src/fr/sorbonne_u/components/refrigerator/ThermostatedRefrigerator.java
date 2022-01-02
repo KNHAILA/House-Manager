@@ -92,7 +92,7 @@ import fr.sorbonne_u.components.AbstractComponent;
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
 @OfferedInterfaces(offered={RefrigeratorCI.class})
-public class			ThermostatedHeater
+public class			ThermostatedRefrigerator
 extends		AbstractCyPhyComponent
 implements	RefrigeratorImplementationI
 {
@@ -110,7 +110,7 @@ implements	RefrigeratorImplementationI
 	 * 
 	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
 	 */
-	protected static enum	HeaterState
+	protected static enum	RefrigeratorState
 	{
 		/** heater is on.													*/
 		ON,
@@ -132,7 +132,7 @@ implements	RefrigeratorImplementationI
 	public static final boolean		VERBOSE = true;
 
 	/** current state (on, off) of the heater.								*/
-	protected HeaterState			currentState;
+	protected RefrigeratorState			currentState;
 	/** inbound port offering the <code>HeaterCI</code> interface.			*/
 	protected RefrigeratorInboundPort		hip;
 	/** target temperature for the heating.	*/
@@ -147,7 +147,7 @@ implements	RefrigeratorImplementationI
 	 *  simulation.															*/
 	protected static final String	SCHEDULED_EXECUTOR_SERVICE_URI = "ses";
 	/** simulator plug-in that holds the SIL simulator for this component.	*/
-	protected ThermostatedHeaterRTAtomicSimulatorPlugin	simulatorPlugin;
+	protected ThermostatedRefrigeratorRTAtomicSimulatorPlugin	simulatorPlugin;
 	/** true if the component executes as a SIL simulation, false otherwise.*/
 	protected boolean				isSILsimulated;
 	/** true if the component executes as a unit test, false otherwise.		*/
@@ -187,7 +187,7 @@ implements	RefrigeratorImplementationI
 	 * @param executesAsUnitTest	true if the component executes as a unit test, false otherwise.
 	 * @throws Exception			<i>to do </i>.
 	 */
-	protected			ThermostatedHeater(
+	protected			ThermostatedRefrigerator(
 		String simArchitectureURI,
 		boolean executesAsUnitTest
 		
@@ -214,7 +214,7 @@ implements	RefrigeratorImplementationI
 	 * @param executesAsUnitTest	true if the component executes as a unit test, false otherwise.
 	 * @throws Exception			<i>to do </i>.
 	 */
-	protected			ThermostatedHeater(
+	protected			ThermostatedRefrigerator(
 		String heaterInboundPortURI,
 		String simArchitectureURI,
 		boolean executesAsUnitTest
@@ -248,7 +248,7 @@ implements	RefrigeratorImplementationI
 	 * @param executesAsUnitTest		true if the component executes as a unit test, false otherwise.
 	 * @throws Exception				<i>to do </i>.
 	 */
-	protected			ThermostatedHeater(
+	protected			ThermostatedRefrigerator(
 		String reflectionInboundPortURI,
 		String heaterInboundPortURI,
 		String simArchitectureURI,
@@ -293,10 +293,10 @@ implements	RefrigeratorImplementationI
 		this.isSILsimulated = !simArchitectureURI.isEmpty();
 		this.composesAsUnitTest =
 				simArchitectureURI.equals(
-						ThermostatedHeaterRTAtomicSimulatorPlugin.
+						ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 												UNIT_TEST_SIM_ARCHITECTURE_URI);
 		this.executesAsUnitTest = executesAsUnitTest;
-		this.currentState = HeaterState.OFF;
+		this.currentState = RefrigeratorState.OFF;
 		this.targetTemperature = 20.0;
 		this.accFactor = this.composesAsUnitTest ?
 							ACC_FACTOR
@@ -306,7 +306,7 @@ implements	RefrigeratorImplementationI
 		this.hip = new RefrigeratorInboundPort(heaterInboundPortURI, this);
 		this.hip.publishPort();
 
-		if (ThermostatedHeater.VERBOSE) {
+		if (ThermostatedRefrigerator.VERBOSE) {
 			this.tracer.get().setTitle("Thermostated heater component");
 			this.tracer.get().setRelativePosition(2, 1);
 			this.toggleTracing();		
@@ -331,7 +331,7 @@ implements	RefrigeratorImplementationI
 			this.createNewExecutorService(
 								SCHEDULED_EXECUTOR_SERVICE_URI, 1, true);
 			this.simulatorPlugin =
-							new ThermostatedHeaterRTAtomicSimulatorPlugin();
+							new ThermostatedRefrigeratorRTAtomicSimulatorPlugin();
 			this.simulatorPlugin.setPluginURI(RefrigeratorCoupledModel.URI);
 			this.simulatorPlugin.setSimulationExecutorService(
 											SCHEDULED_EXECUTOR_SERVICE_URI);
@@ -371,7 +371,7 @@ implements	RefrigeratorImplementationI
 						@Override
 						public void run() {
 							try {
-								((ThermostatedHeater)this.getTaskOwner()).
+								((ThermostatedRefrigerator)this.getTaskOwner()).
 															startRefrigerator();
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -386,7 +386,7 @@ implements	RefrigeratorImplementationI
 						@Override
 						public void run() {
 							try {
-								double t = ((ThermostatedHeater)
+								double t = ((ThermostatedRefrigerator)
 												this.getTaskOwner()).
 													getCurrentTemperature();
 								this.getTaskOwner().traceMessage(
@@ -405,7 +405,7 @@ implements	RefrigeratorImplementationI
 						@Override
 						public void run() {
 							try {
-								((ThermostatedHeater)this.getTaskOwner()).
+								((ThermostatedRefrigerator)this.getTaskOwner()).
 															stopRefrigerator();
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -424,7 +424,7 @@ implements	RefrigeratorImplementationI
 	public synchronized void	shutdown() throws ComponentShutdownException
 	{
 		this.traceMessage("Heater stops.\n");
-		this.currentState = HeaterState.OFF;
+		this.currentState = RefrigeratorState.OFF;
 
 		try {
 			this.hip.unpublishPort();
@@ -452,7 +452,7 @@ implements	RefrigeratorImplementationI
 	 */
 	public boolean		internalIsRunning()
 	{
-		return this.currentState == HeaterState.ON;
+		return this.currentState == RefrigeratorState.ON;
 	}
 
 	/**
@@ -527,12 +527,12 @@ implements	RefrigeratorImplementationI
 	{
 		// when the heater is on, perform the control, but if the heater is
 		// switched off, stop the controller
-		if (this.currentState == ThermostatedHeater.HeaterState.ON) {
+		if (this.currentState == ThermostatedRefrigerator.RefrigeratorState.ON) {
 			try {
 				if (this.isHeating &&
 								this.getCurrentTemperature() >
 										this.targetTemperature + HYSTERESIS) {
-					if (ThermostatedHeater.VERBOSE) {
+					if (ThermostatedRefrigerator.VERBOSE) {
 						this.traceMessage(
 								"Thermostated heater decides to heat.\n");
 					}
@@ -541,12 +541,12 @@ implements	RefrigeratorImplementationI
 								this.getCurrentTemperature() <
 										this.targetTemperature - HYSTERESIS) {
 					this.heat();
-					if (ThermostatedHeater.VERBOSE) {
+					if (ThermostatedRefrigerator.VERBOSE) {
 						this.traceMessage(
 								"Thermostated heater decides to heat.\n");
 					}
 				} else {
-					if (ThermostatedHeater.VERBOSE) {
+					if (ThermostatedRefrigerator.VERBOSE) {
 						this.traceMessage(
 								"Thermostated heater decides to do nothing.\n");
 					}					
@@ -555,7 +555,7 @@ implements	RefrigeratorImplementationI
 				;
 			}
 			this.scheduleTask(
-					o -> ((ThermostatedHeater)o).internalController(period, u),
+					o -> ((ThermostatedRefrigerator)o).internalController(period, u),
 					period, u);
 		}
 	}
@@ -570,7 +570,7 @@ implements	RefrigeratorImplementationI
 	@Override
 	public boolean		isRunning() throws Exception
 	{
-		if (ThermostatedHeater.VERBOSE) {
+		if (ThermostatedRefrigerator.VERBOSE) {
 			this.traceMessage("Thermostated heater returns its state: " +
 											this.currentState + ".\n");
 		}
@@ -583,12 +583,12 @@ implements	RefrigeratorImplementationI
 	@Override
 	public void			startRefrigerator() throws Exception
 	{
-		if (ThermostatedHeater.VERBOSE) {
+		if (ThermostatedRefrigerator.VERBOSE) {
 			this.traceMessage("Thermostated heater starts.\n");
 		}
 		assert	!this.internalIsRunning();
 
-		this.currentState = HeaterState.ON;
+		this.currentState = RefrigeratorState.ON;
 
 		if (this.isSILsimulated) {
 			this.simulatorPlugin.triggerExternalEvent(
@@ -601,7 +601,7 @@ implements	RefrigeratorImplementationI
 		// and decide when to start or stop heating 
 		long accPeriod = (long)(PERIOD/this.accFactor);
 		this.scheduleTask(
-				o -> ((ThermostatedHeater)o).
+				o -> ((ThermostatedRefrigerator)o).
 							internalController(accPeriod, CONTROL_TIME_UNIT),
 				accPeriod, CONTROL_TIME_UNIT);
 	}
@@ -612,12 +612,12 @@ implements	RefrigeratorImplementationI
 	@Override
 	public void			stopRefrigerator() throws Exception
 	{
-		if (ThermostatedHeater.VERBOSE) {
+		if (ThermostatedRefrigerator.VERBOSE) {
 			this.traceMessage("Thermostated heater stops.\n");
 		}
 		assert	this.internalIsRunning();
 
-		this.currentState = HeaterState.OFF;
+		this.currentState = RefrigeratorState.OFF;
 
 		if (this.isSILsimulated) {
 			this.simulatorPlugin.triggerExternalEvent(
@@ -632,7 +632,7 @@ implements	RefrigeratorImplementationI
 	@Override
 	public void			setTargetTemperature(double target) throws Exception
 	{
-		if (ThermostatedHeater.VERBOSE) {
+		if (ThermostatedRefrigerator.VERBOSE) {
 			this.traceMessage("Thermostated heater sets a new target "
 										+ "temperature: " + target + ".\n");
 		}
@@ -649,7 +649,7 @@ implements	RefrigeratorImplementationI
 	@Override
 	public double		getTargetTemperature() throws Exception
 	{
-		if (ThermostatedHeater.VERBOSE) {
+		if (ThermostatedRefrigerator.VERBOSE) {
 			this.traceMessage("Thermostated heater returns its target"
 							+ " temperature " + this.targetTemperature + ".\n");
 		}
@@ -668,12 +668,12 @@ implements	RefrigeratorImplementationI
 			currentTemperature =
 				(double) this.simulatorPlugin.getModelStateValue(
 								RefrigeratorTemperatureSILModel.URI,
-								ThermostatedHeaterRTAtomicSimulatorPlugin.
+								ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 													CURRENT_ROOM_TERMPERATURE);
 		} else {
 			// Temporary implementation; would need a temperature sensor.
 		}
-		if (ThermostatedHeater.VERBOSE) {
+		if (ThermostatedRefrigerator.VERBOSE) {
 			StringBuffer message =
 					new StringBuffer(
 						"Thermostated heater returns the current temperature ");

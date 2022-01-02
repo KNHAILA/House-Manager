@@ -67,11 +67,11 @@ extends		AbstractCVM
 	public void			deploy() throws Exception
 	{
 		AbstractComponent.createComponent(
-				ThermostatedHeater.class.getCanonicalName(),
+				ThermostatedRefrigerator.class.getCanonicalName(),
 				// the first actual parameter tells the component to
 				// execute as a SIL simulation and the second that is must
 				// be executed as a unit test.
-				new Object[]{ThermostatedHeaterRTAtomicSimulatorPlugin.
+				new Object[]{ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 											UNIT_TEST_SIM_ARCHITECTURE_URI,
 							 true});
 
