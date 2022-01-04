@@ -46,10 +46,9 @@ implements	WindTurbineCI {
 	}
 
 	@Override
-	public void WindIntensityControl() throws Exception {
-		this.getOwner().handleRequest(
-				o -> {	((WindTurbineImplementation)o).WindIntensityControl();
-						return null;
-					 });
+	public double getCurrentWindSpeed() throws Exception {
+		return this.getOwner().handleRequest(
+				o -> ((WindTurbineImplementation)o).getCurrentWindSpeed());
+		
 	}
 }

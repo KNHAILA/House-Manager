@@ -352,7 +352,7 @@ implements	ElectricMeterImplementationI
 								// trigger the SwitchOnHeater event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
-												HEATER_ELECTRICITY_MODEL_URI,
+												WATER_HEATER_ELECTRICITY_MODEL_URI,
 									t -> new SwitchOnWaterHeater(t));
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -372,7 +372,7 @@ implements	ElectricMeterImplementationI
 								// trigger the Heat event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
-												HEATER_ELECTRICITY_MODEL_URI,
+									WATER_HEATER_ELECTRICITY_MODEL_URI,
 									t -> new HeatWater(t));
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -392,7 +392,7 @@ implements	ElectricMeterImplementationI
 								// trigger the DoNotHeat event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
-												HEATER_ELECTRICITY_MODEL_URI,
+									WATER_HEATER_ELECTRICITY_MODEL_URI,
 									t -> new DoNotHeatWater(t));
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -412,7 +412,7 @@ implements	ElectricMeterImplementationI
 								// trigger the SwitchOffHeater event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
-												HEATER_ELECTRICITY_MODEL_URI,
+									WATER_HEATER_ELECTRICITY_MODEL_URI,
 									t -> new SwitchOffWaterHeater(t));
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -433,7 +433,7 @@ implements	ElectricMeterImplementationI
 								// trigger the SwitchOnHairDryer event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
-											HAIR_DRYER_ELECTRICITY_MODEL_URI,
+									FAN_ELECTRICITY_MODEL_URI,
 									t -> new SwitchOnFan(t));
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -453,7 +453,7 @@ implements	ElectricMeterImplementationI
 								// trigger the SetHighHairDryer event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
-											HAIR_DRYER_ELECTRICITY_MODEL_URI,
+											FAN_ELECTRICITY_MODEL_URI,
 									t -> new SetHighFan(t));
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -473,7 +473,7 @@ implements	ElectricMeterImplementationI
 								// trigger the SetLowHairDryer event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
-											HAIR_DRYER_ELECTRICITY_MODEL_URI,
+											FAN_ELECTRICITY_MODEL_URI,
 									t -> new SetLowFan(t));
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -493,7 +493,7 @@ implements	ElectricMeterImplementationI
 								// trigger the SwitchOffHairDryer event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
-											HAIR_DRYER_ELECTRICITY_MODEL_URI,
+											FAN_ELECTRICITY_MODEL_URI,
 									t -> new SwitchOffFan(t));
 							} catch (Exception e) {
 								e.printStackTrace();

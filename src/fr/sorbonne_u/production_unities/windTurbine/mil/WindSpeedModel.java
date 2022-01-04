@@ -13,6 +13,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
+
 public class WindSpeedModel    extends		AtomicHIOA
 {
     private static final long serialVersionUID = 1L;
@@ -26,7 +27,7 @@ public class WindSpeedModel    extends		AtomicHIOA
     protected static final double	STEP = 1.0;
     protected final Duration		evaluationStep;
     @ExportedVariable(type = Double.class)
-    protected final Value<Double>	windSpeed =
+    protected final Value<Double>	currentWindSpeed =
             new Value<Double>(this, 0.0, 0);
     protected double				cycleTime;
 
@@ -54,13 +55,13 @@ public class WindSpeedModel    extends		AtomicHIOA
     {
         super.initialiseVariables(startTime);
 
-        this.windSpeed.v = MIN_WIND_SPEED;
+        this.currentWindSpeed.v = MIN_WIND_SPEED;
 
         this.toggleDebugMode();
         this.logMessage("simulation begins.\n");
         StringBuffer message =
                 new StringBuffer("current wind speed: ");
-        message.append(this.windSpeed.v);
+        message.append(this.currentWindSpeed.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());
         message.append("\n");
@@ -89,16 +90,16 @@ public class WindSpeedModel    extends		AtomicHIOA
             this.cycleTime -= PERIOD;
         }
         double c = Math.cos((1.0 + this.cycleTime/(PERIOD/2.0))*Math.PI);
-        this.windSpeed.v =
+        this.currentWindSpeed.v =
                 MIN_WIND_SPEED +
                         (MAX_WIND_SPEED - MIN_WIND_SPEED)*
                                 ((1.0 + c)/2.0);
-        this.windSpeed.time = this.getCurrentStateTime();
+        this.currentWindSpeed.time = this.getCurrentStateTime();
 
         // Tracing
         StringBuffer message =
                 new StringBuffer("current wind speed: ");
-        message.append(this.windSpeed.v);
+        message.append(this.currentWindSpeed.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());
         message.append("\n");

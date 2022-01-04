@@ -22,7 +22,7 @@ implements	WindTurbineCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WindTurbine.WindTurbineCI#isRunning()
+	 * @see fr.sorbonne_u.production_unities.windTurbine.WindTurbineCI#isRunning()
 	 */
 	@Override
 	public boolean	isRunning() throws Exception
@@ -31,7 +31,7 @@ implements	WindTurbineCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WindTurbine.WindTurbineCI#startWindTurbine()
+	 * @see fr.sorbonne_u.production_unities.windTurbine.WindTurbineCI#startWindTurbine()
 	 */
 	@Override
 	public void	startWindTurbine() throws Exception
@@ -40,17 +40,16 @@ implements	WindTurbineCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WindTurbine.WindTurbineCI#stopWindTurbine()
+	 * @see fr.sorbonne_u.production_unities.windTurbine.WindTurbineCI#stopWindTurbine()
 	 */
 	@Override
 	public void	stopWindTurbine() throws Exception
 	{
 		((WindTurbineCI)this.getConnector()).stopWindTurbine();
 	}
-	
+
 	@Override
-	public void	WindIntensityControl() throws Exception
-	{
-		((WindTurbineCI)this.getConnector()).WindIntensityControl();
+	public double getCurrentWindSpeed() throws Exception {
+		return ((WindTurbineCI)this.getConnector()).getCurrentWindSpeed();
 	}
 }

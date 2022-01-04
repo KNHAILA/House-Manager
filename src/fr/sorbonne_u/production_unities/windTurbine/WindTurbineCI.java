@@ -43,10 +43,7 @@ extends		WindTurbineImplementation,
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	@Override
-	default void WindIntensityControl() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+	public double		getCurrentWindSpeed() throws Exception;
 }

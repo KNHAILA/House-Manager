@@ -32,7 +32,6 @@ package fr.sorbonne_u.meter;
 // The fact that you are presently reading this means that you have had
 // knowledge of the CeCILL-C license and that you accept its terms.
 
-import fr.sorbonne_u.components.cyphy.plugins.devs.RTAtomicSimulatorPlugin;
 import fr.sorbonne_u.devs_simulation.architectures.RTArchitecture;
 import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
 import fr.sorbonne_u.devs_simulation.hioa.architectures.RTAtomicHIOA_Descriptor;
@@ -57,6 +56,7 @@ import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
 import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
 import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
 import fr.sorbonne_u.meter.mil.ElectricMeterElectricityModel;
+import fr.sorbonne_u.components.cyphy.plugins.devs.RTAtomicSimulatorPlugin;
 import fr.sorbonne_u.components.fan.FanRTAtomicSimulatorPlugin;
 import fr.sorbonne_u.components.fan.sil.FanElectricitySILModel;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeaterRTAtomicSimulatorPlugin;
@@ -108,19 +108,19 @@ extends		RTAtomicSimulatorPlugin
 	// class and the two model classes. A better solution should be implemented,
 	// but for ALASCA, this way of doing things will be fine (and simple).
 
-	/** URI of the hairdryer electricity model.								*/
-	protected static final String	HAIR_DRYER_ELECTRICITY_MODEL_URI =
+	/** URI of the fan electricity model.								*/
+	protected static final String	FAN_ELECTRICITY_MODEL_URI =
 											FanElectricitySILModel.URI;
-	/** class implementing the hairdryer electricity model.					*/
+	/** class implementing the FAN electricity model.					*/
 	protected static final Class<FanElectricitySILModel>
-									HAIR_DRYER_ELECTRICITY_MODEL_CLASS =
+									FAN_ELECTRICITY_MODEL_CLASS =
 											FanElectricitySILModel.class;
 	/** URI of the heater electricity model.								*/
-	protected static final String	HEATER_ELECTRICITY_MODEL_URI =
+	protected static final String	WATER_HEATER_ELECTRICITY_MODEL_URI =
 											WaterHeaterElectricitySILModel.URI;
 	/** class implementing the heater electricity model.					*/
 	protected static final Class<WaterHeaterElectricitySILModel>
-									HEATER_ELECTRICITY_MODEL_CLASS =
+	                                WATER_HEATER_ELECTRICITY_MODEL_CLASS =
 											WaterHeaterElectricitySILModel.class;
 
 	// -------------------------------------------------------------------------
@@ -195,24 +195,24 @@ extends		RTAtomicSimulatorPlugin
 									coupledModelDescriptors = new HashMap<>();
 
 		Set<String> submodels = new HashSet<String>();
-		submodels.add(HAIR_DRYER_ELECTRICITY_MODEL_URI);
-		submodels.add(HEATER_ELECTRICITY_MODEL_URI);
+		submodels.add(FAN_ELECTRICITY_MODEL_URI);
+		submodels.add(WATER_HEATER_ELECTRICITY_MODEL_URI);
 		submodels.add(ElectricMeterElectricitySILModel.URI);
 
 		atomicModelDescriptors.put(
-				HAIR_DRYER_ELECTRICITY_MODEL_URI,
+				FAN_ELECTRICITY_MODEL_URI,
 				RTAtomicHIOA_Descriptor.create(
-						HAIR_DRYER_ELECTRICITY_MODEL_CLASS,
-						HAIR_DRYER_ELECTRICITY_MODEL_URI,
+						FAN_ELECTRICITY_MODEL_CLASS,
+						FAN_ELECTRICITY_MODEL_URI,
 						TimeUnit.SECONDS,
 						null,
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						accFactor));
 		atomicModelDescriptors.put(
-				HEATER_ELECTRICITY_MODEL_URI,
+				WATER_HEATER_ELECTRICITY_MODEL_URI,
 				RTAtomicHIOA_Descriptor.create(
-						HEATER_ELECTRICITY_MODEL_CLASS,
-						HEATER_ELECTRICITY_MODEL_URI,
+						WATER_HEATER_ELECTRICITY_MODEL_CLASS,
+						WATER_HEATER_ELECTRICITY_MODEL_URI,
 						TimeUnit.SECONDS,
 						null,
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
@@ -238,50 +238,50 @@ extends		RTAtomicSimulatorPlugin
 			imported.put(
 					SwitchOnWaterHeater.class,
 					new EventSink[] {
-							new EventSink(HEATER_ELECTRICITY_MODEL_URI,
+							new EventSink(WATER_HEATER_ELECTRICITY_MODEL_URI,
 										  SwitchOnWaterHeater.class)
 					});
 			imported.put(
 					SwitchOffWaterHeater.class,
 					new EventSink[] {
-							new EventSink(HEATER_ELECTRICITY_MODEL_URI,
+							new EventSink(WATER_HEATER_ELECTRICITY_MODEL_URI,
 										  SwitchOffWaterHeater.class)
 					});
 			imported.put(
 					HeatWater.class,
 					new EventSink[] {
-							new EventSink(HEATER_ELECTRICITY_MODEL_URI,
+							new EventSink(WATER_HEATER_ELECTRICITY_MODEL_URI,
 										  HeatWater.class)
 					});
 			imported.put(
 					DoNotHeatWater.class,
 					new EventSink[] {
-							new EventSink(HEATER_ELECTRICITY_MODEL_URI,
+							new EventSink(WATER_HEATER_ELECTRICITY_MODEL_URI,
 										  DoNotHeatWater.class)
 					});
 
 			imported.put(
 					SwitchOnFan.class,
 					new EventSink[] {
-							new EventSink(HAIR_DRYER_ELECTRICITY_MODEL_URI,
+							new EventSink(FAN_ELECTRICITY_MODEL_URI,
 										  SwitchOnFan.class)
 					});
 			imported.put(
 					SwitchOffFan.class,
 					new EventSink[] {
-							new EventSink(HAIR_DRYER_ELECTRICITY_MODEL_URI,
+							new EventSink(FAN_ELECTRICITY_MODEL_URI,
 										  SwitchOffFan.class)
 					});
 			imported.put(
 					SetHighFan.class,
 					new EventSink[] {
-							new EventSink(HAIR_DRYER_ELECTRICITY_MODEL_URI,
+							new EventSink(FAN_ELECTRICITY_MODEL_URI,
 										  SetHighFan.class)
 					});
 			imported.put(
 					SetLowFan.class,
 					new EventSink[] {
-							new EventSink(HAIR_DRYER_ELECTRICITY_MODEL_URI,
+							new EventSink(FAN_ELECTRICITY_MODEL_URI,
 										  SetLowFan.class)
 					});
 		}
@@ -295,7 +295,7 @@ extends		RTAtomicSimulatorPlugin
 		bindings.put(
 				new VariableSource("currentIntensity",
 								   Double.class,
-								   HAIR_DRYER_ELECTRICITY_MODEL_URI),
+								   FAN_ELECTRICITY_MODEL_URI),
 				new VariableSink[] {
 						new VariableSink("currentFanIntensity",
 										 Double.class,
@@ -304,7 +304,7 @@ extends		RTAtomicSimulatorPlugin
 		bindings.put(
 				new VariableSource("currentIntensity",
 								   Double.class,
-								   HEATER_ELECTRICITY_MODEL_URI),
+								   WATER_HEATER_ELECTRICITY_MODEL_URI),
 				new VariableSink[] {
 						new VariableSink("currentWaterHeaterIntensity",
 										 Double.class,

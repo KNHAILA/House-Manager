@@ -18,23 +18,21 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.AbstractWindTurbineEvent;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.DoNotUseWindTurbine;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 
 /**
- * The class <code>HeaterElectricityModel</code> defines a simulation model
- * for the electricity consumption of the heater.
+ * The class <code>WindTurbineElectricityModel</code> defines a simulation model
+ * for the electricity consumption of the WindTurbine.
  *
  * <p><strong>Description</strong></p>
  * 
  * <p>
  * The model is a simple state-based one: the electricity consumption is
- * assumed to be constant in each possible state of the heater
- * ({@code State.OFF => 0.0}, {@code State.ON => NOT_HEATING_POWER} and
- * {@code State.HEATING => HEATING_POWER}). The state of the heater is
- * modified by the reception of external events ({@code SwitchOnHeater},
- * {@code SwitchOffHeater}, {@code Heat} and {@code DoNotHeat}). The
+ * assumed to be constant in each possible state of the WindTurbine
+ * ({@code State.OFF => 0.0}, {@code State.ON => NOT_working_POWER} and
+ * {@code State.working => working_POWER}). The state of the WindTurbine is
+ * modified by the reception of external events ({@code SwitchOnWindTurbine},
+ * {@code SwitchOffWindTurbine}, {@code Heat} and {@code DoNotHeat}). The
  * electricity consumption is stored in the exported variable
  * {@code currentIntensity}.
  * </p>
@@ -46,8 +44,8 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
  * <p><strong>Invariant</strong></p>
  * 
  * <pre>
- * invariant	{@code NOT_HEATING_POWER >= 0.0}
- * invariant	{@code HEATING_POWER > NOT_HEATING_POWER}
+ * invariant	{@code NOT_working_POWER >= 0.0}
+ * invariant	{@code working_POWER > NOT_working_POWER}
  * invariant	{@code TENSION > 0.0}
  * </pre>
  * 
@@ -57,6 +55,8 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
  */
 @ModelExternalEvents(imported = {DoNotUseWindTurbine.class,
         UseWindTurbine.class,
+        StopWindTurbine.class,
+        StartWindTurbine.class
         })
 // -----------------------------------------------------------------------------
 public class WindTurbineElectricityModel extends AtomicHIOA
@@ -64,16 +64,16 @@ public class WindTurbineElectricityModel extends AtomicHIOA
  
 	/**
 	 * The enumeration <code>State</code> defines the state in which the
-	 * heater can be.
+	 * WindTurbine can be.
 	 *
 	 * <p>Created on : 2021-09-24</p>
 	 * 
 	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
 	 */
     public static enum State {
-    	/** heater is on but not heating.									*/
+    	/** WindTurbine is on but not working.									*/
         USE,
-        /** heater is on but not heating.									*/
+        /** WindTurbine is on but not working.									*/
         NOT_USE
     }
 
@@ -86,9 +86,9 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     /** URI for an instance model; works as long as only one instance is
      *  created.															*/
     public static final String		URI = WindTurbineElectricityModel.class.getSimpleName();
-    /** power of the heater in watts.										*/
+    /** power of the WindTurbine in watts.										*/
     public static double			MODE_PRODUCTION = 200000.0; // Watts	
-    /** power of the heater in watts.										*/
+    /** power of the WindTurbine in watts.										*/
     public static double			TENSION = 220.0; // Volts
 
   
@@ -99,17 +99,13 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     
     /** current intensity in amperes; intensity is power/tension.			*/
     @ImportedVariable(type = Double.class)
-    protected Value<Double>			windSpeed;
+    protected Value<Double>			currentWindSpeed;
     /** current state of the Battery.					*/
     protected State currentState = State.NOT_USE;
-    /** power of the heater in watts.										*/
+    /** power of the WindTurbine in watts.										*/
     protected boolean				consumptionHasChanged = false;
-    /** power of the heater in watts.										*/
+    /** power of the WindTurbine in watts.										*/
     protected double				totalProduction;
-    /** power of the heater in watts.										*/
-    protected double				capacity = 300.0; //    ampere/h
-    /** power of the heater in watts.										*/
-    protected double				charge_time = 1; //    h
 
     // -------------------------------------------------------------------------
     // Constructors
@@ -117,7 +113,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
 
    
     /**
-	 * create a heater MIL model instance.
+	 * create a WindTurbine MIL model instance.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -147,7 +143,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     }
 
 	/**
-	 * set the state of the heater.
+	 * set the state of the WindTurbine.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -164,7 +160,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     }
 
     /**
-	 * return the state of the heater.
+	 * return the state of the WindTurbine.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -253,6 +249,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     @Override
     public void	userDefinedInternalTransition(Duration elapsedTime)
     {
+    	System.out.print("**************************************************** hereeee");
         super.userDefinedInternalTransition(elapsedTime);
 
         // set the current electricity consumption from the current state
@@ -262,7 +259,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
                 this.currentIntensity_production.v = 0.0;
                 break;
             case USE:
-            	this.currentIntensity_production.v = windSpeed.v*MODE_PRODUCTION/TENSION;
+            	this.currentIntensity_production.v = currentWindSpeed.v*MODE_PRODUCTION/TENSION;
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
 
@@ -283,39 +280,37 @@ public class WindTurbineElectricityModel extends AtomicHIOA
      * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedExternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
      */
     @Override
-    public void	userDefinedExternalTransition(Duration elapsedTime)
-    {
-   
-        ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
-      
-        assert	currentEvents != null && currentEvents.size() == 1;
+	public void userDefinedExternalTransition(Duration elapsedTime) {
+    	
+		// get the vector of current external events
+		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
+		
+		// when this method is called, there is at least one external event,
+		// and for the heater model, there will be exactly one by
+		// construction.
+		assert currentEvents != null && currentEvents.size() == 1;
 
-        Event ce = (Event) currentEvents.get(0);
+		Event ce = (Event) currentEvents.get(0);
+		assert ce instanceof WindTurbineEventI;
 
-        // compute the total consumption (in kwh) for the simulation report.
-      
-        if(ce instanceof UseWindTurbine) {
-            this.totalProduction +=
-                    Electricity.computeProduction(elapsedTime,
-                            TENSION*this.currentIntensity_production.v);
-        }
+		// compute the total consumption for the simulation report.
+		this.totalProduction += Electricity.computeProduction(elapsedTime,
+				TENSION * this.currentIntensity_production.v);
 
-        // Tracing
-        StringBuffer message =
-                new StringBuffer("executes an external transition ");
-        message.append(ce.getClass().getSimpleName());
-        message.append("(");
-        message.append(ce.getTimeOfOccurrence().getSimulatedTime());
-        message.append(")\n");
-        this.logMessage(message.toString());
+		StringBuffer sb = new StringBuffer("execute the external event: ");
+		sb.append(ce.eventAsString());
+		sb.append(".\n");
+		this.logMessage(sb.toString());
 
-        assert	ce instanceof AbstractWindTurbineEvent;
-        // events have a method execute on to perform their effect on this
-        // model
-        ce.executeOn(this);
+		// the next call will update the current state of the heater and if
+		// this state has changed, it put the boolean consumptionHasChanged
+		// at true, which in turn will trigger an immediate internal transition
+		// to update the current intensity of the heater electricity
+		// consumption.
+		ce.executeOn(this);
 
-        super.userDefinedExternalTransition(elapsedTime);
-    }
+		super.userDefinedExternalTransition(elapsedTime);
+	}
 
     /**
      * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
@@ -370,8 +365,8 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
 
     /**
-	 * The class <code>HeaterElectricityReport</code> implements the
-	 * simulation report for the <code>HeaterElectricityModel</code>.
+	 * The class <code>WindTurbineElectricityReport</code> implements the
+	 * simulation report for the <code>WindTurbineElectricityModel</code>.
 	 *
 	 * <p><strong>Description</strong></p>
 	 * 

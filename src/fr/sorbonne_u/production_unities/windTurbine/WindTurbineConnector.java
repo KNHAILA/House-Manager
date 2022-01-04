@@ -30,9 +30,9 @@ public class WindTurbineConnector extends AbstractConnector implements WindTurbi
 	public void stopWindTurbine() throws Exception {
 		((WindTurbineCI)this.offering).stopWindTurbine();
 	}
-	
+
 	@Override
-	public void WindIntensityControl() throws Exception {
-		((WindTurbineCI)this.offering).WindIntensityControl();
+	public double getCurrentWindSpeed() throws Exception {
+		return ((WindTurbineCI)this.offering).getCurrentWindSpeed();
 	}
 }

@@ -8,5 +8,5 @@ public interface WindTurbineImplementation {
 	
 	public boolean	isRunning() throws Exception;
 	
-	public void	WindIntensityControl() throws Exception;
+	public double getCurrentWindSpeed() throws Exception; 
 }

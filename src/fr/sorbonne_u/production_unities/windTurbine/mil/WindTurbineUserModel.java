@@ -14,8 +14,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.DoNotUseWindTurbine;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 
 /**
  * The class <code>HeaterUnitTesterModel</code> defines a model that is used
@@ -34,181 +33,143 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
 @ModelExternalEvents(exported = {DoNotUseWindTurbine.class,
-        UseWindTurbine.class
+        UseWindTurbine.class,
+        StopWindTurbine.class,
+        StartWindTurbine.class
         })
 // -----------------------------------------------------------------------------
 public class WindTurbineUserModel extends AtomicES_Model
 {
-    // -------------------------------------------------------------------------
-    // Constants and variables
-    // -------------------------------------------------------------------------
+	 private static final long			serialVersionUID = 1L;
+	    /** URI for an instance model; works as long as only one instance is
+	     *  created.															*/
+	    public static final String			URI = WindTurbineUserModel.class.
+	            getSimpleName();
 
-    private static final long			serialVersionUID = 1L;
-    /** URI for an instance model; works as long as only one instance is
-     *  created.															*/
-    public static final String			URI = WindTurbineUserModel.class.
-            getSimpleName();
+	    /** time interval between event outputs.								*/
+	    protected static double				STEP_MEAN_DURATION = 1.0;
+	    /**	the random number generator from common math library.				*/
+	    protected final RandomDataGenerator	rg ;
 
-    /** time interval between event outputs.								*/
-    protected static double				STEP_MEAN_DURATION = 1.0;
-    /**	the random number generator from common math library.				*/
-    protected final RandomDataGenerator	rg ;
+	    // -------------------------------------------------------------------------
+	    // Constructors
+	    // -------------------------------------------------------------------------
+	    public				WindTurbineUserModel(
+	            String uri,
+	            TimeUnit simulatedTimeUnit,
+	            SimulatorI simulationEngine
+	    ) throws Exception
+	    {
+	        super(uri, simulatedTimeUnit, simulationEngine);
+	        this.rg = new RandomDataGenerator() ;
+	        this.setLogger(new StandardLogger());
+	    }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
+	    // -------------------------------------------------------------------------
+	    // Methods
+	    // -------------------------------------------------------------------------
 
-    /**
-     * create a Battery user MIL model instance.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	{@code simulatedTimeUnit != null}
-     * pre	{@code simulationEngine == null || simulationEngine instanceof AtomicEngine}
-     * post	{@code getURI() != null}
-     * post	{@code uri != null implies this.getURI().equals(uri)}
-     * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
-     * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
-     * post	{@code !isDebugModeOn()}
-     * </pre>
-     *
-     * @param uri				URI of the model.
-     * @param simulatedTimeUnit	time unit used for the simulation time.
-     * @param simulationEngine	simulation engine to which the model is attached.
-     * @throws Exception		<i>to do.</i>
-     */
-    public				WindTurbineUserModel(
-            String uri,
-            TimeUnit simulatedTimeUnit,
-            SimulatorI simulationEngine
-    ) throws Exception
-    {
-        super(uri, simulatedTimeUnit, simulationEngine);
-        this.rg = new RandomDataGenerator() ;
-        this.setLogger(new StandardLogger());
-    }
+	    protected void		generateNextEvent()
+	    {
+	        EventI current = this.eventList.peek();
+	        // compute the time of occurrence for the next event
+	        Time t = this.computeTimeOfNextEvent(current.getTimeOfOccurrence());
+	        // compute the next event type given the current event
+	        ES_EventI nextEvent = null;
+	        if (current instanceof StartWindTurbine) {
+	            nextEvent = new StopWindTurbine(t);
+	        } else if (current instanceof StopWindTurbine) {
+	            nextEvent = new StartWindTurbine(t);
+	        }
+	        // schedule the event to be executed by this model
+	        this.scheduleEvent(nextEvent);
+	    }
 
-    // -------------------------------------------------------------------------
-    // Methods
-    // -------------------------------------------------------------------------
+	    protected Time		computeTimeOfNextEvent(Time from)
+	    {
+	        // generate randomly the next time interval but force it to be
+	        // greater than 0 by returning at least 0.1
+	        double delay = Math.max(this.rg.nextGaussian(STEP_MEAN_DURATION,
+	                        STEP_MEAN_DURATION/2.0),
+	                0.1);
+	        // compute the new time by adding the delay to from
+	        Time t = from.add(new Duration(delay, this.getSimulatedTimeUnit()));
+	        return t;
+	    }
 
-    protected void		generateNextEvent()
-    {
-        EventI current = this.eventList.peek();
-        // compute the time of occurrence for the next event
-        Time t = this.computeTimeOfNextEvent(current.getTimeOfOccurrence());
-        // compute the next event type given the current event
-        ES_EventI nextEvent = null;
-        if (current instanceof UseWindTurbine) {
-            nextEvent = new DoNotUseWindTurbine(t);
-        } else if (current instanceof DoNotUseWindTurbine) {
-            nextEvent = new UseWindTurbine(t);
-        }
-        // schedule the event to be executed by this model
-        this.scheduleEvent(nextEvent);
-    }
+	    // -------------------------------------------------------------------------
+	    // DEVS simulation protocol
+	    // -------------------------------------------------------------------------
 
-    protected Time		computeTimeOfNextEvent(Time from)
-    {
-        // generate randomly the next time interval but force it to be
-        // greater than 0 by returning at least 0.1
-        double delay = Math.max(this.rg.nextGaussian(STEP_MEAN_DURATION,
-                        STEP_MEAN_DURATION/2.0),
-                0.1);
-        // compute the new time by adding the delay to from
-        Time t = from.add(new Duration(delay, this.getSimulatedTimeUnit()));
-        return t;
-    }
+	    @Override
+	    public void			initialiseState(Time initialTime)
+	    {
+	        super.initialiseState(initialTime);
 
-    // -------------------------------------------------------------------------
-    // DEVS simulation protocol
-    // -------------------------------------------------------------------------
+	        this.rg.reSeedSecure();
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
-    @Override
-    public void			initialiseState(Time initialTime)
-    {
-        super.initialiseState(initialTime);
+	        // compute the time of occurrence for the first event
+	        Time t = this.computeTimeOfNextEvent(this.getCurrentStateTime());
+	        // schedule the first event
+	        this.scheduleEvent(new StopWindTurbine(t));
+	        // re-initialisation of the time of occurrence of the next event
+	        // required here after adding a new event in the schedule.
+	        this.nextTimeAdvance = this.timeAdvance();
+	        this.timeOfNextEvent =
+	                this.getCurrentStateTime().add(this.getNextTimeAdvance());
 
-        this.rg.reSeedSecure();
+	        this.toggleDebugMode();
+	        this.logMessage("simulation begins.\n");
+	    }
 
-        // compute the time of occurrence for the first event
-        Time t = this.computeTimeOfNextEvent(this.getCurrentStateTime());
-        // schedule the first event
-        this.scheduleEvent(new DoNotUseWindTurbine(t));
-        // re-initialisation of the time of occurrence of the next event
-        // required here after adding a new event in the schedule.
-        this.nextTimeAdvance = this.timeAdvance();
-        this.timeOfNextEvent =
-                this.getCurrentStateTime().add(this.getNextTimeAdvance());
+	    @Override
+	    public ArrayList<EventI>	output()
+	    {
+	        // generate and schedule the next event
+	        if (this.eventList.peek() != null) {
+	            this.generateNextEvent();
+	        }
+	        // this will extract the next event from the event list and emit it
+	        return super.output();
+	    }
 
-        this.toggleDebugMode();
-        this.logMessage("simulation begins.\n");
-    }
+	    @Override
+	    public void			endSimulation(Time endTime) throws Exception
+	    {
+	        this.logMessage("simulation ends.\n");
+	        super.endSimulation(endTime);
+	    }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
-     */
-    @Override
-    public ArrayList<EventI>	output()
-    {
-        // generate and schedule the next event
-        if (this.eventList.peek() != null) {
-            this.generateNextEvent();
-        }
-        // this will extract the next event from the event list and emit it
-        return super.output();
-    }
+	    // -------------------------------------------------------------------------
+	    // Optional DEVS simulation protocol: simulation run parameters
+	    // -------------------------------------------------------------------------
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
-     */
-    @Override
-    public void			endSimulation(Time endTime) throws Exception
-    {
-        this.logMessage("simulation ends.\n");
-        super.endSimulation(endTime);
-    }
+	    /** run parameter name for {@code STEP_MEAN_DURATION}.					*/
+	    public static final String		STEP_MEAN_DURATION_RUNPNAME =
+	            URI + ":STEP_MEAN_DURATION";
 
-    // -------------------------------------------------------------------------
-    // Optional DEVS simulation protocol: simulation run parameters
-    // -------------------------------------------------------------------------
+	    @Override
+	    public void			setSimulationRunParameters(
+	            Map<String, Object> simParams
+	    ) throws Exception
+	    {
+	        super.setSimulationRunParameters(simParams);
 
-    /** run parameter name for {@code STEP_MEAN_DURATION}.					*/
-    public static final String		STEP_MEAN_DURATION_RUNPNAME =
-            URI + ":STEP_MEAN_DURATION";
+	        if (simParams.containsKey(STEP_MEAN_DURATION_RUNPNAME)) {
+	            STEP_MEAN_DURATION =
+	                    (double) simParams.get(STEP_MEAN_DURATION_RUNPNAME);
+	        }
+	    }
 
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
-     */
-    @Override
-    public void			setSimulationRunParameters(
-            Map<String, Object> simParams
-    ) throws Exception
-    {
-        super.setSimulationRunParameters(simParams);
+	    // -------------------------------------------------------------------------
+	    // Optional DEVS simulation protocol: simulation report
+	    // -------------------------------------------------------------------------
 
-        if (simParams.containsKey(STEP_MEAN_DURATION_RUNPNAME)) {
-            STEP_MEAN_DURATION =
-                    (double) simParams.get(STEP_MEAN_DURATION_RUNPNAME);
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Optional DEVS simulation protocol: simulation report
-    // -------------------------------------------------------------------------
-
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
-     */
-    @Override
-    public SimulationReportI	getFinalReport() throws Exception
-    {
-        return null;
-    }
+	    @Override
+	    public SimulationReportI	getFinalReport() throws Exception
+	    {
+	        return null;
+	    }
 }
 // -----------------------------------------------------------------------------
 

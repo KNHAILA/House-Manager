@@ -1,151 +1,186 @@
 package fr.sorbonne_u.production_unities.windTurbine;
 
-import fr.sorbonne_u.components.AbstractComponent;
-import fr.sorbonne_u.components.annotations.RequiredInterfaces;
-import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
-import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
-@RequiredInterfaces(required={WindTurbineCI.class})
-public class WindTurbineUnitTester 
-extends	AbstractComponent
+import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
+import fr.sorbonne_u.devs_simulation.models.AtomicModel;
+import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
+import fr.sorbonne_u.devs_simulation.models.events.EventI;
+import fr.sorbonne_u.devs_simulation.models.time.Duration;
+import fr.sorbonne_u.devs_simulation.models.time.Time;
+import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
+import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
+
+// -----------------------------------------------------------------------------
+/**
+ * The class <code>ChargeWindTurbineerUnitTesterModel</code> defines a model that is used
+ * to test the models defining the ChargeWindTurbineer simulator.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant	{@code step >= 0}
+ * </pre>
+ * 
+ * <p>Created on : 2021-09-23</p>
+ * 
+ * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ */
+// -----------------------------------------------------------------------------
+@ModelExternalEvents(exported = {UseWindTurbine.class,
+								 DoNotUseWindTurbine.class,
+								 StopWindTurbine.class,
+								 StartWindTurbine.class})
+// -----------------------------------------------------------------------------
+public class			WindTurbineUnitTester
+extends		AtomicModel
 {
-
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
-	protected String windTurbineInboundPortURI;
-	protected WindTurbineOutboundPort wtop;
+	private static final long serialVersionUID = 1L;
+	/** URI for a model; works when only one instance is created.			*/
+	public static final String	URI = WindTurbineUnitTester.class.
+															getSimpleName();
+
+	/** steps in the test scenario.											*/
+	protected int	step;
 
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
 
-	protected	WindTurbineUnitTester() throws Exception
-	{
-		this(WindTurbine.Wind_Turbine_INBOUND_PORT_URI);
-	}
-
-	protected	WindTurbineUnitTester(
-		String windTurbineInboundPortURI
+	/**
+	 * create a <code>ChargeWindTurbineerUnitTesterModel</code> instance.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code simulatedTimeUnit != null}
+	 * pre	{@code simulationEngine == null || simulationEngine instanceof AtomicEngine}
+	 * post	{@code getURI() != null}
+	 * post	{@code uri != null implies this.getURI().equals(uri)}
+	 * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
+	 * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
+	 * post	{@code !isDebugModeOn()}
+	 * </pre>
+	 *
+	 * @param uri				URI of the model.
+	 * @param simulatedTimeUnit	time unit used for the simulation time.
+	 * @param simulationEngine	simulation engine to which the model is attached.
+	 * @throws Exception		<i>to do</i>.
+	 */
+	public				WindTurbineUnitTester(
+		String uri,
+		TimeUnit simulatedTimeUnit,
+		SimulatorI simulationEngine
 		) throws Exception
 	{
-		super(1, 0);
-		this.initialise(windTurbineInboundPortURI);
-	}
-
-	protected			WindTurbineUnitTester(
-		String reflectionInboundPortURI,
-		String windTurbineInboundPortURI
-		) throws Exception
-	{
-		super(reflectionInboundPortURI, 1, 0);
-		this.initialise(windTurbineInboundPortURI);
-	}
-
-	protected void		initialise(String windTurbineInboundPortURI) throws Exception
-	{
-		this.windTurbineInboundPortURI = windTurbineInboundPortURI;
-		this.wtop = new WindTurbineOutboundPort(this);
-		this.wtop.publishPort();
-
-		this.tracer.get().setTitle("WindTurbine tester component");
-		this.tracer.get().setRelativePosition(0, 1);
-		this.toggleTracing();		
+		super(uri, simulatedTimeUnit, simulationEngine);
+		this.setLogger(new StandardLogger());
 	}
 
 	// -------------------------------------------------------------------------
-	// Component services implementation
-	// -------------------------------------------------------------------------
-
-	protected void	testIsRunning()
-	{
-		this.traceMessage("testIsRunning()...\n");
-		try {
-			assertEquals(false, this.wtop.isRunning());
-		} catch (Exception e) {
-			this.traceMessage("...KO.\n" + e);
-			assertTrue(false);
-		}
-		this.traceMessage("...done.\n");
-	}
-
-	protected void	testStartStopWindTurbine()
-	{
-		this.traceMessage("testStartStopWindTurbine()...\n");
-		try {
-			assertEquals(false, this.wtop.isRunning());
-			this.wtop.startWindTurbine();
-			assertEquals(true, this.wtop.isRunning());
-			this.wtop.stopWindTurbine();
-			assertEquals(false, this.wtop.isRunning());
-		} catch (Exception e) {
-			this.traceMessage("...KO.\n");
-			assertTrue(false);
-		}
-		this.traceMessage("...done.\n");
-	}
-
-	protected void	runnAllTests()
-	{
-		this.testIsRunning();
-		this.testStartStopWindTurbine();
-	}
-
-	// -------------------------------------------------------------------------
-	// Component life-cycle
+	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#start()
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
 	 */
 	@Override
-	public synchronized void	start() throws ComponentStartException
+	public void			initialiseState(Time initialTime)
 	{
-		super.start();
+		super.initialiseState(initialTime);
+		this.step = 1;
+		this.toggleDebugMode();
+		this.logMessage("simulation begins.\n");
+	}
 
-		try {
-			this.doPortConnection(
-					this.wtop.getPortURI(),
-					this.windTurbineInboundPortURI,
-					WindTurbineConnector.class.getCanonicalName());
-		} catch (Exception e) {
-			throw new ComponentStartException(e) ;
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
+	 */
+	@Override
+	public ArrayList<EventI>	output()
+	{
+		// Simple way to implement a test scenario. Here each step generates
+		// an event sent to the other models in the standard order.
+		if (this.step > 0 && this.step < 5) {
+			ArrayList<EventI> ret = new ArrayList<EventI>();
+			switch (this.step) {
+			case 1:
+				ret.add(new StartWindTurbine(this.getTimeOfNextEvent()));
+				break;
+			case 2:
+				ret.add(new UseWindTurbine(this.getTimeOfNextEvent()));
+				break;
+			case 3:
+				ret.add(new DoNotUseWindTurbine(this.getTimeOfNextEvent()));
+				break;
+			case 4:
+				ret.add(new StopWindTurbine(this.getTimeOfNextEvent()));
+				break;
+			}
+			return ret;
+		} else {
+			return null;
 		}
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
 	 */
 	@Override
-	public synchronized void execute() throws Exception
+	public Duration		timeAdvance()
 	{
-		this.runnAllTests();
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
-	 */
-	@Override
-	public synchronized void	finalise() throws Exception
-	{
-		this.doPortDisconnection(this.wtop.getPortURI());
-		super.finalise();
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
-	 */
-	@Override
-	public synchronized void	shutdown() throws ComponentShutdownException
-	{
-		try {
-			this.wtop.unpublishPort();
-		} catch (Exception e) {
-			throw new ComponentShutdownException(e) ;
+		// As long as events have to be created and sent, the next internal
+		// transition is set at one second later, otherwise, no more internal
+		// transitions are triggered (delay = infinity).
+		if (this.step < 5) {
+			return new Duration(1.0, this.getSimulatedTimeUnit());
+		} else {
+			return Duration.INFINITY;
 		}
-		super.shutdown();
+	}
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
+	 */
+	@Override
+	public void			userDefinedInternalTransition(Duration elapsedTime)
+	{
+		super.userDefinedInternalTransition(elapsedTime);
+
+		// advance to the next step in the scenario
+		this.step++;
+	}
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
+	 */
+	@Override
+	public void			endSimulation(Time endTime) throws Exception
+	{
+		this.logMessage("simulation ends.\n");
+		super.endSimulation(endTime);
+	}
+
+	// -------------------------------------------------------------------------
+	// Optional DEVS simulation protocol: simulation report
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
+	 */
+	@Override
+	public SimulationReportI	getFinalReport() throws Exception
+	{
+		return null;
 	}
 }
+// -----------------------------------------------------------------------------
+

@@ -1,0 +1,314 @@
+package fr.sorbonne_u.production_unities.windTurbine;
+
+
+import fr.sorbonne_u.components.cyphy.plugins.devs.RTAtomicSimulatorPlugin;
+import fr.sorbonne_u.devs_simulation.architectures.RTArchitecture;
+import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
+import fr.sorbonne_u.devs_simulation.hioa.architectures.RTAtomicHIOA_Descriptor;
+import fr.sorbonne_u.devs_simulation.hioa.architectures.RTCoupledHIOA_Descriptor;
+import fr.sorbonne_u.devs_simulation.hioa.models.vars.VariableSink;
+import fr.sorbonne_u.devs_simulation.hioa.models.vars.VariableSource;
+import fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI;
+import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDescriptor;
+import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor;
+import fr.sorbonne_u.devs_simulation.models.architectures.RTAtomicModelDescriptor;
+import fr.sorbonne_u.devs_simulation.models.events.EventI;
+import fr.sorbonne_u.devs_simulation.models.events.EventSink;
+import fr.sorbonne_u.devs_simulation.models.events.EventSource;
+import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineCoupledModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
+import fr.sorbonne_u.production_unities.windTurbine.sil.WindSpeedSILModel;
+import fr.sorbonne_u.production_unities.windTurbine.sil.WindTurbineElectricitySILModel;
+import fr.sorbonne_u.production_unities.windTurbine.sil.WindTurbineStateModel;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+
+//-----------------------------------------------------------------------------
+/**
+* The class <code>ThermostatedWindTurbineRTAtomicSimulatorPlugin</code> implements
+* the simulation plug-in for the <code>ThermostatedWindTurbine</code> component.
+*
+* <p><strong>Description</strong></p>
+* 
+* <p>
+* This plug-in implementation illustrates the use of the method
+* {@code setSimulationRunParameters} to set the reference to the object
+* representing the owner component so that simulations models can refer
+* to this component to perform some operations (tracing, calling services,
+* etc.). It also illustrates the use of the method {@code getModelStateValue}
+* by the component code to access values in the state of simulation models
+* at run time. Here, this is used to simulate a room temperature sensor by
+* getting the simulated value for this in the
+* {@code WindSpeedSILModel}.
+* </p>
+* 
+* <p><strong>Invariant</strong></p>
+* 
+* <pre>
+* invariant	true
+* </pre>
+* 
+* <p>Created on : 2021-10-05</p>
+* 
+* @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+*/
+public class			SelfControlWindTurbineRTAtomicSimulatorPlugin
+extends		RTAtomicSimulatorPlugin
+{
+	// -------------------------------------------------------------------------
+	// Constants and variables
+	// -------------------------------------------------------------------------
+
+	private static final long	serialVersionUID = 1L;
+	/** simulation architectures can have URI to name them; this is the
+	 *  URI used in this example for unit tests.							*/
+	public static final String	UNIT_TEST_SIM_ARCHITECTURE_URI =
+															"UnitTestWindTurbine";
+	/** name used to pass the owner component reference as simulation
+	 *  parameter.															*/
+	public static final String	OWNER_REFERENCE_NAME = "THCRN";
+	/** name used to access the current room temperature in the
+	 *  {@code WindSpeedSILModel}.								 	*/
+	public static final String	CURRENT_WIND_SPEED = "cws";
+
+	// -------------------------------------------------------------------------
+	// DEVS simulation protocol
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#setSimulationRunParameters(java.util.Map)
+	 */
+	@Override
+	public void			setSimulationRunParameters(
+		Map<String, Object> simParams
+		) throws Exception
+	{
+		// initialise the simulation parameter giving the reference to the
+		// owner component before passing the parameters to the simulation
+		// models
+		simParams.put(OWNER_REFERENCE_NAME, this.getOwner());
+
+		// this will pass the parameters to the simulation models that will
+		// then be able to get their own parameters.
+		super.setSimulationRunParameters(simParams);
+
+		// remove the value so that the reference may not exit the context of
+		// the component
+		simParams.remove(OWNER_REFERENCE_NAME);
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AtomicSimulatorPlugin#getModelStateValue(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Object		getModelStateValue(
+		String modelURI,
+		String name
+		) throws Exception
+	{
+		assert	modelURI != null && name != null;
+
+		// In the WindTurbine model, the only accessible model state value is
+		// the current room temperature in the WindSpeedModel
+		assert	modelURI.equals(WindSpeedSILModel.URI);
+		assert	name.equals(CURRENT_WIND_SPEED);
+
+		// Get a Java reference on the object representing the corresponding
+		// simulation model.
+		ModelDescriptionI m = this.simulator.getDescendentModel(modelURI);
+		// The only model in this example that provides access to some value
+		// is the WindSpeedSILModel.
+		assert	m instanceof WindSpeedSILModel;
+
+		return ((WindSpeedSILModel)m).getCurrentWindSpeed();
+	}
+
+	// -------------------------------------------------------------------------
+	// Methods
+	// -------------------------------------------------------------------------
+
+	/**
+	 * create and set the simulation architecture internal to this component.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code simArchURI != null}
+	 * pre	{@code accFactor > 0.0}
+	 * post	true		// no postcondition.
+	 * </pre>
+	 *
+	 * @param simArchURI	URI of the simulation architecture to be created.
+	 * @param accFactor		acceleration factor used in the real time simulation.
+	 * @throws Exception	<i>to do</i>.
+	 */
+	public void			initialiseSimulationArchitecture(
+		String simArchURI,
+		double accFactor
+		) throws Exception
+	{
+		Map<String,AbstractAtomicModelDescriptor>
+									atomicModelDescriptors = new HashMap<>();
+		Map<String,CoupledModelDescriptor>
+									coupledModelDescriptors = new HashMap<>();
+
+		Set<String> submodels = new HashSet<String>();
+		submodels.add(WindTurbineStateModel.URI);
+		submodels.add(WindSpeedSILModel.URI);
+
+		Map<Class<? extends EventI>,ReexportedEvent> reexported = null;
+		Map<EventSource, EventSink[]> connections =
+									new HashMap<EventSource, EventSink[]>();
+
+		atomicModelDescriptors.put(
+				WindTurbineStateModel.URI,
+				RTAtomicModelDescriptor.create(
+						WindTurbineStateModel.class,
+						WindTurbineStateModel.URI,
+						TimeUnit.SECONDS,
+						null,
+						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+						accFactor));
+		atomicModelDescriptors.put(
+				WindSpeedSILModel.URI,
+				RTAtomicHIOA_Descriptor.create(
+						WindSpeedSILModel.class,
+						WindSpeedSILModel.URI,
+						TimeUnit.SECONDS,
+						null,
+						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+						accFactor));
+
+		if (UNIT_TEST_SIM_ARCHITECTURE_URI.equals(simArchURI)) {
+			// when executed as a unit test, the simulation architecture
+			// includes the WindTurbine electricity model and events
+			// exported by the state model are directed to the electricity
+			// model
+			submodels.add(WindTurbineElectricitySILModel.URI);
+
+			atomicModelDescriptors.put(
+					WindTurbineElectricitySILModel.URI,
+					RTAtomicHIOA_Descriptor.create(
+							WindTurbineElectricitySILModel.class,
+							WindTurbineElectricitySILModel.URI,
+							TimeUnit.SECONDS,
+							null,
+							SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+							accFactor));
+
+			connections.put(
+					new EventSource(WindTurbineStateModel.URI,
+									StartWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindTurbineElectricitySILModel.URI,
+										  StartWindTurbine.class)
+					});
+			connections.put(
+					new EventSource(WindTurbineStateModel.URI,
+							 		StopWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindTurbineElectricitySILModel.URI,
+										  StopWindTurbine.class)
+					});
+			connections.put(
+					new EventSource(WindTurbineStateModel.URI,
+									UseWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindTurbineElectricitySILModel.URI,
+										  UseWindTurbine.class),
+							new EventSink(WindSpeedSILModel.URI,
+									  	  UseWindTurbine.class)
+					});
+			connections.put(
+					new EventSource(WindTurbineStateModel.URI,
+									DoNotUseWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindTurbineElectricitySILModel.URI,
+										  DoNotUseWindTurbine.class),
+							new EventSink(WindSpeedSILModel.URI,
+										  DoNotUseWindTurbine.class)
+					});
+		} else {
+			// when *not* executed as a unit test, the simulation architecture
+			// does not include the hair dryer electricity model and events
+			// exported by the state model are reexported by the coupled model
+
+			connections.put(
+					new EventSource(WindTurbineStateModel.URI,
+									UseWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindSpeedSILModel.URI,
+									  	  UseWindTurbine.class)
+					});
+			connections.put(
+					new EventSource(WindTurbineStateModel.URI,
+									DoNotUseWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindSpeedSILModel.URI,
+										  DoNotUseWindTurbine.class)
+					});
+
+			reexported =
+					new HashMap<Class<? extends EventI>,ReexportedEvent>();
+			reexported.put(StartWindTurbine.class,
+						   new ReexportedEvent(WindTurbineStateModel.URI,
+								   			   StartWindTurbine.class));
+			reexported.put(StopWindTurbine.class,
+					   new ReexportedEvent(WindTurbineStateModel.URI,
+							   			   StopWindTurbine.class));
+			reexported.put(UseWindTurbine.class,
+					   new ReexportedEvent(WindTurbineStateModel.URI,
+							   			   UseWindTurbine.class));
+			reexported.put(DoNotUseWindTurbine.class,
+					   new ReexportedEvent(WindTurbineStateModel.URI,
+							   			   DoNotUseWindTurbine.class));
+		}
+
+		// variable bindings between exporting and importing models
+		Map<VariableSource,VariableSink[]> bindings =
+							new HashMap<VariableSource,VariableSink[]>();
+
+		bindings.put(new VariableSource("currentWindSpeed",
+										Double.class,
+										WindSpeedSILModel.URI),
+					 new VariableSink[] {
+							 new VariableSink("currentWindSpeed",
+									 		  Double.class,
+									 		 WindTurbineElectricitySILModel.URI)
+					 });
+
+		coupledModelDescriptors.put(
+				WindTurbineCoupledModel.URI,
+				new RTCoupledHIOA_Descriptor(
+						WindTurbineCoupledModel.class,
+						WindTurbineCoupledModel.URI,
+						submodels,
+						null,
+						reexported,
+						connections,
+						null,
+						SimulationEngineCreationMode.COORDINATION_RT_ENGINE,
+						null,
+						null,
+						bindings,
+						accFactor));
+
+		// this sets the architecture in the plug-in for further reference
+		// and use
+		this.setSimulationArchitecture(
+				new RTArchitecture(
+						simArchURI,
+						WindTurbineCoupledModel.URI,
+						atomicModelDescriptors,
+						coupledModelDescriptors,
+						TimeUnit.SECONDS,
+						accFactor));
+	}
+}
+//-----------------------------------------------------------------------------

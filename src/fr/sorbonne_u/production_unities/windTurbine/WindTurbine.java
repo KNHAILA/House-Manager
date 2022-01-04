@@ -27,6 +27,9 @@ public class WindTurbine extends AbstractComponent implements WindTurbineImpleme
 	protected WindTurbineInboundPort wtip;
 
 	protected WindTurbineState currentState;
+	
+	/** fake current 	*/
+	public static final double		FAKE_CURRENT_WIND_SPEED = 10.0;
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
@@ -154,11 +157,11 @@ public class WindTurbine extends AbstractComponent implements WindTurbineImpleme
 	}
 
 	@Override
-	public void	startWindTurbine() throws Exception {
+	public void startWindTurbine() throws Exception {
 		if (WindTurbine.VERBOSE) {
 			this.traceMessage("WindTurbine starts.\n");
 		}
-		assert	!this.internalIsRunning();
+		assert !this.internalIsRunning();
 
 		this.currentState = WindTurbineState.ON;
 	}
@@ -168,7 +171,7 @@ public class WindTurbine extends AbstractComponent implements WindTurbineImpleme
 		if (WindTurbine.VERBOSE) {
 			this.traceMessage("Wind turbine stops.\n");
 		}
-		assert	this.internalIsRunning();
+		assert this.internalIsRunning();
 
 		this.currentState = WindTurbineState.OFF;
 
@@ -177,15 +180,19 @@ public class WindTurbine extends AbstractComponent implements WindTurbineImpleme
 	@Override
 	public boolean isRunning() throws Exception {
 		if (WindTurbine.VERBOSE) {
-			this.traceMessage("Wind turbine returns its state: " +
-											this.currentState + ".\n");
+			this.traceMessage("Wind turbine returns its state: " + this.currentState + ".\n");
 		}
 		return this.internalIsRunning();
 	}
 
 	@Override
-	public void WindIntensityControl() throws Exception {
-		// TODO Auto-generated method stub
+	public double getCurrentWindSpeed() throws Exception {
+		double currentSpeed = FAKE_CURRENT_WIND_SPEED;
+		if (WindTurbine.VERBOSE) {
+			this.traceMessage("Wind Turbine returns the current" + " wind speed " + currentSpeed + ".\n");
+		}
+
+		return currentSpeed;
 
 	}
 
@@ -193,12 +200,11 @@ public class WindTurbine extends AbstractComponent implements WindTurbineImpleme
 	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
 	 */
 	@Override
-	public synchronized void shutdown() throws ComponentShutdownException
-	{
+	public synchronized void shutdown() throws ComponentShutdownException {
 		try {
 			this.wtip.unpublishPort();
 		} catch (Exception e) {
-			throw new ComponentShutdownException(e) ;
+			throw new ComponentShutdownException(e);
 		}
 		super.shutdown();
 	}
