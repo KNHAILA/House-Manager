@@ -19,7 +19,7 @@ import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotMiniHydroelectricDam;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotUseMiniHydroelectricDam;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniHydroelectricDam;
 
 /**
@@ -116,10 +116,10 @@ public class RunMiniHydroelectricDamUnitarySimulation
                     new HashMap<EventSource,EventSink[]>();
 
             connections.put(
-                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotMiniHydroelectricDam.class),
+                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotUseMiniHydroelectricDam.class),
                     new EventSink[] {
                             new EventSink(MiniHydroelectricDamElectricityModel.URI,
-                            		DoNotMiniHydroelectricDam.class)
+                            		DoNotUseMiniHydroelectricDam.class)
                     });
         
             

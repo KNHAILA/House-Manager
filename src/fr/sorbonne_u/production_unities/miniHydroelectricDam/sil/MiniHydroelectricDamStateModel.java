@@ -59,8 +59,8 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 */
 //-----------------------------------------------------------------------------
 @ModelExternalEvents(
-		imported = {StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class,DoNotMiniHydroelectricDam.class, StartMiniHydroelectricDam.class},
-		exported = {StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class,DoNotMiniHydroelectricDam.class, StartMiniHydroelectricDam.class})
+		imported = {StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class,DoNotUseMiniHydroelectricDam.class, StartMiniHydroelectricDam.class},
+		exported = {StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class,DoNotUseMiniHydroelectricDam.class, StartMiniHydroelectricDam.class})
 //-----------------------------------------------------------------------------
 public class			MiniHydroelectricDamStateModel
 extends		AtomicModel

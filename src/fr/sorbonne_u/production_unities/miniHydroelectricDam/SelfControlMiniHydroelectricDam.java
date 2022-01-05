@@ -446,7 +446,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 		this.isWorking = true;
 
 		if (this.isSILsimulated) {
-			this.simulatorPlugin.triggerExternalEvent(MiniHydroelectricDamStateModel.URI, t -> new DoNotMiniHydroelectricDam(t));
+			this.simulatorPlugin.triggerExternalEvent(MiniHydroelectricDamStateModel.URI, t -> new DoNotUseMiniHydroelectricDam(t));
 		}
 	}
 

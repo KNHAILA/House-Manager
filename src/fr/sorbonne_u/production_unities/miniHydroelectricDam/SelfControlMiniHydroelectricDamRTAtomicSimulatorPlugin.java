@@ -227,12 +227,12 @@ extends		RTAtomicSimulatorPlugin
 					});
 			connections.put(
 					new EventSource(MiniHydroelectricDamStateModel.URI,
-									DoNotMiniHydroelectricDam.class),
+							DoNotUseMiniHydroelectricDam.class),
 					new EventSink[] {
 							new EventSink(MiniHydroelectricDamElectricitySILModel.URI,
-										  DoNotMiniHydroelectricDam.class),
+									DoNotUseMiniHydroelectricDam.class),
 							new EventSink(WaterVolumeSILModel.URI,
-										  DoNotMiniHydroelectricDam.class)
+									DoNotUseMiniHydroelectricDam.class)
 					});
 		} else {
 			// when *not* executed as a unit test, the simulation architecture
@@ -248,10 +248,10 @@ extends		RTAtomicSimulatorPlugin
 					});
 			connections.put(
 					new EventSource(MiniHydroelectricDamStateModel.URI,
-									DoNotMiniHydroelectricDam.class),
+							DoNotUseMiniHydroelectricDam.class),
 					new EventSink[] {
 							new EventSink(WaterVolumeSILModel.URI,
-										  DoNotMiniHydroelectricDam.class)
+									DoNotUseMiniHydroelectricDam.class)
 					});
 
 			reexported =
@@ -265,9 +265,9 @@ extends		RTAtomicSimulatorPlugin
 			reexported.put(UseMiniHydroelectricDam.class,
 					   new ReexportedEvent(MiniHydroelectricDamStateModel.URI,
 							   			   UseMiniHydroelectricDam.class));
-			reexported.put(DoNotMiniHydroelectricDam.class,
+			reexported.put(DoNotUseMiniHydroelectricDam.class,
 					   new ReexportedEvent(MiniHydroelectricDamStateModel.URI,
-							   			   DoNotMiniHydroelectricDam.class));
+							   DoNotUseMiniHydroelectricDam.class));
 		}
 
 		// variable bindings between exporting and importing models

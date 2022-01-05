@@ -21,7 +21,7 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectr
  * 
  * @author	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">Kaoutar NHAILA</a>
  */
-public class DoNotMiniHydroelectricDam extends AbstractMiniHydroelectricDamEvent
+public class DoNotUseMiniHydroelectricDam extends AbstractMiniHydroelectricDamEvent
 {
     // -------------------------------------------------------------------------
     // Constants and variables
@@ -33,7 +33,7 @@ public class DoNotMiniHydroelectricDam extends AbstractMiniHydroelectricDamEvent
     // Constructors
     // -------------------------------------------------------------------------
 
-    public	DoNotMiniHydroelectricDam(Time timeOfOccurrence)
+    public	DoNotUseMiniHydroelectricDam(Time timeOfOccurrence)
     {
         super(timeOfOccurrence, null);
     }

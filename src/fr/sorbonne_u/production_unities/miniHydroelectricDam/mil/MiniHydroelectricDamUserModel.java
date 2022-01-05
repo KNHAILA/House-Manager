@@ -14,7 +14,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotMiniHydroelectricDam;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotUseMiniHydroelectricDam;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniHydroelectricDam;
 
 
@@ -34,7 +34,7 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniH
  * 
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-@ModelExternalEvents(exported = {DoNotMiniHydroelectricDam.class,
+@ModelExternalEvents(exported = {DoNotUseMiniHydroelectricDam.class,
         UseMiniHydroelectricDam.class
         })
 // -----------------------------------------------------------------------------
@@ -102,8 +102,8 @@ public class MiniHydroelectricDamUserModel extends AtomicES_Model
         // compute the next event type given the current event
         ES_EventI nextEvent = null;
         if (current instanceof UseMiniHydroelectricDam) {
-            nextEvent = new DoNotMiniHydroelectricDam(t);
-        } else if (current instanceof DoNotMiniHydroelectricDam) {
+            nextEvent = new DoNotUseMiniHydroelectricDam(t);
+        } else if (current instanceof DoNotUseMiniHydroelectricDam) {
             nextEvent = new UseMiniHydroelectricDam(t);
         }
         // schedule the event to be executed by this model
@@ -136,7 +136,7 @@ public class MiniHydroelectricDamUserModel extends AtomicES_Model
         // compute the time of occurrence for the first event
         Time t = this.computeTimeOfNextEvent(this.getCurrentStateTime());
         // schedule the first event
-        this.scheduleEvent(new DoNotMiniHydroelectricDam(t));
+        this.scheduleEvent(new DoNotUseMiniHydroelectricDam(t));
         // re-initialisation of the time of occurrence of the next event
         // required here after adding a new event in the schedule.
         this.nextTimeAdvance = this.timeAdvance();
