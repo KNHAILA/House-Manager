@@ -8,6 +8,8 @@
 	<required>java.time.Duration</required>
 	<required>java.time.LocalTime</required>
 	<instance-var type="boolean" name="isPlanned" static-init="false"/>
+	<instance-var type="LocalTime" name="startTime" static-init="null"/>
+	<instance-var type="Duration" name="duration" static-init="null"/>
 	<on>
 		<body equipmentRef="washingMachine">
 		return isPlanned || washingMachine.isRunning();
@@ -38,31 +40,36 @@
 		</hasPlan>
 		<startTime>
 			<body>
-			if (isPlanned)
-				return LocalTime.now();
-			return null;
+				return startTime;
 			</body>
 		</startTime>
 		<duration>
-			<body>
-			if (isPlanned)
-				return Duration.ofHours((long)1);
-			return null;
-			</body></duration>
+			<body equipmentRef="washingMachine">
+				return washingMachine.getDuration();
+			</body>
+		</duration>
     	<deadline>
     		<body>
     			if (isPlanned)
-					return LocalTime.now();
+					return startTime.plus(duration);
 				return null;
 			</body>
 		</deadline>
 		<postpone><parameter name="d"/>
     		<body>
-    			return true;
+    		if (isPlanned)
+    			startTime = startTime.plus(d)
+    		return true;
 			</body>
 		</postpone>
 		<cancel>
     		<body>
+    			if (isPlanned)
+    			{
+    				isPlanned = false;
+    				startTime = null;
+    				duration = null;
+    			}
     			return true;
 			</body>
 		</cancel>
