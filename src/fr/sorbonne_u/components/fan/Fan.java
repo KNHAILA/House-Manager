@@ -51,13 +51,13 @@ import java.util.HashMap;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>HairDryer</code> implements the hair dryer component
+ * The class <code>HairDryer</code> implements the fan component
  * including a SIL simulation.
  *
  * <p><strong>Description</strong></p>
  * 
  * <p>
- * The hair dryer is an uncontrollable appliance, hence it does not connect
+ * The fan is an uncontrollable appliance, hence it does not connect
  * with the household energy manager. This version of the component is made to
  * act as a cyber-physical component able to use SIL simulations to test the
  * code against models of the physical world.
@@ -94,10 +94,10 @@ implements	FanImplementation
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
-	/** URI of the hair dryer reflection inbound port used.					*/
+	/** URI of the fan reflection inbound port used.					*/
 	public static final String			REFLECTION_INBOUND_PORT_URI =
 												"HAIR-DRYER-rip";
-	/** URI of the hair dryer inbound port used in tests.					*/
+	/** URI of the fan inbound port used in tests.					*/
 	public static final String			INBOUND_PORT_URI =
 												"HAIR-DRYER-INBOUND-PORT-URI";
 
@@ -106,9 +106,9 @@ implements	FanImplementation
 	public static final State	INITIAL_STATE = State.OFF;
 	public static final Mode	INITIAL_MODE = Mode.LOW;
 
-	/** current state (on, off) of the hair dryer.							*/
+	/** current state (on, off) of the fan.							*/
 	protected State		currentState;
-	/** current mode of operation (low, high) of the hair dryer.			*/
+	/** current mode of operation (low, high) of the fan.			*/
 	protected Mode			currentMode;
 
 	/** inbound port offering the <code>HairDryerCI</code> interface.		*/
@@ -136,7 +136,7 @@ implements	FanImplementation
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create a hair dryer component including a SIL simulation.
+	 * create a fan component including a SIL simulation.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -164,7 +164,7 @@ implements	FanImplementation
 	}
 
 	/**
-	 * create a hair dryer component.
+	 * create a fan component.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -177,7 +177,7 @@ implements	FanImplementation
 	 * post	{@code getMode() == HairDryerMode.LOW}
 	 * </pre>
 	 * 
-	 * @param hairDryerInboundPortURI	URI of the hair dryer inbound port.
+	 * @param hairDryerInboundPortURI	URI of the fan inbound port.
 	 * @param simArchitectureURI		URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest		true if the component executes as a unit test, false otherwise.
 	 * @throws Exception				<i>to do</i>.
@@ -195,7 +195,7 @@ implements	FanImplementation
 	}
 
 	/**
-	 * create a hair dryer component with the given reflection innbound port
+	 * create a fan component with the given reflection innbound port
 	 * URI.
 	 * 
 	 * <p><strong>Contract</strong></p>
@@ -211,7 +211,7 @@ implements	FanImplementation
 	 * </pre>
 	 *
 	 * @param reflectionInboundPortURI	URI of the reflection innbound port of the component.
-	 * @param hairDryerInboundPortURI	URI of the hair dryer inbound port.
+	 * @param hairDryerInboundPortURI	URI of the fan inbound port.
 	 * @param simArchitectureURI		URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest		true if the component executes as a unit test, false otherwise.
 	 * @throws Exception				<i>to do</i>.
@@ -229,7 +229,7 @@ implements	FanImplementation
 	}
 
 	/**
-	 * initialise the hair dryer component.
+	 * initialise the fan component.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -242,7 +242,7 @@ implements	FanImplementation
 	 * post	{@code getMode() == HairDryerMode.LOW}
 	 * </pre>
 	 * 
-	 * @param hairDryerInboundPortURI	URI of the hair dryer inbound port.
+	 * @param hairDryerInboundPortURI	URI of the fan inbound port.
 	 * @param simArchitectureURI		URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest		true if the component executes as a unit test, false otherwise.
 	 * @throws Exception				<i>to do</i>.
@@ -271,7 +271,7 @@ implements	FanImplementation
 		this.hdip.publishPort();
 
 		if (Fan.VERBOSE) {
-			this.tracer.get().setTitle("Hair dryer component");
+			this.tracer.get().setTitle("fan component");
 			this.tracer.get().setRelativePosition(2, 0);
 			this.toggleTracing();
 		}
@@ -289,7 +289,7 @@ implements	FanImplementation
 	{
 		super.start();
 
-		this.traceMessage("Hair dryer starts.\n");
+		this.traceMessage("fan starts.\n");
 
 		if (this.isSILsimulated) {
 			this.createNewExecutorService(
@@ -334,7 +334,7 @@ implements	FanImplementation
 	@Override
 	public synchronized void	shutdown() throws ComponentShutdownException
 	{
-		this.traceMessage("Hair dryer stops.\n");
+		this.traceMessage("fan stops.\n");
 
 		try {
 			this.hdip.unpublishPort();
@@ -355,7 +355,7 @@ implements	FanImplementation
 	public State	getState() throws Exception
 	{
 		if (Fan.VERBOSE) {
-			this.traceMessage("Hair dryer returns its state : " +
+			this.traceMessage("fan returns its state : " +
 													this.currentState + ".\n");
 		}
 
@@ -369,7 +369,7 @@ implements	FanImplementation
 	public Mode	getMode() throws Exception
 	{
 		if (Fan.VERBOSE) {
-			this.traceMessage("Hair dryer returns its mode : " +
+			this.traceMessage("fan returns its mode : " +
 													this.currentMode + ".\n");
 		}
 
@@ -387,7 +387,7 @@ implements	FanImplementation
 										"getState() == HairDryerState.OFF");
 
 		if (Fan.VERBOSE) {
-			this.traceMessage("Hair dryer is turned on.\n");
+			this.traceMessage("fan is turned on.\n");
 		}
 
 		this.currentState = State.ON;
@@ -396,7 +396,7 @@ implements	FanImplementation
 		if (this.isSILsimulated) {
 			// trigger an immediate SwitchOnHairDryer event on the
 			// HairDryerStateModel, which in turn will emit this event
-			// towards the other models of the hair dryer
+			// towards the other models of the fan
 			// the t parameter in the lambda expression represents the current
 			// simulation time to be provided by he simulator before passing
 			// the event instance to the model
@@ -417,7 +417,7 @@ implements	FanImplementation
 										"getState() == HairDryerState.ON");
 
 		if (Fan.VERBOSE) {
-			this.traceMessage("Hair dryer is turned off.\n");
+			this.traceMessage("fan is turned off.\n");
 		}
 
 		this.currentState = State.OFF;
@@ -425,7 +425,7 @@ implements	FanImplementation
 		if (this.isSILsimulated) {
 			// trigger an immediate SwitchOffHairDryer event on the
 			// HairDryerStateModel, which in turn will emit this event
-			// towards the other models of the hair dryer
+			// towards the other models of the fan
 			// the t parameter in the lambda expression represents the current
 			// simulation time to be provided by he simulator before passing
 			// the event instance to the model
@@ -448,7 +448,7 @@ implements	FanImplementation
 					new PreconditionException("getMode() == HairDryerMode.LOW");
 
 		if (Fan.VERBOSE) {
-			this.traceMessage("Hair dryer is set high.\n");
+			this.traceMessage("fan is set high.\n");
 		}
 
 		this.currentMode = Mode.HIGH;
@@ -456,7 +456,7 @@ implements	FanImplementation
 		if (this.isSILsimulated) {
 			// trigger an immediate SetHighHairDryer event on the
 			// HairDryerStateModel, which in turn will emit this event
-			// towards the other models of the hair dryer
+			// towards the other models of the fan
 			// the t parameter in the lambda expression represents the current
 			// simulation time to be provided by he simulator before passing
 			// the event instance to the model
@@ -480,7 +480,7 @@ implements	FanImplementation
 										"getMode() == HairDryerMode.HIGH");
 
 		if (Fan.VERBOSE) {
-			this.traceMessage("Hair dryer is set low.\n");
+			this.traceMessage("fan is set low.\n");
 		}
 
 		this.currentMode = Mode.LOW;
@@ -488,7 +488,7 @@ implements	FanImplementation
 		if (this.isSILsimulated) {
 			// trigger an immediate SetLowHairDryer event on the
 			// HairDryerStateModel, which in turn will emit this event
-			// towards the other models of the hair dryer
+			// towards the other models of the fan
 			// the t parameter in the lambda expression represents the current
 			// simulation time to be provided by the simulator before passing
 			// the event instance to the model

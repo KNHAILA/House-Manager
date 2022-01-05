@@ -36,6 +36,7 @@ import fr.sorbonne_u.components.AbstractComponent;
 
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import fr.sorbonne_u.components.fan.Fan;
+import fr.sorbonne_u.components.refrigerator.Refrigerator;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.hem.HEM;
 import fr.sorbonne_u.meter.ElectricMeter;
@@ -96,22 +97,26 @@ extends		AbstractCVM
 				// a SIL simulation architecture for integration test and the
 				// second 'false' that it must *not* be executed as a unit test.
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
+		
+		//water heater
 		AbstractComponent.createComponent(
 				ThermostatedWaterHeater.class.getCanonicalName(),
-				// the first actual parameter tells the component to create
-				// a SIL simulation architecture for integration test and the
-				// second 'true' that it must be executed as a unit test.
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+		
+		//refrigerator
+		AbstractComponent.createComponent(
+				Refrigerator.class.getCanonicalName(),
+				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+		
+		//Meter
 		AbstractComponent.createComponent(
 				ElectricMeter.class.getCanonicalName(),
-				// the first actual parameter tells the component to create
-				// a SIL simulation architecture for integration test and the
-				// second 'false' that it must *not* be executed as a unit test.
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
+		
+		
 		AbstractComponent.createComponent(
 				HEM.class.getCanonicalName(),
 				new Object[]{false});
-
 		AbstractComponent.createComponent(
 				SIL_Coordinator.class.getCanonicalName(),
 				new Object[]{});

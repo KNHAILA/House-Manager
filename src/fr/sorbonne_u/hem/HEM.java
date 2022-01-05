@@ -1,225 +1,242 @@
 package fr.sorbonne_u.hem;
 
 
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import fr.sorbonne_u.components.AbstractComponent;
-import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
-import fr.sorbonne_u.components.connectors.AbstractConnector;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import fr.sorbonne_u.hem.registration.RegistrationCI;
-import fr.sorbonne_u.hem.registration.RegistrationImplementation;
-import fr.sorbonne_u.hem.registration.RegistrationInboundPort;
-import fr.sorbonne_u.interfaces.PlanningEquipmentControlCI;
+import fr.sorbonne_u.components.refrigerator.Refrigerator;
+import fr.sorbonne_u.components.refrigerator.RefrigeratorCI;
+import fr.sorbonne_u.components.refrigerator.RefrigeratorConnector;
+import fr.sorbonne_u.components.refrigerator.RefrigeratorOutboundPort;
+import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
+import fr.sorbonne_u.components.waterHeater.WaterHeaterCI;
+import fr.sorbonne_u.components.waterHeater.WaterHeaterConnector;
+import fr.sorbonne_u.components.waterHeater.WaterHeaterOutboundPort;
 import fr.sorbonne_u.interfaces.StandardEquipmentControlCI;
 import fr.sorbonne_u.interfaces.SuspensionEquipmentControlCI;
 import fr.sorbonne_u.meter.ElectricMeter;
 import fr.sorbonne_u.meter.ElectricMeterCI;
 import fr.sorbonne_u.meter.ElectricMeterConnector;
 import fr.sorbonne_u.meter.ElectricMeterOutboundPort;
-import fr.sorbonne_u.production_unities.windTurbine.WindTurbine;
-import fr.sorbonne_u.production_unities.windTurbine.WindTurbineConnector;
 import fr.sorbonne_u.production_unities.windTurbine.WindTurbineOutboundPort;
-import fr.sorbonne_u.storage.battery.Battery;
-import fr.sorbonne_u.storage.battery.BatteryCI;
-import fr.sorbonne_u.storage.battery.BatteryConnector;
 import fr.sorbonne_u.storage.battery.BatteryOutboundPort;
-import fr.sorbonne_u.treatements.ConnectorGenerator;
-import fr.sorbonne_u.treatements.ParseXML;
-import fr.sorbonne_u.treatements.XML;
 
 
-@RequiredInterfaces(required =	{StandardEquipmentControlCI.class,
-		 SuspensionEquipmentControlCI.class,
-		 ElectricMeterCI.class,
-		 BatteryCI.class})
-
-@OfferedInterfaces(offered={RegistrationCI.class})
-
-public class HEM
-extends	AbstractComponent implements RegistrationImplementation
+// -----------------------------------------------------------------------------
+/**
+ * The class <code>HEM</code> implements the basis for a household energy
+ * management component.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p>
+ * As is, this component is only a very limited starting point for the actual
+ * component. The given code is there only to ease the understanding of the
+ * objectives, but most of it must be replaced to get the correct code.
+ * Especially, no registration of the components representing the appliances
+ * is given.
+ * </p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant	true
+ * </pre>
+ * 
+ * <p>Created on : 2021-09-09</p>
+ * 
+ * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ */
+@RequiredInterfaces(required = {StandardEquipmentControlCI.class,
+								SuspensionEquipmentControlCI.class,
+								ElectricMeterCI.class,
+								RefrigeratorCI.class,
+								WaterHeaterCI.class})
+public class			HEM
+extends		AbstractComponent
 {
+	// -------------------------------------------------------------------------
+	// Constants and variables
+	// -------------------------------------------------------------------------
 
-	//Componants
-	protected RegistrationInboundPort rip;
-    protected SuspensionEquipmentControlOutboundPort	waterHeaterop;
-	//protected SuspensionEquipmentControlOutboundPort	refrigeratorop;
-    protected PlanningEquipmentControlOutboundPort washingMachineop;
-    
-    //Electric Meter 
-	protected ElectricMeterOutboundPort	meterop;
+	/** period at which the HEM looks at the current consumption and makes
+	 *  energy management decisions.									 	*/
+	protected static final long		MANAGEMENT_PERIOD = 1;
+	/** time unit to interpret {@code MANAGEMENT_PERIOD}.					*/
+	protected static final TimeUnit	MANAGEMENT_PERIOD_TIME_UNIT =
+															TimeUnit.SECONDS;
+
+	/** true if the component executes in a unit test mode, false
+	 *  otherwise.															*/
+	protected boolean		executesAsUnitTest;
+	/** future allowing to act upon the management task.					*/
+	protected Future<?>		managementTaskFuture;
+
+	//outbound port
+	protected RefrigeratorOutboundPort	refrigeratorop;
+	protected WaterHeaterOutboundPort	waterHeaterop;
 	
-	//Storage
+	protected PlanningEquipmentControlOutboundPort washingMachineop;
+	protected ElectricMeterOutboundPort					meterop;
+	
 	protected BatteryOutboundPort batteryop;
-	
-	//Production Unit
 	protected WindTurbineOutboundPort windTurbineop;
 	
 	
-	public static final String		INBOUND_PORT_URI =
-			"HEM-INBOUND-PORT-URI";
 	
+	public static final String		INBOUND_PORT_URI = "HEM-INBOUND-PORT-URI";
 	
-	protected HEM() throws Exception{
-		super(1, 0);
-		this.rip = new RegistrationInboundPort(INBOUND_PORT_URI, this);
-		this.rip.publishPort();
-		
-		this.meterop = new ElectricMeterOutboundPort(this);
-		this.meterop.publishPort();
-		
-		this.batteryop = new BatteryOutboundPort(this);
-		this.batteryop.publishPort();
-		
-		this.windTurbineop = new WindTurbineOutboundPort(this);
-		this.windTurbineop.publishPort();
-		
-	}
-	protected HEM(
-			String registrationInboundPortURI
-			) throws Exception
-		{
-			super(1, 0);
-			this.initialise(registrationInboundPortURI);
-		}
-	
-	protected	HEM(
-			String reflectionInboundPortURI,
-			String registrationInboundPortURI
-			) throws Exception
-		{
-			super(reflectionInboundPortURI, 1, 0);
-			this.initialise(registrationInboundPortURI);
-		}
-	
-	
-	protected void	initialise(String registrationInboundPortURI)
-	throws Exception
-	{
-		assert registrationInboundPortURI != null;
-		assert !registrationInboundPortURI.isEmpty();
+	// -------------------------------------------------------------------------
+	// Constructors
+	// -------------------------------------------------------------------------
 
-		this.tracer.get().setTitle("Refrigerator component");
-		this.tracer.get().setRelativePosition(1, 1);
-		this.toggleTracing();		
+	/**
+	 * create a HEM instance.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	true		// no precondition.
+	 * post	true		// no postcondition.
+	 * </pre>
+	 *
+	 * @param executesAsUnitTest	true if the component executes in a unit test mode, false otherwise.
+	 */
+	protected 			HEM(
+		boolean executesAsUnitTest
+		)
+	{
+		super(1, 1);
+
+		this.executesAsUnitTest = executesAsUnitTest;
+
+		this.tracer.get().setTitle("Home Energy Manager component");
+		this.tracer.get().setRelativePosition(1, 0);
+		this.toggleTracing();
+		
 	}
-	
+
+	// -------------------------------------------------------------------------
+	// Internal methods
+	// -------------------------------------------------------------------------
+
+	/**
+	 * first draft of the management task for the HEM.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	true		// no precondition.
+	 * post	true		// no postcondition.
+	 * </pre>
+	 *
+	 * @throws Exception	<i>to do</i>.
+	 */
+	protected void		manage() throws Exception
+	{
+		this.traceMessage("Electric meter current consumption? " +
+						  this.meterop.getCurrentConsumption() + "\n");
+		this.traceMessage("Electric meter current production? " +
+						  this.meterop.getCurrentProduction() + "\n");
+	}
+
+	// -------------------------------------------------------------------------
+	// Component life-cycle
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#start()
+	 */
 	@Override
-	public synchronized void start() throws ComponentStartException
+	public synchronized void	start() throws ComponentStartException
 	{
 		super.start();
 
+		this.traceMessage("Home Energy Manager starts.\n");
+
 		try {
+			this.meterop = new ElectricMeterOutboundPort(this);
+			this.meterop.publishPort();
 			this.doPortConnection(
 					this.meterop.getPortURI(),
 					ElectricMeter.ELECTRIC_METER_INBOUND_PORT_URI,
 					ElectricMeterConnector.class.getCanonicalName());
-			
+
+			this.waterHeaterop = new WaterHeaterOutboundPort(this);
+			this.waterHeaterop.publishPort();
 			this.doPortConnection(
-					this.batteryop.getPortURI(),
-					Battery.Battery_INBOUND_PORT_URI,
-					BatteryConnector.class.getCanonicalName());
+					this.waterHeaterop.getPortURI(),
+					ThermostatedWaterHeater.INBOUND_PORT_URI,
+					WaterHeaterConnector.class.getCanonicalName());
 			
+			this.refrigeratorop = new RefrigeratorOutboundPort(this);
+			this.refrigeratorop.publishPort();
 			this.doPortConnection(
-					this.windTurbineop.getPortURI(),
-					WindTurbine.Wind_Turbine_INBOUND_PORT_URI,
-					WindTurbineConnector.class.getCanonicalName());
+					this.refrigeratorop.getPortURI(),
+					Refrigerator.INBOUND_PORT_URI,
+					RefrigeratorConnector.class.getCanonicalName());
 			
 		} catch (Exception e) {
 			throw new ComponentStartException(e) ;
 		}
 	}
-	
+
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
 	 */
 	@Override
-	public synchronized void execute() throws Exception
+	public synchronized void	execute() throws Exception
 	{
-		// simplified integration testing.
-		
-		//Electric meter
-		this.traceMessage("Electric meter current consumption? " +
+		if (this.executesAsUnitTest) {
+			// simplified integration testing.
+			this.traceMessage("Electric meter current consumption? " +
 				this.meterop.getCurrentConsumption() + "\n");
-		this.traceMessage("Electric meter current production? " +
+			this.traceMessage("Electric meter current production? " +
 				this.meterop.getCurrentProduction() + "\n");
-		
-		
-		//Battery
-		this.traceMessage("Battery is unisg? " +
-				this.batteryop.isUsing() + "\n");
-		this.traceMessage("Active Battery");
-		this.batteryop.activeBattery();
-		this.traceMessage("Battery is unisg? " +
-				this.batteryop.isUsing() + "\n");
-		this.traceMessage("Battry remain charge percentage " +
-				this.batteryop.remainingChargePercentage() + "\n");
-		this.traceMessage("Charge Battery");
-		this.batteryop.chargeBattery();
-		this.traceMessage("Battry remain charge percentage " +
-				this.batteryop.remainingChargePercentage() + "\n");
-		this.traceMessage("Decharge Battery");
-		this.batteryop.dechargeBattery();
-		this.traceMessage("Battry remain charge percentage " +
-				this.batteryop.remainingChargePercentage() + "\n");
-		
-		//WindTurbine
-		this.traceMessage("Start Wind Turbine");
-		this.windTurbineop.startWindTurbine();
-		this.traceMessage("Wind Turbine is running? " +
-				this.windTurbineop.isRunning() + "\n");
-		this.traceMessage("Stop Wind Turbine");
-		this.windTurbineop.stopWindTurbine();
-		
-		
-		//Washing Machine
-		this.traceMessage("Water heater max mode index is? " +
-				this.washingMachineop.maxMode() + "\n");
-		this.traceMessage("Water heater is switched on? " +
-				this.washingMachineop.switchOn() + "\n");
-		this.traceMessage("Washing Machine has plan? " +
-				this.washingMachineop.hasPlan() + "\n");
-		this.traceMessage("Washing Machine startTime is"+
-				this.washingMachineop.startTime());
-		this.traceMessage("Water heater is switched off? " +
-				this.washingMachineop.switchOff() + "\n");
-		
-	
-		
-		//Water Heater
-		this.traceMessage("Water heater is on? " + this.waterHeaterop.on() + "\n");
-		this.traceMessage("Water heater max mode index is? " +
-				this.waterHeaterop.maxMode() + "\n");
-		this.traceMessage("Water heater is switched on? " +
-				this.waterHeaterop.switchOn() + "\n");
-		this.traceMessage("Water heater current mode is? " +
-				this.waterHeaterop.currentMode() + "\n");
-		this.traceMessage("Water heater is suspended? " +
-				this.waterHeaterop.suspended() + "\n");
-		this.traceMessage("Water heater suspends? " +
-				this.waterHeaterop.suspend() + "\n");
-		this.traceMessage("Water heater emergency? " +
-				this.waterHeaterop.emergency() + "\n");
-		this.traceMessage("Water heater resumes? " +
-				this.waterHeaterop.resume() + "\n");
-		this.traceMessage("Water heater is suspended? " +
-				this.waterHeaterop.suspended() + "\n");
-		this.traceMessage("Water heater is switched off? " +
-				this.waterHeaterop.switchOff() + "\n");
-		this.traceMessage("Water heater is on? " + this.waterHeaterop.on() + "\n");
-		
+
+			this.waterHeaterop.startWaterHeater();
+			this.traceMessage("Water Heater is on \n");
+			
+			this.refrigeratorop.startRefrigerator();
+			this.traceMessage("Refrigerator is on \n");
+			
+		} else {
+			final HEM h = this;
+			this.managementTaskFuture =
+				this.scheduleTaskAtFixedRateOnComponent(
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								h.manage();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					MANAGEMENT_PERIOD,
+					MANAGEMENT_PERIOD,
+					MANAGEMENT_PERIOD_TIME_UNIT);
+		}
 	}
-	
+
 	/**
 	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
 	 */
 	@Override
 	public synchronized void	finalise() throws Exception
 	{
-	    this.doPortDisconnection(this.meterop.getPortURI());
-	    this.doPortDisconnection(this.batteryop.getPortURI());
-	    this.doPortDisconnection(this.windTurbineop.getPortURI());
+		if (this.managementTaskFuture != null &&
+								!this.managementTaskFuture.isCancelled()) {
+			this.managementTaskFuture.cancel(true);
+		}
+		this.doPortDisconnection(this.meterop.getPortURI());
 		this.doPortDisconnection(this.waterHeaterop.getPortURI());
+		this.doPortDisconnection(this.refrigeratorop.getPortURI());
 		super.finalise();
 	}
 
@@ -229,40 +246,16 @@ extends	AbstractComponent implements RegistrationImplementation
 	@Override
 	public synchronized void	shutdown() throws ComponentShutdownException
 	{
+		this.traceMessage("Home Energy Manager stops.\n");
+
 		try {
-            this.meterop.unpublishPort();
-            this.batteryop.unpublishPort();
-            this.windTurbineop.unpublishPort();
+			this.meterop.unpublishPort();
 			this.waterHeaterop.unpublishPort();
+			this.refrigeratorop.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e) ;
 		}
 		super.shutdown();
 	}
-	
-	@Override
-	public boolean register(String uid, String controlPortURI, String path2xmlControlAdapter) throws Exception {
-		XML xmlElements = ParseXML.getXmlElements(path2xmlControlAdapter);
-		if(xmlElements.getType().equals("suspension")) {
-			Class clazz = ConnectorGenerator.makeConnectorClassJavassist("fr.sorbonne_u.components.hem" + xmlElements.getRef() + "Connector",
-					AbstractConnector.class, SuspensionEquipmentControlCI.class, Class.forName(xmlElements.getOffered()), xmlElements.getMethods(), xmlElements.getParametersOfOperations(), xmlElements.getAttributes(), xmlElements.getPackages());
-			this.waterHeaterop = new SuspensionEquipmentControlOutboundPort(this);
-			this.waterHeaterop.publishPort();
-			this.doPortConnection(
-					this.waterHeaterop.getPortURI(),
-					controlPortURI,
-					clazz.getCanonicalName());
-		}else{
-		Class clazz = ConnectorGenerator.makeConnectorClassJavassist("fr.sorbonne_u.components.hem" + xmlElements.getRef() + "Connector",
-					AbstractConnector.class, PlanningEquipmentControlCI.class, Class.forName(xmlElements.getOffered()), xmlElements.getMethods(), xmlElements.getParametersOfOperations(), xmlElements.getAttributes(), xmlElements.getPackages());
-			this.washingMachineop = new PlanningEquipmentControlOutboundPort(this);
-			this.washingMachineop.publishPort();
-			this.doPortConnection(
-					this.washingMachineop.getPortURI(),
-					controlPortURI,
-					clazz.getCanonicalName());
-		} 
-		return true;
-	}
 }
-
+// -----------------------------------------------------------------------------
