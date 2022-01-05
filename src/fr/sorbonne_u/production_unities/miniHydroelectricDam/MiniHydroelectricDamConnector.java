@@ -1,6 +1,7 @@
 package fr.sorbonne_u.production_unities.miniHydroelectricDam;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
+import fr.sorbonne_u.production_unities.windTurbine.WindTurbineCI;
 
 public class MiniHydroelectricDamConnector extends AbstractConnector implements MiniHydroelectricDamCI {
 	
@@ -29,5 +30,10 @@ public class MiniHydroelectricDamConnector extends AbstractConnector implements 
 	@Override
 	public void stopMiniHydroelectricDam() throws Exception {
 		((MiniHydroelectricDamCI)this.offering).stopMiniHydroelectricDam();
+	}
+
+	@Override
+	public double getCurrentWaterVolume() throws Exception {
+		return ((MiniHydroelectricDamCI)this.offering).getCurrentWaterVolume();
 	}
 }

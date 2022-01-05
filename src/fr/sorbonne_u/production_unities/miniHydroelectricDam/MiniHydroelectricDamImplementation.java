@@ -7,4 +7,6 @@ public interface MiniHydroelectricDamImplementation {
 	public void stopMiniHydroelectricDam() throws Exception;
 
 	public boolean isRunning() throws Exception;
+	
+	public double getCurrentWaterVolume() throws Exception; 
 }

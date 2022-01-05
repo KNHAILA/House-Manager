@@ -45,4 +45,10 @@ implements	MiniHydroelectricDamCI
 		return this.getOwner().handleRequest(
 				o -> ((MiniHydroelectricDamImplementation)o).isRunning());
 	}
+
+	@Override
+	public double getCurrentWaterVolume() throws Exception {
+		return this.getOwner().handleRequest(
+				o -> ((MiniHydroelectricDamImplementation)o).getCurrentWaterVolume());
+	}
 }

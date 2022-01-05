@@ -7,141 +7,143 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 @OfferedInterfaces(offered = { MiniHydroelectricDamCI.class })
 public class MiniHydroelectricDam extends AbstractComponent implements MiniHydroelectricDamImplementation {
 
-
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
 	protected static enum MiniHydroelectricDamState {
-		/** Mini Hydroelectric Dam is on. */
+		/** winde turbine is on. */
 		ON,
-		/** Mini Hydroelectric Dam is off. */
+		/** winde turbine is off. */
 		OFF
 	}
 
-	/** URI of the mini hydroelectricn dam in bound port used in tests. */
-	public static final String Mini_Hydroelectric_Dam_INBOUND_PORT_URI = "Wind_Turbine";
+	/** URI of the wind turbine in bound port used in tests. */
+	public static final String Wind_Turbine_INBOUND_PORT_URI = "Wind_Turbine";
 	/** when true, methods trace their actions. */
 	public static final boolean VERBOSE = true;
 
-	/** in bound port offering the <code>MiniHydroelectricDamCI</code> interface. */
-	protected MiniHydroelectricDamInboundPort mhdip;
+	/** in bound port offering the <code>WindTurbineCI</code> interface. */
+	protected MiniHydroelectricDamInboundPort wtip;
 
 	protected MiniHydroelectricDamState currentState;
+	
+	/** fake current 	*/
+	public static final double		FAKE_CURRENT_WIND_SPEED = 10.0;
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create an Mini Hydroelectric Dam component.
+	 * create an wind turbine component.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
 	 * </p>
 	 * 
 	 * <pre>
-	 * pre	{@code Mini_Hydroelectric_Dam__INBOUND_PORT_URI != null}
-	 * pre	{@code !Mini_Hydroelectric_Dam__PORT_URI.isEmpty()}
+	 * pre	{@code ELECTRIC_METER_INBOUND_PORT_URI != null}
+	 * pre	{@code !ELECTRIC_METER_INBOUND_PORT_URI.isEmpty()}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 * 
 	 * @throws Exception <i>to do</i>.
 	 */
 	protected MiniHydroelectricDam() throws Exception {
-		this(Mini_Hydroelectric_Dam_INBOUND_PORT_URI);
+		this(Wind_Turbine_INBOUND_PORT_URI);
 	}
 
 	/**
-	 * create an Mini Hydroelectric Dam component.
+	 * create an wind turbine component.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
 	 * </p>
 	 * 
 	 * <pre>
-	 * pre	{@code MiniHydroelectricDamInboundPortURI != null}
-	 * pre	{@code !MiniHydroelectricDamInboundPortURI.isEmpty()}
+	 * pre	{@code WindTurbineInboundPortURI != null}
+	 * pre	{@code !WindTurbineInboundPortURI.isEmpty()}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
-	 * @param MiniHydroelectricDamInboundPortURI URI of the mini hydroelectricn dam inbound port.
+	 * @param WindTurbineInboundPortURI URI of the wind turbine inbound port.
 	 * @throws Exception <i>to do</i>.
 	 */
-	protected MiniHydroelectricDam(String miniHydroelectricDamInboundPortURI) throws Exception {
-		this(miniHydroelectricDamInboundPortURI, 1, 0);
+	protected MiniHydroelectricDam(String windTurbineInboundPortURI) throws Exception {
+		this(windTurbineInboundPortURI, 1, 0);
 	}
 
 	/**
-	 * create an mini hydroelectricn dam component.
+	 * create an wind turbine component.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
 	 * </p>
 	 * 
 	 * <pre>
-	 * pre	{@code miniHydroelectricDamInboundPortURI != null}
-	 * pre	{@code !miniHydroelectricDamInboundPortURI.isEmpty()}
+	 * pre	{@code windTurbineInboundPortURI != null}
+	 * pre	{@code !windTurbineInboundPortURI.isEmpty()}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
-	 * @param miniHydroelectricDamInboundPortURI URI of the mini hydroelectricn dam inbound port.
+	 * @param windTurbineInboundPortURI URI of the wind turbine inbound port.
 	 * @param nbThreads                 number of standard threads.
 	 * @param nbSchedulableThreads      number of schedulable threads.
 	 * @throws Exception <i>to do</i>.
 	 */
-	protected MiniHydroelectricDam(String miniHydroelectricDamInboundPortURI, int nbThreads, int nbSchedulableThreads) throws Exception {
+	protected MiniHydroelectricDam(String windTurbineInboundPortURI, int nbThreads, int nbSchedulableThreads) throws Exception {
 		super(nbThreads, nbSchedulableThreads);
-		this.initialise(miniHydroelectricDamInboundPortURI);
+		this.initialise(windTurbineInboundPortURI);
 	}
 
 	/**
-	 * create an mini hydroelectricn dam component.
+	 * create an wind turbine component.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
 	 * </p>
 	 * 
 	 * <pre>
-	 * pre	{@code miniHydroelectricDamInboundPortURI != null}
-	 * pre	{@code !miniHydroelectricDamInboundPortURI.isEmpty()}
+	 * pre	{@code windTurbineInboundPortURI != null}
+	 * pre	{@code !windTurbineInboundPortURI.isEmpty()}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
 	 * @param reflectionInboundPortURI  URI of the reflection innbound port of the
 	 *                                  component.
-	 * @param miniHydroelectricDamInboundPortURI URI of the mini hydroelectricn dam inbound port.
+	 * @param windTurbineInboundPortURI URI of the wind turbine inbound port.
 	 * @param nbThreads                 number of standard threads.
 	 * @param nbSchedulableThreads      number of schedulable threads.
 	 * @throws Exception <i>to do</i>.
 	 */
-	protected MiniHydroelectricDam(String reflectionInboundPortURI, String miniHydroelectricDamInboundPortURI, int nbThreads,
+	protected MiniHydroelectricDam(String reflectionInboundPortURI, String windTurbineInboundPortURI, int nbThreads,
 			int nbSchedulableThreads) throws Exception {
 		super(reflectionInboundPortURI, nbThreads, nbSchedulableThreads);
-		this.initialise(miniHydroelectricDamInboundPortURI);
+		this.initialise(windTurbineInboundPortURI);
 	}
 
 	/**
-	 * initialise an mini hydroelectricn dam component.
+	 * initialise an wind turbine component.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
 	 * </p>
 	 * 
 	 * <pre>
-	 * pre	{@code miniHydroelectricDamInboundPortURI != null}
-	 * pre	{@code !miniHydroelectricDamInboundPortURI.isEmpty()}
+	 * pre	{@code windTurbineInboundPortURI != null}
+	 * pre	{@code !windTurbineInboundPortURI.isEmpty()}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
-	 * @param miniHydroelectricDamInboundPortURI URI of the mini hydroelectricn dam inbound port.
+	 * @param windTurbineInboundPortURI URI of the wind turbine inbound port.
 	 * @throws Exception <i>to do</i>.
 	 */
-	protected void initialise(String miniHydroelectricDamInboundPortURI) throws Exception {
-		assert miniHydroelectricDamInboundPortURI != null;
-		assert !miniHydroelectricDamInboundPortURI.isEmpty();
+	protected void initialise(String windTurbineInboundPortURI) throws Exception {
+		assert windTurbineInboundPortURI != null;
+		assert !windTurbineInboundPortURI.isEmpty();
 
-		this.mhdip = new MiniHydroelectricDamInboundPort(miniHydroelectricDamInboundPortURI, this);
-		this.mhdip.publishPort();
+		this.wtip = new MiniHydroelectricDamInboundPort(windTurbineInboundPortURI, this);
+		this.wtip.publishPort();
 
 		if (VERBOSE) {
 			this.tracer.get().setTitle("Wind Turbin component");
@@ -155,11 +157,11 @@ public class MiniHydroelectricDam extends AbstractComponent implements MiniHydro
 	}
 
 	@Override
-	public void	startMiniHydroelectricDam() throws Exception {
+	public void startMiniHydroelectricDam() throws Exception {
 		if (MiniHydroelectricDam.VERBOSE) {
-			this.traceMessage("MiniHydroelectricDam starts.\n");
+			this.traceMessage("WindTurbine starts.\n");
 		}
-		assert	!this.internalIsRunning();
+		assert !this.internalIsRunning();
 
 		this.currentState = MiniHydroelectricDamState.ON;
 	}
@@ -167,9 +169,9 @@ public class MiniHydroelectricDam extends AbstractComponent implements MiniHydro
 	@Override
 	public void stopMiniHydroelectricDam() throws Exception {
 		if (MiniHydroelectricDam.VERBOSE) {
-			this.traceMessage("mini hydroelectricn dam stops.\n");
+			this.traceMessage("Wind turbine stops.\n");
 		}
-		assert	this.internalIsRunning();
+		assert this.internalIsRunning();
 
 		this.currentState = MiniHydroelectricDamState.OFF;
 
@@ -178,12 +180,32 @@ public class MiniHydroelectricDam extends AbstractComponent implements MiniHydro
 	@Override
 	public boolean isRunning() throws Exception {
 		if (MiniHydroelectricDam.VERBOSE) {
-			this.traceMessage("mini hydroelectricn dam returns its state: " +
-											this.currentState + ".\n");
+			this.traceMessage("Wind turbine returns its state: " + this.currentState + ".\n");
 		}
 		return this.internalIsRunning();
 	}
+
+	@Override
+	public double getCurrentWaterVolume() throws Exception {
+		double currentSpeed = FAKE_CURRENT_WIND_SPEED;
+		if (MiniHydroelectricDam.VERBOSE) {
+			this.traceMessage("Wind Turbine returns the current" + " wind speed " + currentSpeed + ".\n");
+		}
+
+		return currentSpeed;
+
+	}
+
+	/**
+	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
+	 */
+	@Override
+	public synchronized void shutdown() throws ComponentShutdownException {
+		try {
+			this.wtip.unpublishPort();
+		} catch (Exception e) {
+			throw new ComponentShutdownException(e);
+		}
+		super.shutdown();
+	}
 }
-
-
-

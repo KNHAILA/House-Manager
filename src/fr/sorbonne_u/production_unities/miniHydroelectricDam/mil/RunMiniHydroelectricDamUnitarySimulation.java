@@ -91,10 +91,10 @@ public class RunMiniHydroelectricDamUnitarySimulation
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
-            		WaterSpeedModel.URI,
+            		WaterVolumeModel.URI,
 					AtomicHIOA_Descriptor.create(
-							WaterSpeedModel.class,
-							WaterSpeedModel.URI,
+							WaterVolumeModel.class,
+							WaterVolumeModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -108,7 +108,7 @@ public class RunMiniHydroelectricDamUnitarySimulation
             Set<String> submodels = new HashSet<String>();
             submodels.add(MiniHydroelectricDamElectricityModel.URI);
             submodels.add(MiniHydroelectricDamUserModel.URI);
-            submodels.add(WaterSpeedModel.URI);
+            submodels.add(WaterVolumeModel.URI);
 
             // event exchanging connections between exporting and importing
             // models
@@ -128,14 +128,14 @@ public class RunMiniHydroelectricDamUnitarySimulation
 					new EventSink[] {
 							new EventSink(MiniHydroelectricDamElectricityModel.URI,
 									UseMiniHydroelectricDam.class),
-							new EventSink(WaterSpeedModel.URI,
+							new EventSink(WaterVolumeModel.URI,
 									UseMiniHydroelectricDam.class)
 					});
             Map<VariableSource,VariableSink[]> bindings = new HashMap<VariableSource,VariableSink[]>();
             
             bindings.put(new VariableSource("waterSpeed",
             		Double.class,
-				WaterSpeedModel.URI),
+            		WaterVolumeModel.URI),
 			 new VariableSink[] {
 					 new VariableSink("waterSpeed",
 							 		  Double.class,
