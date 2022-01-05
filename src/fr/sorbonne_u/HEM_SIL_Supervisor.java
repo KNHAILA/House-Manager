@@ -307,7 +307,7 @@ extends		AbstractCyPhyComponent
 							WindTurbineCoupledModel.URI,
 							new Class[]{},
 							new Class[]{
-									DoNotMiniHydroelectricDam.class, StartMiniHydroelectricDam.class,
+									DoNotUseMiniHydroelectricDam.class, StartMiniHydroelectricDam.class,
 									StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class},
 							TimeUnit.SECONDS,
 							SelfControlWindTurbine.REFLECTION_INBOUND_PORT_URI));
@@ -323,7 +323,7 @@ extends		AbstractCyPhyComponent
 								SwitchOffFan.class,
 								SetHighFan.class, SetLowFan.class, SwitchOnWaterHeater.class, SwitchOffWaterHeater.class,
 								HeatWater.class, DoNotHeatWater.class, DoNotUseWindTurbine.class, StartWindTurbine.class,
-								StopWindTurbine.class, UseWindTurbine.class, DoNotMiniHydroelectricDam.class, StartMiniHydroelectricDam.class,
+								StopWindTurbine.class, UseWindTurbine.class, DoNotUseMiniHydroelectricDam.class, StartMiniHydroelectricDam.class,
 								StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class},
 						new Class[]{},
 						TimeUnit.SECONDS,
@@ -514,10 +514,10 @@ extends		AbstractCyPhyComponent
 						});
 		connections.put(
 						new EventSource(MiniHydroelectricDamCoupledModel.URI,
-										DoNotMiniHydroelectricDam.class),
+										DoNotUseMiniHydroelectricDam.class),
 						new EventSink[] {
 								new EventSink(ElectricMeterCoupledModel.URI,
-											  DoNotMiniHydroelectricDam.class)
+											  DoNotUseMiniHydroelectricDam.class)
 						});
 		
 		Map<String,CoupledModelDescriptor> coupledModelDescriptors =

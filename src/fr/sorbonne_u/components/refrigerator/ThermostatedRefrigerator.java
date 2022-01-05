@@ -325,7 +325,7 @@ implements	RefrigeratorImplementationI
 	{
 		super.start();
 
-		this.traceMessage("Heater starts.\n");
+		this.traceMessage("Refrigerator starts.\n");
 
 		if (this.isSILsimulated) {
 			this.createNewExecutorService(
@@ -423,7 +423,7 @@ implements	RefrigeratorImplementationI
 	@Override
 	public synchronized void	shutdown() throws ComponentShutdownException
 	{
-		this.traceMessage("Heater stops.\n");
+		this.traceMessage("Refrigerator");
 		this.currentState = RefrigeratorState.OFF;
 
 		try {
