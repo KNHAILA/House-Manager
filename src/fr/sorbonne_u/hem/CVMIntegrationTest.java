@@ -6,6 +6,7 @@ import fr.sorbonne_u.components.fan.FanTester;
 import fr.sorbonne_u.components.refrigerator.Refrigerator;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.meter.ElectricMeter;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.SelfControlMiniHydroelectricDam;
 import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
 import fr.sorbonne_u.components.AbstractComponent;
 
@@ -66,7 +67,13 @@ extends		AbstractCVM
 		AbstractComponent.createComponent(
 				SelfControlWindTurbine.class.getCanonicalName(),
 				new Object[] { "", "", false });
+		
+		// Dame
+		AbstractComponent.createComponent(
+				SelfControlMiniHydroelectricDam.class.getCanonicalName(),
+				new Object[] { "", "", false });
 
+		
 	// Refrigerator
     	/*AbstractComponent.createComponent(
 				Refrigerator.class.getCanonicalName(),

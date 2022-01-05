@@ -277,7 +277,7 @@ public class SelfControlWindTurbine extends AbstractCyPhyComponent implements Wi
 
 		if (SelfControlWindTurbine.VERBOSE) {
 			this.tracer.get().setTitle("WindTurbine component");
-			this.tracer.get().setRelativePosition(2, 1);
+			this.tracer.get().setRelativePosition(3, 1);
 			this.toggleTracing();
 		}
 	}

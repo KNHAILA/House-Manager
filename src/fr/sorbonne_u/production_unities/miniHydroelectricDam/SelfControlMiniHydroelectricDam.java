@@ -277,7 +277,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 
 		if (SelfControlMiniHydroelectricDam.VERBOSE) {
 			this.tracer.get().setTitle("MiniHydroelectricDam component");
-			this.tracer.get().setRelativePosition(2, 1);
+			this.tracer.get().setRelativePosition(0, 1);
 			this.toggleTracing();
 		}
 	}

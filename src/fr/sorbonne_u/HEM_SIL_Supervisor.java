@@ -50,6 +50,8 @@ import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.meter.ElectricMeter;
 import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamCoupledModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineCoupledModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
@@ -298,6 +300,18 @@ extends		AbstractCyPhyComponent
 								SelfControlWindTurbine.REFLECTION_INBOUND_PORT_URI));
 						
 
+		//SelfControlMiniHydroelectricDam
+			atomicModelDescriptors.put(
+					MiniHydroelectricDamCoupledModel.URI,
+					RTComponentAtomicModelDescriptor.create(
+							WindTurbineCoupledModel.URI,
+							new Class[]{},
+							new Class[]{
+									DoNotMiniHydroelectricDam.class, StartMiniHydroelectricDam.class,
+									StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class},
+							TimeUnit.SECONDS,
+							SelfControlWindTurbine.REFLECTION_INBOUND_PORT_URI));
+			
 		// The electric meter simulation model held by the ElectricMeter
 		// component.
 		atomicModelDescriptors.put(
@@ -309,7 +323,8 @@ extends		AbstractCyPhyComponent
 								SwitchOffFan.class,
 								SetHighFan.class, SetLowFan.class, SwitchOnWaterHeater.class, SwitchOffWaterHeater.class,
 								HeatWater.class, DoNotHeatWater.class, DoNotUseWindTurbine.class, StartWindTurbine.class,
-								StopWindTurbine.class, UseWindTurbine.class},
+								StopWindTurbine.class, UseWindTurbine.class, DoNotMiniHydroelectricDam.class, StartMiniHydroelectricDam.class,
+								StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class},
 						new Class[]{},
 						TimeUnit.SECONDS,
 						ElectricMeter.REFLECTION_INBOUND_PORT_URI));
@@ -324,6 +339,7 @@ extends		AbstractCyPhyComponent
 		submodels.add(WaterHeaterCoupledModel.URI);
 		submodels.add(WindTurbineCoupledModel.URI);
         //submodels.add(RefrigeratorCoupledModel.URI);
+		submodels.add(MiniHydroelectricDamCoupledModel.URI);
 		submodels.add(ElectricMeterCoupledModel.URI);
 
 		Map<EventSource,EventSink[]> connections =
@@ -474,7 +490,35 @@ extends		AbstractCyPhyComponent
 									  DoNotUseWindTurbine.class)
 				});
 		
-		
+		//SelfControlMiniHydroelectricDam
+		connections.put(
+				new EventSource(MiniHydroelectricDamCoupledModel.URI,
+										StartMiniHydroelectricDam.class),
+				new EventSink[] {
+								new EventSink(ElectricMeterCoupledModel.URI,
+										StartMiniHydroelectricDam.class)
+						});
+		connections.put(
+						new EventSource(MiniHydroelectricDamCoupledModel.URI,
+								StopMiniHydroelectricDam.class),
+						new EventSink[] {
+								new EventSink(ElectricMeterCoupledModel.URI,
+										StopMiniHydroelectricDam.class)
+						});
+		connections.put(
+						new EventSource(MiniHydroelectricDamCoupledModel.URI,
+										UseMiniHydroelectricDam.class),
+						new EventSink[] {
+								new EventSink(ElectricMeterCoupledModel.URI,
+											  UseMiniHydroelectricDam.class)
+						});
+		connections.put(
+						new EventSource(MiniHydroelectricDamCoupledModel.URI,
+										DoNotMiniHydroelectricDam.class),
+						new EventSink[] {
+								new EventSink(ElectricMeterCoupledModel.URI,
+											  DoNotMiniHydroelectricDam.class)
+						});
 		
 		Map<String,CoupledModelDescriptor> coupledModelDescriptors =
 															new HashMap<>();
