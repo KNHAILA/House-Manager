@@ -28,7 +28,6 @@ import fr.sorbonne_u.hem.registration.RegistrationOutboundPort;
 */
 
 @OfferedInterfaces(offered={WaterHeaterCI.class})
-@RequiredInterfaces(required={RegistrationCI.class})
 
 public class WaterHeater extends		AbstractComponent
 implements	WaterHeaterImplementationI {

@@ -6,6 +6,7 @@ import fr.sorbonne_u.components.fan.FanTester;
 import fr.sorbonne_u.components.refrigerator.Refrigerator;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.meter.ElectricMeter;
+import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
 import fr.sorbonne_u.components.AbstractComponent;
 
 
@@ -40,12 +41,13 @@ extends		AbstractCVM
 	@Override
 	public void			deploy() throws Exception
 	{
+
 		//Meter
 		AbstractComponent.createComponent(
 				ElectricMeter.class.getCanonicalName(),
 				new Object[]{"",false});
 
-		
+		//Fan
 		AbstractComponent.createComponent(
 				Fan.class.getCanonicalName(),
 				new Object[]{"",false});
@@ -54,21 +56,30 @@ extends		AbstractCVM
 				FanTester.class.getCanonicalName(),
 				new Object[]{});
 
+				
 		//ThermostatedHeater
 		AbstractComponent.createComponent(
 				ThermostatedWaterHeater.class.getCanonicalName(),
 				new Object[]{"","",false});
 
+		// Wind Turbine
+		AbstractComponent.createComponent(
+				SelfControlWindTurbine.class.getCanonicalName(),
+				new Object[] { "", "", false });
+
 	// Refrigerator
-	/*	AbstractComponent.createComponent(
+    	/*AbstractComponent.createComponent(
 				Refrigerator.class.getCanonicalName(),
 				new Object[] { "", "", "" });
-
+				*/
+				
+						
 		// HEM
-		AbstractComponent.createComponent(
+		/*AbstractComponent.createComponent(
 				HEM.class.getCanonicalName(),
 				new Object[]{true});
-*/
+				*/
+
 		super.deploy();
 	}
 

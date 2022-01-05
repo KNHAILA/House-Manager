@@ -54,7 +54,7 @@ import fr.sorbonne_u.storage.battery.BatteryOutboundPort;
 @RequiredInterfaces(required = {StandardEquipmentControlCI.class,
 								SuspensionEquipmentControlCI.class,
 								ElectricMeterCI.class,
-								RefrigeratorCI.class,
+								//RefrigeratorCI.class,
 								WaterHeaterCI.class})
 public class			HEM
 extends		AbstractComponent
@@ -172,13 +172,17 @@ extends		AbstractComponent
 					this.waterHeaterop.getPortURI(),
 					ThermostatedWaterHeater.INBOUND_PORT_URI,
 					WaterHeaterConnector.class.getCanonicalName());
+					
 			
-			this.refrigeratorop = new RefrigeratorOutboundPort(this);
+		/*	this.refrigeratorop = new RefrigeratorOutboundPort(this);
 			this.refrigeratorop.publishPort();
 			this.doPortConnection(
 					this.refrigeratorop.getPortURI(),
 					Refrigerator.INBOUND_PORT_URI,
 					RefrigeratorConnector.class.getCanonicalName());
+					*/
+					
+					
 			
 		} catch (Exception e) {
 			throw new ComponentStartException(e) ;
@@ -201,8 +205,12 @@ extends		AbstractComponent
 			this.waterHeaterop.startWaterHeater();
 			this.traceMessage("Water Heater is on \n");
 			
-			this.refrigeratorop.startRefrigerator();
+			
+			
+			
+		//	this.refrigeratorop.startRefrigerator();
 			this.traceMessage("Refrigerator is on \n");
+			
 			
 		} else {
 			final HEM h = this;
@@ -236,7 +244,7 @@ extends		AbstractComponent
 		}
 		this.doPortDisconnection(this.meterop.getPortURI());
 		this.doPortDisconnection(this.waterHeaterop.getPortURI());
-		this.doPortDisconnection(this.refrigeratorop.getPortURI());
+		//this.doPortDisconnection(this.refrigeratorop.getPortURI());
 		super.finalise();
 	}
 
@@ -251,7 +259,7 @@ extends		AbstractComponent
 		try {
 			this.meterop.unpublishPort();
 			this.waterHeaterop.unpublishPort();
-			this.refrigeratorop.unpublishPort();
+			//this.refrigeratorop.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e) ;
 		}
