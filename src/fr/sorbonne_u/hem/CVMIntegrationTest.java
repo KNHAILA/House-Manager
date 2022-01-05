@@ -45,10 +45,10 @@ extends		AbstractCVM
 				ElectricMeter.class.getCanonicalName(),
 				new Object[]{"",false});
 
-		//Fan
+		
 		AbstractComponent.createComponent(
 				Fan.class.getCanonicalName(),
-				new Object[]{false,false});
+				new Object[]{"",false});
 
 		AbstractComponent.createComponent(
 				FanTester.class.getCanonicalName(),
@@ -57,18 +57,18 @@ extends		AbstractCVM
 		//ThermostatedHeater
 		AbstractComponent.createComponent(
 				ThermostatedWaterHeater.class.getCanonicalName(),
-				new Object[]{false,false,false});
+				new Object[]{"","",false});
 
-		// Refrigerator
-		AbstractComponent.createComponent(
+	// Refrigerator
+	/*	AbstractComponent.createComponent(
 				Refrigerator.class.getCanonicalName(),
-				new Object[] { false, false, false });
+				new Object[] { "", "", "" });
 
 		// HEM
 		AbstractComponent.createComponent(
 				HEM.class.getCanonicalName(),
 				new Object[]{true});
-
+*/
 		super.deploy();
 	}
 
