@@ -13,11 +13,11 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 
-public class WaterSpeedModel    extends		AtomicHIOA
+public class WaterVolumeModel    extends		AtomicHIOA
 {
     private static final long serialVersionUID = 1L;
 
-    public static final String URI = WaterSpeedModel.class.
+    public static final String URI = WaterVolumeModel.class.
             getSimpleName();
 
     public static final double		MIN_WATER_SPEED = 0.0;
@@ -30,7 +30,7 @@ public class WaterSpeedModel    extends		AtomicHIOA
             new Value<Double>(this, 0.0, 0);
     protected double				cycleTime;
 
-    public WaterSpeedModel(
+    public WaterVolumeModel(
             String uri,
             TimeUnit simulatedTimeUnit,
             SimulatorI simulationEngine

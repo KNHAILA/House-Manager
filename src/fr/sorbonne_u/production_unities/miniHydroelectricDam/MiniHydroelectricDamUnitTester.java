@@ -1,140 +1,186 @@
 package fr.sorbonne_u.production_unities.miniHydroelectricDam;
 
-import fr.sorbonne_u.components.AbstractComponent;
-import fr.sorbonne_u.components.annotations.RequiredInterfaces;
-import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
-import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
+import fr.sorbonne_u.devs_simulation.models.AtomicModel;
+import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
+import fr.sorbonne_u.devs_simulation.models.events.EventI;
+import fr.sorbonne_u.devs_simulation.models.time.Duration;
+import fr.sorbonne_u.devs_simulation.models.time.Time;
+import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
+import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 
-@RequiredInterfaces(required = { MiniHydroelectricDamCI.class })
-public class MiniHydroelectricDamUnitTester extends AbstractComponent {
-
+// -----------------------------------------------------------------------------
+/**
+ * The class <code>ChargeWindTurbineerUnitTesterModel</code> defines a model that is used
+ * to test the models defining the ChargeWindTurbineer simulator.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant	{@code step >= 0}
+ * </pre>
+ * 
+ * <p>Created on : 2021-09-23</p>
+ * 
+ * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ */
+// -----------------------------------------------------------------------------
+@ModelExternalEvents(exported = {UseMiniHydroelectricDam.class,
+								 DoNotMiniHydroelectricDam.class,
+								 StopMiniHydroelectricDam.class,
+								 StartMiniHydroelectricDam.class})
+// -----------------------------------------------------------------------------
+public class			MiniHydroelectricDamUnitTester
+extends		AtomicModel
+{
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
-	protected String miniHydroelectricDamInboundPortURI;
-	protected MiniHydroelectricDamOutboundPort wtop;
+	private static final long serialVersionUID = 1L;
+	/** URI for a model; works when only one instance is created.			*/
+	public static final String	URI = MiniHydroelectricDamUnitTester.class.
+															getSimpleName();
+
+	/** steps in the test scenario.											*/
+	protected int	step;
 
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
 
-	protected	MiniHydroelectricDamUnitTester() throws Exception
-		{
-			this(MiniHydroelectricDam.Mini_Hydroelectric_Dam_INBOUND_PORT_URI);
-		}
-
-	protected	MiniHydroelectricDamUnitTester(
-			String miniHydroelectricDamInboundPortURI
-			) throws Exception
-		{
-			super(1, 0);
-			this.initialise(miniHydroelectricDamInboundPortURI);
-		}
-
-	protected			MiniHydroelectricDamUnitTester(
-			String reflectionInboundPortURI,
-			String miniHydroelectricDamInboundPortURI
-			) throws Exception
-		{
-			super(reflectionInboundPortURI, 1, 0);
-			this.initialise(miniHydroelectricDamInboundPortURI);
-		}
-
-	protected void initialise(String miniHydroelectricDamInboundPortURI) throws Exception {
-		this.miniHydroelectricDamInboundPortURI = miniHydroelectricDamInboundPortURI;
-		this.wtop = new MiniHydroelectricDamOutboundPort(this);
-		this.wtop.publishPort();
-
-		this.tracer.get().setTitle("MiniHydroelectricDam tester component");
-		this.tracer.get().setRelativePosition(0, 1);
-		this.toggleTracing();
+	/**
+	 * create a <code>ChargeWindTurbineerUnitTesterModel</code> instance.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code simulatedTimeUnit != null}
+	 * pre	{@code simulationEngine == null || simulationEngine instanceof AtomicEngine}
+	 * post	{@code getURI() != null}
+	 * post	{@code uri != null implies this.getURI().equals(uri)}
+	 * post	{@code getSimulatedTimeUnit().equals(simulatedTimeUnit)}
+	 * post	{@code simulationEngine != null implies getSimulationEngine().equals(simulationEngine)}
+	 * post	{@code !isDebugModeOn()}
+	 * </pre>
+	 *
+	 * @param uri				URI of the model.
+	 * @param simulatedTimeUnit	time unit used for the simulation time.
+	 * @param simulationEngine	simulation engine to which the model is attached.
+	 * @throws Exception		<i>to do</i>.
+	 */
+	public				MiniHydroelectricDamUnitTester(
+		String uri,
+		TimeUnit simulatedTimeUnit,
+		SimulatorI simulationEngine
+		) throws Exception
+	{
+		super(uri, simulatedTimeUnit, simulationEngine);
+		this.setLogger(new StandardLogger());
 	}
 
 	// -------------------------------------------------------------------------
-	// Component services implementation
-	// -------------------------------------------------------------------------
-
-	protected void testIsRunning() {
-		this.traceMessage("testIsRunning()...\n");
-		try {
-			assertEquals(false, this.wtop.isRunning());
-		} catch (Exception e) {
-			this.traceMessage("...KO.\n" + e);
-			assertTrue(false);
-		}
-		this.traceMessage("...done.\n");
-	}
-
-	protected void testStartStopMiniHydroelectricDam() {
-		this.traceMessage("testStartStopMiniHydroelectricDam()...\n");
-		try {
-			assertEquals(false, this.wtop.isRunning());
-			this.wtop.startMiniHydroelectricDam();
-			assertEquals(true, this.wtop.isRunning());
-			this.wtop.stopMiniHydroelectricDam();
-			assertEquals(false, this.wtop.isRunning());
-		} catch (Exception e) {
-			this.traceMessage("...KO.\n");
-			assertTrue(false);
-		}
-		this.traceMessage("...done.\n");
-	}
-
-	protected void runnAllTests() {
-		this.testIsRunning();
-		this.testStartStopMiniHydroelectricDam();
-	}
-
-	// -------------------------------------------------------------------------
-	// Component life-cycle
+	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#start()
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
 	 */
 	@Override
-	public synchronized void start() throws ComponentStartException {
-		super.start();
+	public void			initialiseState(Time initialTime)
+	{
+		super.initialiseState(initialTime);
+		this.step = 1;
+		this.toggleDebugMode();
+		this.logMessage("simulation begins.\n");
+	}
 
-		try {
-			this.doPortConnection(this.wtop.getPortURI(), this.miniHydroelectricDamInboundPortURI,
-					MiniHydroelectricDamConnector.class.getCanonicalName());
-		} catch (Exception e) {
-			throw new ComponentStartException(e);
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.AtomicModelI#output()
+	 */
+	@Override
+	public ArrayList<EventI>	output()
+	{
+		// Simple way to implement a test scenario. Here each step generates
+		// an event sent to the other models in the standard order.
+		if (this.step > 0 && this.step < 5) {
+			ArrayList<EventI> ret = new ArrayList<EventI>();
+			switch (this.step) {
+			case 1:
+				ret.add(new StartMiniHydroelectricDam(this.getTimeOfNextEvent()));
+				break;
+			case 2:
+				ret.add(new UseMiniHydroelectricDam(this.getTimeOfNextEvent()));
+				break;
+			case 3:
+				ret.add(new DoNotMiniHydroelectricDam(this.getTimeOfNextEvent()));
+				break;
+			case 4:
+				ret.add(new StopMiniHydroelectricDam(this.getTimeOfNextEvent()));
+				break;
+			}
+			return ret;
+		} else {
+			return null;
 		}
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#execute()
+	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
 	 */
 	@Override
-	public synchronized void execute() throws Exception {
-		this.runnAllTests();
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#finalise()
-	 */
-	@Override
-	public synchronized void finalise() throws Exception {
-		this.doPortDisconnection(this.wtop.getPortURI());
-		super.finalise();
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.AbstractComponent#shutdown()
-	 */
-	@Override
-	public synchronized void shutdown() throws ComponentShutdownException {
-		try {
-			this.wtop.unpublishPort();
-		} catch (Exception e) {
-			throw new ComponentShutdownException(e);
+	public Duration		timeAdvance()
+	{
+		// As long as events have to be created and sent, the next internal
+		// transition is set at one second later, otherwise, no more internal
+		// transitions are triggered (delay = infinity).
+		if (this.step < 5) {
+			return new Duration(1.0, this.getSimulatedTimeUnit());
+		} else {
+			return Duration.INFINITY;
 		}
-		super.shutdown();
+	}
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
+	 */
+	@Override
+	public void			userDefinedInternalTransition(Duration elapsedTime)
+	{
+		super.userDefinedInternalTransition(elapsedTime);
+
+		// advance to the next step in the scenario
+		this.step++;
+	}
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
+	 */
+	@Override
+	public void			endSimulation(Time endTime) throws Exception
+	{
+		this.logMessage("simulation ends.\n");
+		super.endSimulation(endTime);
+	}
+
+	// -------------------------------------------------------------------------
+	// Optional DEVS simulation protocol: simulation report
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
+	 */
+	@Override
+	public SimulationReportI	getFinalReport() throws Exception
+	{
+		return null;
 	}
 }
+// -----------------------------------------------------------------------------
+
