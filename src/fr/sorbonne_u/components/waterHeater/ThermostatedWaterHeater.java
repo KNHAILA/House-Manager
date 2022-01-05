@@ -33,6 +33,7 @@ package fr.sorbonne_u.components.waterHeater;
 // knowledge of the CeCILL-C license and that you accept its terms.
 
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.waterHeater.WaterHeaterCI;
 import fr.sorbonne_u.components.waterHeater.WaterHeaterImplementationI;
@@ -45,6 +46,7 @@ import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
 import fr.sorbonne_u.CVM_SIL;
 import fr.sorbonne_u.components.waterHeater.sil.WaterHeaterStateModel;
 import fr.sorbonne_u.components.waterHeater.sil.WaterHeaterTemperatureSILModel;
+import fr.sorbonne_u.hem.registration.RegistrationCI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import java.util.HashMap;
@@ -93,7 +95,7 @@ import fr.sorbonne_u.components.AbstractComponent;
  */
 @OfferedInterfaces(offered={WaterHeaterCI.class})
 public class			ThermostatedWaterHeater
-extends		AbstractCyPhyComponent
+extends		AbstractComponent
 implements	WaterHeaterImplementationI
 {
 	// -------------------------------------------------------------------------

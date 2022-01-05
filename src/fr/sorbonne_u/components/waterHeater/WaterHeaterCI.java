@@ -22,7 +22,7 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
  * 
  * @author	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
  */
-public interface WaterHeaterCI extends OfferedCI, WaterHeaterImplementationI, RequiredCI {
+public interface WaterHeaterCI extends WaterHeaterImplementationI, RequiredCI, OfferedCI {
 	/**
 	 * @see fr.sorbonne_u.components.waterHeater.WaterHeaterImplementationI#isRunning()
 	 */

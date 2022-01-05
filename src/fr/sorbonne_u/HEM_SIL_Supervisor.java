@@ -50,6 +50,9 @@ import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.meter.ElectricMeter;
 import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
+import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineCoupledModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 import fr.sorbonne_u.components.cyphy.plugins.devs.RTCoordinatorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.SupervisorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.architectures.ComponentModelArchitecture;
@@ -269,7 +272,7 @@ extends		AbstractCyPhyComponent
 						ThermostatedWaterHeater.REFLECTION_INBOUND_PORT_URI));
 		
 		// Refrigerator
-		atomicModelDescriptors.put(
+		/*atomicModelDescriptors.put(
 				RefrigeratorCoupledModel.URI,
 				RTComponentAtomicModelDescriptor.create(
 						RefrigeratorCoupledModel.URI,
@@ -280,6 +283,20 @@ extends		AbstractCyPhyComponent
 								OpenRefrigeratorDoor.class, Resting.class},
 						TimeUnit.SECONDS,
 						Refrigerator.REFLECTION_INBOUND_PORT_URI));
+						*/
+		
+		// Wind turbine
+			atomicModelDescriptors.put(
+						WindTurbineCoupledModel.URI,
+						RTComponentAtomicModelDescriptor.create(
+								WindTurbineCoupledModel.URI,
+								new Class[]{},
+								new Class[]{
+										DoNotUseWindTurbine.class, StartWindTurbine.class,
+										StopWindTurbine.class, UseWindTurbine.class},
+								TimeUnit.SECONDS,
+								SelfControlWindTurbine.REFLECTION_INBOUND_PORT_URI));
+						
 
 		// The electric meter simulation model held by the ElectricMeter
 		// component.
@@ -288,21 +305,25 @@ extends		AbstractCyPhyComponent
 				RTComponentAtomicModelDescriptor.create(
 						ElectricMeterCoupledModel.URI,
 						new Class[]{
-								SwitchOnWaterHeater.class, SwitchOffWaterHeater.class,
-								HeatWater.class, DoNotHeatWater.class,
 								SwitchOnFan.class,
 								SwitchOffFan.class,
-								SetHighFan.class, SetLowFan.class, CloseRefrigeratorDoor.class, Freezing.class,
-								OffRefrigerator.class, OnRefrigerator.class,
-								OpenRefrigeratorDoor.class, Resting.class},
+								SetHighFan.class, SetLowFan.class, SwitchOnWaterHeater.class, SwitchOffWaterHeater.class,
+								HeatWater.class, DoNotHeatWater.class, DoNotUseWindTurbine.class, StartWindTurbine.class,
+								StopWindTurbine.class, UseWindTurbine.class},
 						new Class[]{},
 						TimeUnit.SECONDS,
 						ElectricMeter.REFLECTION_INBOUND_PORT_URI));
+		
+		/*, CloseRefrigeratorDoor.class, Freezing.class,
+		OffRefrigerator.class, OnRefrigerator.class,
+		OpenRefrigeratorDoor.class, Resting.class
+		*/
 
 		Set<String> submodels = new HashSet<String>();
 		submodels.add(FanCoupledModel.URI);
 		submodels.add(WaterHeaterCoupledModel.URI);
-		submodels.add(RefrigeratorCoupledModel.URI);
+		submodels.add(WindTurbineCoupledModel.URI);
+        //submodels.add(RefrigeratorCoupledModel.URI);
 		submodels.add(ElectricMeterCoupledModel.URI);
 
 		Map<EventSource,EventSink[]> connections =
@@ -375,9 +396,10 @@ extends		AbstractCyPhyComponent
 						new EventSink(ElectricMeterCoupledModel.URI,
 									  DoNotHeatWater.class)
 				});
+				
 		
 		//Refrigerator
-		connections.put(
+		/*connections.put(
 				new EventSource(RefrigeratorCoupledModel.URI,
 						CloseRefrigeratorDoor.class),
 				new EventSink[] {
@@ -419,7 +441,41 @@ extends		AbstractCyPhyComponent
 						new EventSink(ElectricMeterCoupledModel.URI,
 								OnRefrigerator.class)
 				});
+				*/
+				
 
+		//Wind turbine
+		connections.put(
+				new EventSource(WindTurbineCoupledModel.URI,
+								StartWindTurbine.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								StartWindTurbine.class)
+				});
+		connections.put(
+				new EventSource(WindTurbineCoupledModel.URI,
+						StopWindTurbine.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								StopWindTurbine.class)
+				});
+		connections.put(
+				new EventSource(WindTurbineCoupledModel.URI,
+								UseWindTurbine.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+									  UseWindTurbine.class)
+				});
+		connections.put(
+				new EventSource(WindTurbineCoupledModel.URI,
+								DoNotUseWindTurbine.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+									  DoNotUseWindTurbine.class)
+				});
+		
+		
+		
 		Map<String,CoupledModelDescriptor> coupledModelDescriptors =
 															new HashMap<>();
 		coupledModelDescriptors.put(

@@ -1,7 +1,8 @@
 package fr.sorbonne_u.components.waterHeater;
 
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.ports.AbstractOutboundPort;
+import fr.sorbonne_u.hem.StandardEquipmentControlOutboundPort;
+//import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 
 //-----------------------------------------------------------------------------
 /**
@@ -21,7 +22,7 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 * * @author	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
 */
 
-public class WaterHeaterOutboundPort extends AbstractOutboundPort implements WaterHeaterCI {
+public class WaterHeaterOutboundPort extends StandardEquipmentControlOutboundPort implements WaterHeaterCI {
 	
 	private static final long serialVersionUID = 1L;
 

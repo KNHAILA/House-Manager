@@ -40,6 +40,7 @@ import fr.sorbonne_u.components.refrigerator.Refrigerator;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.hem.HEM;
 import fr.sorbonne_u.meter.ElectricMeter;
+import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
 
 // -----------------------------------------------------------------------------
 /**
@@ -102,11 +103,19 @@ extends		AbstractCVM
 		AbstractComponent.createComponent(
 				ThermostatedWaterHeater.class.getCanonicalName(),
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+				
 		
 		//refrigerator
-		AbstractComponent.createComponent(
+		/*AbstractComponent.createComponent(
 				Refrigerator.class.getCanonicalName(),
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+				*/
+		
+		//Wind turbine
+		AbstractComponent.createComponent(
+				SelfControlWindTurbine.class.getCanonicalName(),
+				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+				
 		
 		//Meter
 		AbstractComponent.createComponent(
