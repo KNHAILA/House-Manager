@@ -19,7 +19,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.AbstractMiniHydroelectricDamEvent;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotMiniHydroelectricDam;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotUseMiniHydroelectricDam;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniHydroelectricDam;
 
 /**
@@ -55,7 +55,7 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniH
  * 
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-@ModelExternalEvents(imported = {DoNotMiniHydroelectricDam.class,
+@ModelExternalEvents(imported = {DoNotUseMiniHydroelectricDam.class,
         UseMiniHydroelectricDam.class
         })
 // -----------------------------------------------------------------------------

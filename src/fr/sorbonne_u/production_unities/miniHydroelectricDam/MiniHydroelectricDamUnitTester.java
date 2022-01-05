@@ -32,7 +32,7 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
  */
 // -----------------------------------------------------------------------------
 @ModelExternalEvents(exported = {UseMiniHydroelectricDam.class,
-								 DoNotMiniHydroelectricDam.class,
+								 DoNotUseMiniHydroelectricDam.class,
 								 StopMiniHydroelectricDam.class,
 								 StartMiniHydroelectricDam.class})
 // -----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ extends		AtomicModel
 				ret.add(new UseMiniHydroelectricDam(this.getTimeOfNextEvent()));
 				break;
 			case 3:
-				ret.add(new DoNotMiniHydroelectricDam(this.getTimeOfNextEvent()));
+				ret.add(new DoNotUseMiniHydroelectricDam(this.getTimeOfNextEvent()));
 				break;
 			case 4:
 				ret.add(new StopMiniHydroelectricDam(this.getTimeOfNextEvent()));
