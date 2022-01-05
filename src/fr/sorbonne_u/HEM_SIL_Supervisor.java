@@ -33,19 +33,20 @@ package fr.sorbonne_u;
 // knowledge of the CeCILL-C license and that you accept its terms.
 
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
-import fr.sorbonne_u.HEM_CoupledModel;
 import fr.sorbonne_u.components.fan.Fan;
 import fr.sorbonne_u.components.fan.mil.FanCoupledModel;
 import fr.sorbonne_u.components.fan.mil.events.SetHighFan;
 import fr.sorbonne_u.components.fan.mil.events.SetLowFan;
 import fr.sorbonne_u.components.fan.mil.events.SwitchOffFan;
 import fr.sorbonne_u.components.fan.mil.events.SwitchOnFan;
+import fr.sorbonne_u.components.refrigerator.Refrigerator;
+import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorCoupledModel;
+import fr.sorbonne_u.components.refrigerator.mil.events.*;
 import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterCoupledModel;
 import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
 import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
 import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
 import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
-import fr.sorbonne_u.components.waterHeater.WaterHeater;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.meter.ElectricMeter;
 import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
@@ -242,7 +243,7 @@ extends		AbstractCyPhyComponent
 		// port URI of the component holding them in order to connect this
 		// component inside the component-based simulation architecture.
 
-		// The hair dryer simulation model held by the HairDryer component.
+		// The fan simulation model held by the Fan component.
 		atomicModelDescriptors.put(
 				FanCoupledModel.URI,
 				RTComponentAtomicModelDescriptor.create(
@@ -255,7 +256,7 @@ extends		AbstractCyPhyComponent
 						TimeUnit.SECONDS,
 						Fan.REFLECTION_INBOUND_PORT_URI));
 
-		// The heater simulation model held by the ThermostatedHeater component.
+		// ThermostatedHeater
 		atomicModelDescriptors.put(
 				WaterHeaterCoupledModel.URI,
 				RTComponentAtomicModelDescriptor.create(
@@ -266,6 +267,19 @@ extends		AbstractCyPhyComponent
 								HeatWater.class, DoNotHeatWater.class},
 						TimeUnit.SECONDS,
 						ThermostatedWaterHeater.REFLECTION_INBOUND_PORT_URI));
+		
+		// Refrigerator
+		atomicModelDescriptors.put(
+				RefrigeratorCoupledModel.URI,
+				RTComponentAtomicModelDescriptor.create(
+						RefrigeratorCoupledModel.URI,
+						new Class[]{},
+						new Class[]{
+								CloseRefrigeratorDoor.class, Freezing.class,
+								OffRefrigerator.class, OnRefrigerator.class,
+								OpenRefrigeratorDoor.class, Resting.class},
+						TimeUnit.SECONDS,
+						Refrigerator.REFLECTION_INBOUND_PORT_URI));
 
 		// The electric meter simulation model held by the ElectricMeter
 		// component.
@@ -278,7 +292,9 @@ extends		AbstractCyPhyComponent
 								HeatWater.class, DoNotHeatWater.class,
 								SwitchOnFan.class,
 								SwitchOffFan.class,
-								SetHighFan.class, SetLowFan.class},
+								SetHighFan.class, SetLowFan.class, CloseRefrigeratorDoor.class, Freezing.class,
+								OffRefrigerator.class, OnRefrigerator.class,
+								OpenRefrigeratorDoor.class, Resting.class},
 						new Class[]{},
 						TimeUnit.SECONDS,
 						ElectricMeter.REFLECTION_INBOUND_PORT_URI));
@@ -286,6 +302,7 @@ extends		AbstractCyPhyComponent
 		Set<String> submodels = new HashSet<String>();
 		submodels.add(FanCoupledModel.URI);
 		submodels.add(WaterHeaterCoupledModel.URI);
+		submodels.add(RefrigeratorCoupledModel.URI);
 		submodels.add(ElectricMeterCoupledModel.URI);
 
 		Map<EventSource,EventSink[]> connections =
@@ -297,6 +314,8 @@ extends		AbstractCyPhyComponent
 		// coming from the appliances towards their electric consumption models
 		// must pass from their components to the ElectricMeter component as
 		// shown in the next connections.
+										
+        //Fan										
 		connections.put(
 				new EventSource(FanCoupledModel.URI,
 								SwitchOnFan.class),
@@ -325,7 +344,9 @@ extends		AbstractCyPhyComponent
 						new EventSink(ElectricMeterCoupledModel.URI,
 									  SetLowFan.class)
 				});
-
+		
+		
+		//Water heater
 		connections.put(
 				new EventSource(WaterHeaterCoupledModel.URI,
 								SwitchOnWaterHeater.class),
@@ -353,6 +374,50 @@ extends		AbstractCyPhyComponent
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
 									  DoNotHeatWater.class)
+				});
+		
+		//Refrigerator
+		connections.put(
+				new EventSource(RefrigeratorCoupledModel.URI,
+						CloseRefrigeratorDoor.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								CloseRefrigeratorDoor.class)
+				});
+		connections.put(
+				new EventSource(RefrigeratorCoupledModel.URI,
+						OpenRefrigeratorDoor.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								OpenRefrigeratorDoor.class)
+				});
+		connections.put(
+				new EventSource(RefrigeratorCoupledModel.URI,
+								Freezing.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								Freezing.class)
+				});
+		connections.put(
+				new EventSource(RefrigeratorCoupledModel.URI,
+								Resting.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								Resting.class)
+				});
+		connections.put(
+				new EventSource(RefrigeratorCoupledModel.URI,
+								OffRefrigerator.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								OffRefrigerator.class)
+				});
+		connections.put(
+				new EventSource(RefrigeratorCoupledModel.URI,
+						OnRefrigerator.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								OnRefrigerator.class)
 				});
 
 		Map<String,CoupledModelDescriptor> coupledModelDescriptors =

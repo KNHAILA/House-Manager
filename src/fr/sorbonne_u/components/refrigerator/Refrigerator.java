@@ -52,6 +52,9 @@ implements	RefrigeratorImplementationI {
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
+	/** URI of the hair dryer reflection inbound port.						*/
+	public static final String		REFLECTION_INBOUND_PORT_URI =
+												"REFRIGERATOR-rip";
 	/** URI of the refrigerator inbound port used in tests.					*/
 	public static final String		INBOUND_PORT_URI =
 												"REFRIGERATOR-INBOUND-PORT-URI";
