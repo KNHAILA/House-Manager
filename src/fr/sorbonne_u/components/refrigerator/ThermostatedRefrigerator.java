@@ -124,10 +124,10 @@ implements	RefrigeratorImplementationI
 
 	/** URI of the hair dryer reflection inbound port.						*/
 	public static final String		REFLECTION_INBOUND_PORT_URI =
-												"HEATER-rip";
+												"REFRIGERATOR-rip";
 	/** URI of the hair dryer inbound port used in tests.					*/
 	public static final String		INBOUND_PORT_URI =
-												"HEATER-INBOUND-PORT-URI";
+												"REFRIGERATOR-INBOUND-PORT-URI";
 	/** when true, methods trace their actions.								*/
 	public static final boolean		VERBOSE = true;
 
@@ -307,7 +307,7 @@ implements	RefrigeratorImplementationI
 		this.hip.publishPort();
 
 		if (ThermostatedRefrigerator.VERBOSE) {
-			this.tracer.get().setTitle("Thermostated heater component");
+			this.tracer.get().setTitle("Thermostated refrigerator component");
 			this.tracer.get().setRelativePosition(2, 1);
 			this.toggleTracing();		
 		}
@@ -534,7 +534,7 @@ implements	RefrigeratorImplementationI
 										this.targetTemperature + HYSTERESIS) {
 					if (ThermostatedRefrigerator.VERBOSE) {
 						this.traceMessage(
-								"Thermostated heater decides to heat.\n");
+								"Thermostated refrigerator decides to heat.\n");
 					}
 					this.doNotHeat();
 				} else if (!this.isHeating &&
@@ -543,12 +543,12 @@ implements	RefrigeratorImplementationI
 					this.heat();
 					if (ThermostatedRefrigerator.VERBOSE) {
 						this.traceMessage(
-								"Thermostated heater decides to heat.\n");
+								"Thermostated refrigerator decides to heat.\n");
 					}
 				} else {
 					if (ThermostatedRefrigerator.VERBOSE) {
 						this.traceMessage(
-								"Thermostated heater decides to do nothing.\n");
+								"Thermostated refrigerator decides to do nothing.\n");
 					}					
 				}
 			} catch (Exception e) {

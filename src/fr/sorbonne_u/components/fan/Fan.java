@@ -96,10 +96,10 @@ implements	FanImplementation
 
 	/** URI of the hair dryer reflection inbound port used.					*/
 	public static final String			REFLECTION_INBOUND_PORT_URI =
-												"HAIR-DRYER-rip";
+												"FAN-rip";
 	/** URI of the hair dryer inbound port used in tests.					*/
 	public static final String			INBOUND_PORT_URI =
-												"HAIR-DRYER-INBOUND-PORT-URI";
+												"FAN-INBOUND-PORT-URI";
 
 	/** when true, methods trace their actions.								*/
 	public static final boolean			VERBOSE = true;

@@ -103,7 +103,7 @@ extends		RTAtomicSimulatorPlugin
 	/** simulation architectures can have URI to name them; this is the
 	 *  URI used in this example for unit tests.							*/
 	public static final String	UNIT_TEST_SIM_ARCHITECTURE_URI =
-															"UnitTestHeater";
+															"UnitTestRefrigerator";
 	/** name used to pass the owner component reference as simulation
 	 *  parameter.															*/
 	public static final String	OWNER_REFERENCE_NAME = "THCRN";

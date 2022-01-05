@@ -95,10 +95,10 @@ implements	VacuumCleanerImplementation
 
 	/** URI of the hair dryer reflection inbound port used.					*/
 	public static final String			REFLECTION_INBOUND_PORT_URI =
-												"HAIR-DRYER-rip";
+												"VACUUM-CLEANER-rip";
 	/** URI of the hair dryer inbound port used in tests.					*/
 	public static final String			INBOUND_PORT_URI =
-												"HAIR-DRYER-INBOUND-PORT-URI";
+												"VACUUM-CLEANER-INBOUND-PORT-URI";
 
 	/** when true, methods trace their actions.								*/
 	public static final boolean			VERBOSE = true;
@@ -254,10 +254,10 @@ implements	VacuumCleanerImplementation
 	{
 		assert	hairDryerInboundPortURI != null :
 					new PreconditionException(
-										"hairDryerInboundPortURI != null");
+										"vacuumCleanerInboundPortURI != null");
 		assert	!hairDryerInboundPortURI.isEmpty() :
 					new PreconditionException(
-										"!hairDryerInboundPortURI.isEmpty()");
+										"!vacuumCleanerrInboundPortURI.isEmpty()");
 		assert	simArchitectureURI != null;
 		assert	!simArchitectureURI.isEmpty() || !executesAsUnitTest;
 
@@ -270,7 +270,7 @@ implements	VacuumCleanerImplementation
 		this.hdip.publishPort();
 
 		if (VacuumCleaner.VERBOSE) {
-			this.tracer.get().setTitle("Hair dryer component");
+			this.tracer.get().setTitle("Vacuum Cleaner component");
 			this.tracer.get().setRelativePosition(2, 0);
 			this.toggleTracing();
 		}
@@ -288,7 +288,7 @@ implements	VacuumCleanerImplementation
 	{
 		super.start();
 
-		this.traceMessage("Hair dryer starts.\n");
+		this.traceMessage("Vacuum Cleaner starts.\n");
 
 		if (this.isSILsimulated) {
 			this.createNewExecutorService(
@@ -333,7 +333,7 @@ implements	VacuumCleanerImplementation
 	@Override
 	public synchronized void	shutdown() throws ComponentShutdownException
 	{
-		this.traceMessage("Hair dryer stops.\n");
+		this.traceMessage("Vacuum Cleaner stops.\n");
 
 		try {
 			this.hdip.unpublishPort();
@@ -354,7 +354,7 @@ implements	VacuumCleanerImplementation
 	public VacuumCleanerState	getState() throws Exception
 	{
 		if (VacuumCleaner.VERBOSE) {
-			this.traceMessage("Hair dryer returns its state : " +
+			this.traceMessage("Vacuum Cleaner returns its state : " +
 													this.currentState + ".\n");
 		}
 
@@ -368,7 +368,7 @@ implements	VacuumCleanerImplementation
 	public VacuumCleanerMode	getMode() throws Exception
 	{
 		if (VacuumCleaner.VERBOSE) {
-			this.traceMessage("Hair dryer returns its mode : " +
+			this.traceMessage("Vacuum Cleaner returns its mode : " +
 													this.currentMode + ".\n");
 		}
 
@@ -383,10 +383,10 @@ implements	VacuumCleanerImplementation
 	{
 		assert	this.getState() == VacuumCleanerState.OFF :
 					new PreconditionException(
-										"getState() == HairDryerState.OFF");
+										"getState() == VacuumCleanerrState.OFF");
 
 		if (VacuumCleaner.VERBOSE) {
-			this.traceMessage("Hair dryer is turned on.\n");
+			this.traceMessage("Vacuum Cleaner is turned on.\n");
 		}
 
 		this.currentState = VacuumCleanerState.ON;
@@ -413,10 +413,10 @@ implements	VacuumCleanerImplementation
 	{
 		assert	this.getState() == VacuumCleanerState.ON :
 					new PreconditionException(
-										"getState() == HairDryerState.ON");
+										"getState() == VacuumCleanerState.ON");
 
 		if (VacuumCleaner.VERBOSE) {
-			this.traceMessage("Hair dryer is turned off.\n");
+			this.traceMessage("Vacuum Cleaner is turned off.\n");
 		}
 
 		this.currentState = VacuumCleanerState.OFF;
@@ -442,12 +442,12 @@ implements	VacuumCleanerImplementation
 	{
 		assert	this.getState() == VacuumCleanerState.ON :
 					new PreconditionException(
-										"getState() == HairDryerState.ON");
+										"getState() == VacuumCleanerrState.ON");
 		assert	this.getMode() == VacuumCleanerMode.LOW :
-					new PreconditionException("getMode() == HairDryerMode.LOW");
+					new PreconditionException("getMode() == VacuumCleanerMode.LOW");
 
 		if (VacuumCleaner.VERBOSE) {
-			this.traceMessage("Hair dryer is set high.\n");
+			this.traceMessage("Vacuum Cleaner is set high.\n");
 		}
 
 		this.currentMode = VacuumCleanerMode.HIGH;
@@ -473,13 +473,13 @@ implements	VacuumCleanerImplementation
 	{
 		assert	this.getState() == VacuumCleanerState.ON :
 					new PreconditionException(
-										"getState() == HairDryerState.ON");
+										"getState() == VacuumCleanerState.ON");
 		assert	this.getMode() == VacuumCleanerMode.HIGH :
 					new PreconditionException(
-										"getMode() == HairDryerMode.HIGH");
+										"getMode() == VacuumCleanerMode.HIGH");
 
 		if (VacuumCleaner.VERBOSE) {
-			this.traceMessage("Hair dryer is set low.\n");
+			this.traceMessage("Vacuum Cleaner is set low.\n");
 		}
 
 		this.currentMode = VacuumCleanerMode.LOW;

@@ -112,7 +112,7 @@ implements	WashingMachineImplementationI
 	 * 
 	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
 	 */
-	protected static enum	HeaterState
+	protected static enum	WashingMachineState
 	{
 		/** heater is on.													*/
 		ON,
@@ -126,15 +126,15 @@ implements	WashingMachineImplementationI
 
 	/** URI of the hair dryer reflection inbound port.						*/
 	public static final String		REFLECTION_INBOUND_PORT_URI =
-												"HEATER-rip";
+												"WASHING-MACHINE-rip";
 	/** URI of the hair dryer inbound port used in tests.					*/
 	public static final String		INBOUND_PORT_URI =
-												"HEATER-INBOUND-PORT-URI";
+												"WASHING-MACHINE-INBOUND-PORT-URI";
 	/** when true, methods trace their actions.								*/
 	public static final boolean		VERBOSE = true;
 
 	/** current state (on, off) of the heater.								*/
-	protected HeaterState			currentState;
+	protected WashingMachineState			currentState;
 	/** inbound port offering the <code>HeaterCI</code> interface.			*/
 	protected WashingMachineInboundPort		hip;
 	/** target temperature for the heating.	*/
@@ -298,7 +298,7 @@ implements	WashingMachineImplementationI
 						ThermostatedWashingMachineRTAtomicSimulatorPlugin.
 												UNIT_TEST_SIM_ARCHITECTURE_URI);
 		this.executesAsUnitTest = executesAsUnitTest;
-		this.currentState = HeaterState.OFF;
+		this.currentState = WashingMachineState.OFF;
 		this.targetTemperature = 20;
 		this.accFactor = this.composesAsUnitTest ?
 							ACC_FACTOR
@@ -309,7 +309,7 @@ implements	WashingMachineImplementationI
 		this.hip.publishPort();
 
 		if (ThermostatedWashingMachine.VERBOSE) {
-			this.tracer.get().setTitle("Thermostated heater component");
+			this.tracer.get().setTitle("Thermostated washing machine component");
 			this.tracer.get().setRelativePosition(2, 1);
 			this.toggleTracing();		
 		}
@@ -327,7 +327,7 @@ implements	WashingMachineImplementationI
 	{
 		super.start();
 
-		this.traceMessage("Heater starts.\n");
+		this.traceMessage("Washing machine starts.\n");
 
 		if (this.isSILsimulated) {
 			this.createNewExecutorService(
@@ -425,8 +425,8 @@ implements	WashingMachineImplementationI
 	@Override
 	public synchronized void	shutdown() throws ComponentShutdownException
 	{
-		this.traceMessage("Heater stops.\n");
-		this.currentState = HeaterState.OFF;
+		this.traceMessage("Washing machine stops.\n");
+		this.currentState = WashingMachineState.OFF;
 
 		try {
 			this.hip.unpublishPort();
@@ -454,7 +454,7 @@ implements	WashingMachineImplementationI
 	 */
 	public boolean		internalIsRunning()
 	{
-		return this.currentState == HeaterState.ON;
+		return this.currentState == WashingMachineState.ON;
 	}
 
 	/**
@@ -529,14 +529,14 @@ implements	WashingMachineImplementationI
 	{
 		// when the heater is on, perform the control, but if the heater is
 		// switched off, stop the controller
-		if (this.currentState == ThermostatedWashingMachine.HeaterState.ON) {
+		if (this.currentState == ThermostatedWashingMachine.WashingMachineState.ON) {
 			try {
 				if (this.isHeating &&
 								this.getCurrentTemperature() >
 										this.targetTemperature + HYSTERESIS) {
 					if (ThermostatedWashingMachine.VERBOSE) {
 						this.traceMessage(
-								"Thermostated heater decides to heat.\n");
+								"Thermostated washing machine decides to heat.\n");
 					}
 					this.doNotHeat();
 				} else if (!this.isHeating &&
@@ -545,12 +545,12 @@ implements	WashingMachineImplementationI
 					this.heat();
 					if (ThermostatedWashingMachine.VERBOSE) {
 						this.traceMessage(
-								"Thermostated heater decides to heat.\n");
+								"Thermostated washing machine decides to heat.\n");
 					}
 				} else {
 					if (ThermostatedWashingMachine.VERBOSE) {
 						this.traceMessage(
-								"Thermostated heater decides to do nothing.\n");
+								"Thermostated washine machine decides to do nothing.\n");
 					}					
 				}
 			} catch (Exception e) {
@@ -573,7 +573,7 @@ implements	WashingMachineImplementationI
 	public boolean		isRunning() throws Exception
 	{
 		if (ThermostatedWashingMachine.VERBOSE) {
-			this.traceMessage("Thermostated heater returns its state: " +
+			this.traceMessage("Thermostated washine machine returns its state: " +
 											this.currentState + ".\n");
 		}
 		return this.internalIsRunning();
@@ -586,11 +586,11 @@ implements	WashingMachineImplementationI
 	public void			startWashingMachine() throws Exception
 	{
 		if (ThermostatedWashingMachine.VERBOSE) {
-			this.traceMessage("Thermostated heater starts.\n");
+			this.traceMessage("Thermostated washine machine starts.\n");
 		}
 		assert	!this.internalIsRunning();
 
-		this.currentState = HeaterState.ON;
+		this.currentState = WashingMachineState.ON;
 
 		if (this.isSILsimulated) {
 			this.simulatorPlugin.triggerExternalEvent(
@@ -615,11 +615,11 @@ implements	WashingMachineImplementationI
 	public void			stopWashingMachine() throws Exception
 	{
 		if (ThermostatedWashingMachine.VERBOSE) {
-			this.traceMessage("Thermostated heater stops.\n");
+			this.traceMessage("Thermostated washine machine stops.\n");
 		}
 		assert	this.internalIsRunning();
 
-		this.currentState = HeaterState.OFF;
+		this.currentState = WashingMachineState.OFF;
 
 		if (this.isSILsimulated) {
 			this.simulatorPlugin.triggerExternalEvent(
@@ -628,24 +628,65 @@ implements	WashingMachineImplementationI
 		}
 	}
 
-	/*@Override
-	public void setTargetTemperature(int target) throws Exception {
-		// TODO Auto-generated method stub
-		
+
+	/**
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#setTargetTemperature(double)
+	 */
+	@Override
+	public void			setTargetTemperature(int target) throws Exception
+	{
+		if (ThermostatedWashingMachine.VERBOSE) {
+			this.traceMessage("Thermostated washine machine sets a new target "
+										+ "temperature: " + target + ".\n");
+		}
+
+		assert	this.internalIsRunning();
+		assert	target >= -50.0 && target <= 50.0;
+
+		this.targetTemperature = target;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#getTargetTemperature()
+	 */
 	@Override
-	public int getTargetTemperature() throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+	public int		getTargetTemperature() throws Exception
+	{
+		if (ThermostatedWashingMachine.VERBOSE) {
+			this.traceMessage("Thermostated washine machine returns its target"
+							+ " temperature " + this.targetTemperature + ".\n");
+		}
+
+		return this.targetTemperature;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#getCurrentTemperature()
+	 */
 	@Override
-	public int getCurrentTemperature() throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}*/
-
+	public double		getCurrentTemperature() throws Exception
+	{
+		double currentTemperature =  0.0;
+		if (this.isSILsimulated) {
+			currentTemperature =
+				(double) this.simulatorPlugin.getModelStateValue(
+								WashingMachineTemperatureSILModel.URI,
+								ThermostatedWashingMachineRTAtomicSimulatorPlugin.
+													CURRENT_ROOM_TERMPERATURE);
+		} else {
+			// Temporary implementation; would need a temperature sensor.
+		}
+		if (ThermostatedWashingMachine.VERBOSE) {
+			StringBuffer message =
+					new StringBuffer(
+						"Thermostated washine machine returns the current temperature ");
+			message.append(currentTemperature);
+			message.append(".\n");
+			this.traceMessage(message.toString());
+		}
+		return currentTemperature;
+	}
+	
 	@Override
 	public void setSpinningNumber(int target) throws Exception {
 		// TODO Auto-generated method stub
@@ -692,64 +733,6 @@ implements	WashingMachineImplementationI
 	public Program getMode() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#setTargetTemperature(double)
-	 */
-	@Override
-	public void			setTargetTemperature(int target) throws Exception
-	{
-		if (ThermostatedWashingMachine.VERBOSE) {
-			this.traceMessage("Thermostated heater sets a new target "
-										+ "temperature: " + target + ".\n");
-		}
-
-		assert	this.internalIsRunning();
-		assert	target >= -50.0 && target <= 50.0;
-
-		this.targetTemperature = target;
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#getTargetTemperature()
-	 */
-	@Override
-	public int		getTargetTemperature() throws Exception
-	{
-		if (ThermostatedWashingMachine.VERBOSE) {
-			this.traceMessage("Thermostated heater returns its target"
-							+ " temperature " + this.targetTemperature + ".\n");
-		}
-
-		return this.targetTemperature;
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#getCurrentTemperature()
-	 */
-	@Override
-	public double		getCurrentTemperature() throws Exception
-	{
-		double currentTemperature =  0.0;
-		if (this.isSILsimulated) {
-			currentTemperature =
-				(double) this.simulatorPlugin.getModelStateValue(
-								WashingMachineTemperatureSILModel.URI,
-								ThermostatedWashingMachineRTAtomicSimulatorPlugin.
-													CURRENT_ROOM_TERMPERATURE);
-		} else {
-			// Temporary implementation; would need a temperature sensor.
-		}
-		if (ThermostatedWashingMachine.VERBOSE) {
-			StringBuffer message =
-					new StringBuffer(
-						"Thermostated heater returns the current temperature ");
-			message.append(currentTemperature);
-			message.append(".\n");
-			this.traceMessage(message.toString());
-		}
-		return currentTemperature;
 	}
 }
 // -----------------------------------------------------------------------------
