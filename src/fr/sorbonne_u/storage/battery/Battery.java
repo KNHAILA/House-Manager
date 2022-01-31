@@ -90,8 +90,8 @@ implements	BatteryImplementation
 	/** URI of the hair dryer reflection inbound port.						*/
 	public static final String		REFLECTION_INBOUND_PORT_URI =
 												"Battery-rip";
-	/** URI of the hair dryer inbound port used in tests.					*/
-	public static final String		INBOUND_PORT_URI =
+	/** URI of the hair dryer inbound port used in tests.	*/
+	public static final String		Battery_INBOUND_PORT_URI =
 												"Battery-INBOUND-PORT-URI";
 	/** when true, methods trace their actions.								*/
 	public static final boolean		VERBOSE = true;
@@ -158,7 +158,7 @@ implements	BatteryImplementation
 			
 			) throws Exception
 		{
-			this(INBOUND_PORT_URI, simArchitectureURI, executesAsUnitTest);
+			this(Battery_INBOUND_PORT_URI, simArchitectureURI, executesAsUnitTest);
 		}
 
 	/**
@@ -532,11 +532,9 @@ implements	BatteryImplementation
 	@Override
 	public boolean		isRunning() throws Exception
 	{
-		this.traceMessage("************************************************ 1111");
 		if (Battery.VERBOSE) {
 			this.traceMessage("battery returns its state: " +
 											this.currentState + ".\n");
-			this.traceMessage("************************************************ 22222");
 		}
 		return this.internalIsRunning();
 	}
