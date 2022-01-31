@@ -53,10 +53,10 @@ public class RunWindTurbineUnitarySimulation {
 			// the WindTurbine unit tester model only exchanges event, an
 			// atomic model hence we use an AtomicModelDescriptor
 			atomicModelDescriptors.put(
-					WindTurbineUnitTester.URI,
+					WindTurbineUnitTesterModel.URI,
 					AtomicModelDescriptor.create(
-							WindTurbineUnitTester.class,
-							WindTurbineUnitTester.URI,
+							WindTurbineUnitTesterModel.class,
+							WindTurbineUnitTesterModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -70,7 +70,7 @@ public class RunWindTurbineUnitarySimulation {
 			Set<String> submodels = new HashSet<String>();
 			submodels.add(WindTurbineElectricityModel.URI);
 			submodels.add(WindSpeedModel.URI);
-			submodels.add(WindTurbineUnitTester.URI);
+			submodels.add(WindTurbineUnitTesterModel.URI);
 			
 			// event exchanging connections between exporting and importing
 			// models
@@ -78,27 +78,27 @@ public class RunWindTurbineUnitarySimulation {
 										new HashMap<EventSource,EventSink[]>();
 
 			connections.put(
-					new EventSource(WindTurbineUnitTester.URI,
+					new EventSource(WindTurbineUnitTesterModel.URI,
 									StartWindTurbine.class),
 					new EventSink[] {
 							new EventSink(WindTurbineElectricityModel.URI,
 										  StartWindTurbine.class),							
 					});
 			connections.put(
-					new EventSource(WindTurbineUnitTester.URI,
+					new EventSource(WindTurbineUnitTesterModel.URI,
 									StopWindTurbine.class),
 					new EventSink[] {
 							new EventSink(WindTurbineElectricityModel.URI,
 										  StopWindTurbine.class)
 					});
 			connections.put(
-					new EventSource(WindTurbineUnitTester.URI, UseWindTurbine.class),
+					new EventSource(WindTurbineUnitTesterModel.URI, UseWindTurbine.class),
 					new EventSink[] {
 							new EventSink(WindTurbineElectricityModel.URI,
 										  UseWindTurbine.class)
 					});
 			connections.put(
-					new EventSource(WindTurbineUnitTester.URI, DoNotUseWindTurbine.class),
+					new EventSource(WindTurbineUnitTesterModel.URI, DoNotUseWindTurbine.class),
 					new EventSink[] {
 							new EventSink(WindTurbineElectricityModel.URI,
 										  DoNotUseWindTurbine.class)

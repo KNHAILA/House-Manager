@@ -20,13 +20,13 @@ public class WaterVolumeModel    extends		AtomicHIOA
     public static final String URI = WaterVolumeModel.class.
             getSimpleName();
 
-    public static final double		MIN_WATER_SPEED = 0.0;
-    public static final double		MAX_WATER_SPEED = 500.0;
+    public static final double		MIN_WATER_VOLUME = 0.0;
+    public static final double		MAX_WATER_VOLUME = 500.0;
     public static final double		PERIOD = 10.0;
     protected static final double	STEP = 1.0;
     protected final Duration		evaluationStep;
     @ExportedVariable(type = Double.class)
-    protected final Value<Double>	waterSpeed =
+    protected final Value<Double>	waterVolume =
             new Value<Double>(this, 0.0, 0);
     protected double				cycleTime;
 
@@ -54,13 +54,13 @@ public class WaterVolumeModel    extends		AtomicHIOA
     {
         super.initialiseVariables(startTime);
 
-        this.waterSpeed.v = MIN_WATER_SPEED;
+        this.waterVolume.v = MIN_WATER_VOLUME;
 
         this.toggleDebugMode();
         this.logMessage("simulation begins.\n");
         StringBuffer message =
-                new StringBuffer("current wind speed: ");
-        message.append(this.waterSpeed.v);
+                new StringBuffer("current water volume: ");
+        message.append(this.waterVolume.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());
         message.append("\n");
@@ -89,16 +89,16 @@ public class WaterVolumeModel    extends		AtomicHIOA
             this.cycleTime -= PERIOD;
         }
         double c = Math.cos((1.0 + this.cycleTime/(PERIOD/2.0))*Math.PI);
-        this.waterSpeed.v =
-                MIN_WATER_SPEED +
-                        (MAX_WATER_SPEED - MIN_WATER_SPEED)*
+        this.waterVolume.v =
+                MIN_WATER_VOLUME +
+                        (MAX_WATER_VOLUME - MIN_WATER_VOLUME)*
                                 ((1.0 + c)/2.0);
-        this.waterSpeed.time = this.getCurrentStateTime();
+        this.waterVolume.time = this.getCurrentStateTime();
 
         // Tracing
         StringBuffer message =
-                new StringBuffer("current wind speed: ");
-        message.append(this.waterSpeed.v);
+                new StringBuffer("current water volume: ");
+        message.append(this.waterVolume.v);
         message.append(" at ");
         message.append(this.getCurrentStateTime());
         message.append("\n");

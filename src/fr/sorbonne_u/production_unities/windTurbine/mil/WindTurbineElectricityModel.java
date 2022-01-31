@@ -249,7 +249,6 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     @Override
     public void	userDefinedInternalTransition(Duration elapsedTime)
     {
-    	System.out.print("**************************************************** hereeee");
         super.userDefinedInternalTransition(elapsedTime);
 
         // set the current electricity consumption from the current state

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.cyphy.plugins.devs.utils.StandardComponentLogger;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel.State;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel.State;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
@@ -19,32 +19,32 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 
 //-----------------------------------------------------------------------------
 /**
-* The class <code>WindTurbineStateModel</code> defines a SIL simulation model
-* that simulate the evolution of the state of the WindTurbine over time.
+* The class <code>MiniHydroelectricDamStateModel</code> defines a SIL simulation model
+* that simulate the evolution of the state of the MiniHydroelectricDam over time.
 *
 * <p><strong>Description</strong></p>
 * 
 * <p>
-* In SIL simulation, the mode changes in the WindTurbine are controlled by the
-* WindTurbine component which will issue external events into its simulation
+* In SIL simulation, the mode changes in the MiniHydroelectricDam are controlled by the
+* MiniHydroelectricDam component which will issue external events into its simulation
 * model. In the MIL implementation, such events are received both by the
-* the {@code WindTurbineElectricityModel} and the {@code WindTurbineTemperatureModel}.
-* In the SIL simulation, the {@code WindTurbineElectricitySILModel} will be
+* the {@code MiniHydroelectricDamElectricityModel} and the {@code MiniHydroelectricDamTemperatureModel}.
+* In the SIL simulation, the {@code MiniHydroelectricDamElectricitySILModel} will be
 * executing inside the {@code ElectricMeter} component, not inside the
-* {@code SelfControlWindTurbine} component. Therefore, events sent to it must
+* {@code SelfControlMiniHydroelectricDam} component. Therefore, events sent to it must
 * be reemitted to the model in the {@code ElectricMeter} component.
 * </p>
 * <p>
 * BCM4Java-CyPhy allows a component to issue an external event into its own
 * simulation models, but not directly to models in other components. Hence,
 * the present model is added to receive the events issued by the
-* {@code SelfControlWindTurbine} component and reemit them to the
-* {@code WindTurbineElectricitySILModel} in the {@code ElectricMeter} component.
+* {@code SelfControlMiniHydroelectricDam} component and reemit them to the
+* {@code MiniHydroelectricDamElectricitySILModel} in the {@code ElectricMeter} component.
 * </p>
 * <p>
 * After taking care of the above, it turns out to be simpler to make
-* this new {@code WindTurbineStateModel} responsible for also sending the
-* events to the {@code WindTurbineTemperatureSILModel}.
+* this new {@code MiniHydroelectricDamStateModel} responsible for also sending the
+* events to the {@code MiniHydroelectricDamTemperatureSILModel}.
 * </p>
 * 
 * <p><strong>Invariant</strong></p>
@@ -74,7 +74,7 @@ extends		AtomicModel
 	public static final String			URI = MiniHydroelectricDamStateModel.class.
 															getSimpleName();
 
-	/** current state of the wind turbine.									*/
+	/** current state of the MiniHydroelectricDam.									*/
 	protected State						currentState;
 	/** last received event or null if none.								*/
 	protected AbstractMiniHydroelectricDamEvent lastReceived;
@@ -87,7 +87,7 @@ extends		AtomicModel
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create a WindTurbine state model instance.
+	 * create a MiniHydroelectricDam state model instance.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -194,7 +194,7 @@ extends		AtomicModel
 		// get the vector of current external events
 		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 		// when this method is called, there is at least one external event,
-		// and for the wind turbine model, there will be exactly one by
+		// and for the MiniHydroelectricDam model, there will be exactly one by
 		// construction.
 		assert	currentEvents != null && currentEvents.size() == 1;
 

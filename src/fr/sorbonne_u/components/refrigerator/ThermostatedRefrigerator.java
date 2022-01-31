@@ -534,7 +534,7 @@ implements	RefrigeratorImplementationI
 										this.targetTemperature + HYSTERESIS) {
 					if (ThermostatedRefrigerator.VERBOSE) {
 						this.traceMessage(
-								"Thermostated refrigerator decides to heat.\n");
+								"Thermostated refrigerator decides to freeze.\n");
 					}
 					this.doNotHeat();
 				} else if (!this.isHeating &&
@@ -543,7 +543,7 @@ implements	RefrigeratorImplementationI
 					this.heat();
 					if (ThermostatedRefrigerator.VERBOSE) {
 						this.traceMessage(
-								"Thermostated refrigerator decides to heat.\n");
+								"Thermostated refrigerator decides to freeze.\n");
 					}
 				} else {
 					if (ThermostatedRefrigerator.VERBOSE) {

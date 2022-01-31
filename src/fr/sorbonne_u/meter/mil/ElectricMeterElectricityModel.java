@@ -164,10 +164,10 @@ public class			ElectricMeterElectricityModel
     {
         // simple sum of all incoming intensities
        this.currentIntensity_consumption.v =
-                this.currentFanIntensity.v +
+                this.currentFanIntensity.v;
                       //  this.currentRefrigeratorIntensity.v +
                         //     this.currentVacuumCleanerIntensity.v +
-                                  this.currentWaterHeaterIntensity.v;
+                          //        this.currentWaterHeaterIntensity.v+
                           //             this.currentWashingMachineIntensity.v +
                             //                this.currentBatteryIntensity_consumption.v ;
 

@@ -68,9 +68,8 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUserModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterSpeedModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotMiniHydroelectricDam;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniHydroelectricDam;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterVolumeModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindSpeedModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUserModel;
@@ -352,10 +351,10 @@ public class			RunHEM_RT_Simulation
                             ACCELERATION_FACTOR));
             
             atomicModelDescriptors.put(
-            		WaterSpeedModel.URI,
+            		WaterVolumeModel.URI,
             		RTAtomicHIOA_Descriptor.create(
-							WaterSpeedModel.class,
-							WaterSpeedModel.URI,
+							WaterVolumeModel.class,
+							WaterVolumeModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
@@ -438,7 +437,7 @@ public class			RunHEM_RT_Simulation
             // Productions unities 
             
             submodels.add(MiniHydroelectricDamElectricityModel.URI);
-            submodels.add(WaterSpeedModel.URI);
+            submodels.add(WaterVolumeModel.URI);
             submodels.add(MiniHydroelectricDamUserModel.URI);
             
             submodels.add(WindTurbineElectricityModel.URI);
@@ -661,10 +660,10 @@ public class			RunHEM_RT_Simulation
 
             // Productions unities
             connections.put(
-                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotMiniHydroelectricDam.class),
+                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotUseMiniHydroelectricDam.class),
                     new EventSink[] {
                             new EventSink(MiniHydroelectricDamElectricityModel.URI,
-                            		DoNotMiniHydroelectricDam.class)
+                            		DoNotUseMiniHydroelectricDam.class)
                     });
         
             
@@ -673,7 +672,7 @@ public class			RunHEM_RT_Simulation
 					new EventSink[] {
 							new EventSink(MiniHydroelectricDamElectricityModel.URI,
 									UseMiniHydroelectricDam.class),
-							new EventSink(WaterSpeedModel.URI,
+							new EventSink(WaterVolumeModel.URI,
 									UseMiniHydroelectricDam.class)
 					});
             
@@ -730,11 +729,11 @@ public class			RunHEM_RT_Simulation
                     });
 
             // Productions unities
-            bindings.put(new VariableSource("waterSpeed",
+            bindings.put(new VariableSource("waterVolume",
                             Double.class,
-                            WaterSpeedModel.URI),
+                            WaterVolumeModel.URI),
                     new VariableSink[] {
-                            new VariableSink("waterSpeed",
+                            new VariableSink("waterVolume",
                                     Double.class,
                                     MiniHydroelectricDamElectricityModel.URI)
                     });

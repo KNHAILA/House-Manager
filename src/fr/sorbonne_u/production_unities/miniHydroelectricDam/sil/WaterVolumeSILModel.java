@@ -12,9 +12,9 @@ import java.util.Map;
 
 //-----------------------------------------------------------------------------
 /**
-* The class <code>WindSpeedSILModel</code> extends the base
+* The class <code>WaterVolumeSILModel</code> extends the base
 * {@code HeaterTemperatureModel} to cater for its execution inside
-* the {@code SelfControlWindTurbine} component.
+* the {@code SelfControlMiniHydroelectricDam} component.
 *
 * <p><strong>Description</strong></p>
 * 
@@ -102,7 +102,7 @@ extends		WaterVolumeModel
 	 */
 	public double		getCurrentWaterVolume()
 	{
-		return this.waterSpeed.v;
+		return this.waterVolume.v;
 	}
 
 	// -------------------------------------------------------------------------

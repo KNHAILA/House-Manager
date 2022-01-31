@@ -13,8 +13,8 @@ import java.util.Map;
 
 //-----------------------------------------------------------------------------
 /**
-* The class <code>WindTurbineElectricitySILModel</code> extends the base
-* {@code WindTurbineElectricityModel} to cater for its execution inside
+* The class <code>DameElectricitySILModel</code> extends the base
+* {@code DameElectricityModel} to cater for its execution inside
 * the {@code ElectricMeter} component.
 *
 * <p><strong>Description</strong></p>
@@ -57,7 +57,7 @@ extends		MiniHydroelectricDamElectricityModel
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create a WindTurbine electricity model instance.
+	 * create a Dame electricity model instance.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 

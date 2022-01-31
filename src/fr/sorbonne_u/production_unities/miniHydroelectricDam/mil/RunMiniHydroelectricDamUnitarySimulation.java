@@ -19,8 +19,7 @@ import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotUseMiniHydroelectricDam;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniHydroelectricDam;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 
 /**
  * The class <code>RunHeaterUnitarySimulation</code> creates a simulator
@@ -80,21 +79,21 @@ public class RunMiniHydroelectricDamUnitarySimulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
-            // for atomic model, we use an AtomicModelDescriptor
-            atomicModelDescriptors.put(
-            		MiniHydroelectricDamUserModel.URI,
-                    AtomicModelDescriptor.create(
-                    		MiniHydroelectricDamUserModel.class,
-                    		MiniHydroelectricDamUserModel.URI,
-                            TimeUnit.SECONDS,
-                            null,
-                            SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
             		WaterVolumeModel.URI,
 					AtomicHIOA_Descriptor.create(
 							WaterVolumeModel.class,
 							WaterVolumeModel.URI,
+							TimeUnit.SECONDS,
+							null,
+							SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
+            atomicModelDescriptors.put(
+            		MiniHydroelectricDamUnitTesterModel.URI,
+					AtomicModelDescriptor.create(
+							MiniHydroelectricDamUnitTesterModel.class,
+							MiniHydroelectricDamUnitTesterModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -107,7 +106,7 @@ public class RunMiniHydroelectricDamUnitarySimulation
             // the set of submodels of the coupled model, given by their URIs
             Set<String> submodels = new HashSet<String>();
             submodels.add(MiniHydroelectricDamElectricityModel.URI);
-            submodels.add(MiniHydroelectricDamUserModel.URI);
+            submodels.add(MiniHydroelectricDamUnitTesterModel.URI);
             submodels.add(WaterVolumeModel.URI);
 
             // event exchanging connections between exporting and importing
@@ -116,7 +115,7 @@ public class RunMiniHydroelectricDamUnitarySimulation
                     new HashMap<EventSource,EventSink[]>();
 
             connections.put(
-                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotUseMiniHydroelectricDam.class),
+                    new EventSource(MiniHydroelectricDamUnitTesterModel.URI, DoNotUseMiniHydroelectricDam.class),
                     new EventSink[] {
                             new EventSink(MiniHydroelectricDamElectricityModel.URI,
                             		DoNotUseMiniHydroelectricDam.class)
@@ -124,20 +123,40 @@ public class RunMiniHydroelectricDamUnitarySimulation
         
             
             connections.put(
-					new EventSource(MiniHydroelectricDamUserModel.URI, UseMiniHydroelectricDam.class),
+					new EventSource(MiniHydroelectricDamUnitTesterModel.URI, UseMiniHydroelectricDam.class),
 					new EventSink[] {
 							new EventSink(MiniHydroelectricDamElectricityModel.URI,
 									UseMiniHydroelectricDam.class),
 							new EventSink(WaterVolumeModel.URI,
 									UseMiniHydroelectricDam.class)
 					});
+            
+            connections.put(
+					new EventSource(MiniHydroelectricDamUnitTesterModel.URI, StartMiniHydroelectricDam.class),
+					new EventSink[] {
+							new EventSink(MiniHydroelectricDamElectricityModel.URI,
+									StartMiniHydroelectricDam.class),
+							new EventSink(WaterVolumeModel.URI,
+									StartMiniHydroelectricDam.class)
+					});
+            
+            connections.put(
+					new EventSource(MiniHydroelectricDamUnitTesterModel.URI, StopMiniHydroelectricDam.class),
+					new EventSink[] {
+							new EventSink(MiniHydroelectricDamElectricityModel.URI,
+									StopMiniHydroelectricDam.class),
+							new EventSink(WaterVolumeModel.URI,
+									StopMiniHydroelectricDam.class)
+					});
+
+            
             Map<VariableSource,VariableSink[]> bindings = new HashMap<VariableSource,VariableSink[]>();
             
-            bindings.put(new VariableSource("waterSpeed",
+            bindings.put(new VariableSource("waterVolume",
             		Double.class,
             		WaterVolumeModel.URI),
 			 new VariableSink[] {
-					 new VariableSink("waterSpeed",
+					 new VariableSink("waterVolume",
 							 		  Double.class,
 							 		 MiniHydroelectricDamElectricityModel.URI)
 			 });           

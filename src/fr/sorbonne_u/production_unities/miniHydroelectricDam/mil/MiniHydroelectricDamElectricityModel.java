@@ -95,7 +95,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     
     /** current intensity in amperes; intensity is power/tension.			*/
     @ImportedVariable(type = Double.class)
-    protected Value<Double>			waterSpeed;
+    protected Value<Double>			waterVolume;
     /** power of the heater in watts.										*/
     protected State currentState = State.NOT_USE;
     /** power of the heater in watts.										*/
@@ -252,7 +252,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
                 this.currentIntensity_production.v = 0.0;
                 break;
             case USE:
-            	this.currentIntensity_production.v = waterSpeed.v*MODE_PRODUCTION/TENSION;
+            	this.currentIntensity_production.v = waterVolume.v*MODE_PRODUCTION/TENSION;
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
 

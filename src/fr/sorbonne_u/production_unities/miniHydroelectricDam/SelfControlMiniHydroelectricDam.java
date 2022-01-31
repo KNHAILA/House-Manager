@@ -17,7 +17,7 @@ import fr.sorbonne_u.components.AbstractComponent;
 
 //-----------------------------------------------------------------------------
 /**
- * The class <code>SelfControlWindTurbine</code> a WindTurbine component
+ * The class <code>SelfControlMiniHydroelectricDam</code> a MiniHydroelectricDam component
  * including a SIL simulation.
  *
  * <p>
@@ -25,7 +25,7 @@ import fr.sorbonne_u.components.AbstractComponent;
  * </p>
  * 
  * <p>
- * The WindTurbine is an appliance that can be suspended, hence it will connect
+ * The MiniHydroelectricDam is an appliance that can be suspended, hence it will connect
  * with the household energy manager. This version of the component is made to
  * act as a cyber-physical component able to use SIL simulations to test the
  * code against models of the physical world.
@@ -64,8 +64,8 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The enumeration <code>WindTurbineState</code> describes the operation states
-	 * of the WindTurbine.
+	 * The enumeration <code>MiniHydroelectricDamState</code> describes the operation states
+	 * of the MiniHydroelectricDam.
 	 *
 	 * <p>
 	 * <strong>Description</strong>
@@ -78,9 +78,9 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	 * @author <a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
 	 */
 	protected static enum MiniHydroelectricDamState {
-		/** WindTurbine is on. */
+		/** MiniHydroelectricDam is on. */
 		ON,
-		/** WindTurbine is off. */
+		/** MiniHydroelectricDam is off. */
 		OFF
 	}
 
@@ -95,9 +95,9 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	/** when true, methods trace their actions. */
 	public static final boolean VERBOSE = true;
 
-	/** current state (on, off) of the WindTurbine. */
+	/** current state (on, off) of the MiniHydroelectricDam. */
 	protected MiniHydroelectricDamState currentState;
-	/** inbound port offering the <code>WindTurbineCI</code> interface. */
+	/** inbound port offering the <code>MiniHydroelectricDamCI</code> interface. */
 	protected MiniHydroelectricDamInboundPort hip;
 
 	// SIL simulation
@@ -138,7 +138,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	// -------------------------------------------------------------------------
 
 	/**
-	 * create a new WindTurbine.
+	 * create a new MiniHydroelectricDam.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
@@ -166,22 +166,22 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	}
 
 	/**
-	 * create a new WindTurbine.
+	 * create a new MiniHydroelectricDam.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
 	 * </p>
 	 * 
 	 * <pre>
-	 * pre	{@code WindTurbineInboundPortURI != null}
-	 * pre	{@code !WindTurbineInboundPortURI.isEmpty()}
+	 * pre	{@code MiniHydroelectricDamInboundPortURI != null}
+	 * pre	{@code !MiniHydroelectricDamInboundPortURI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 * 
-	 * @param WindTurbineInboundPortURI URI of the inbound port to call the
-	 *                                  WindTurbine component.
+	 * @param MiniHydroelectricDamInboundPortURI URI of the inbound port to call the
+	 *                                  MiniHydroelectricDam component.
 	 * @param simArchitectureURI        URI of the simulation architecture to be
 	 *                                  created or the empty string if the component
 	 *                                  does not execute as a SIL simulation.
@@ -189,16 +189,16 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	 *                                  test, false otherwise.
 	 * @throws Exception <i>to do </i>.
 	 */
-	protected SelfControlMiniHydroelectricDam(String WindTurbineInboundPortURI, String simArchitectureURI,
+	protected SelfControlMiniHydroelectricDam(String MiniHydroelectricDamInboundPortURI, String simArchitectureURI,
 			boolean executesAsUnitTest) throws Exception {
 		// one standard thread pool used to execute the services and one
 		// schedulable pool thread to execute the controller task
 		super(REFLECTION_INBOUND_PORT_URI, 1, 1);
-		this.initialise(WindTurbineInboundPortURI, simArchitectureURI, executesAsUnitTest);
+		this.initialise(MiniHydroelectricDamInboundPortURI, simArchitectureURI, executesAsUnitTest);
 	}
 
 	/**
-	 * create a new WindTurbine.
+	 * create a new MiniHydroelectricDam.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
@@ -207,8 +207,8 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	 * <pre>
 	 * pre	{@code reflectionInboundPortURI != null}
 	 * pre	{@code !reflectionInboundPortURI.isEmpty()}
-	 * pre	{@code WindTurbineInboundPortURI != null}
-	 * pre	{@code !WindTurbineInboundPortURI.isEmpty()}
+	 * pre	{@code MiniHydroelectricDamInboundPortURI != null}
+	 * pre	{@code !MiniHydroelectricDamInboundPortURI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
@@ -216,8 +216,8 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	 * 
 	 * @param reflectionInboundPortURI  URI of the reflection inbound port of the
 	 *                                  component.
-	 * @param WindTurbineInboundPortURI URI of the inbound port to call the
-	 *                                  WindTurbine component.
+	 * @param MiniHydroelectricDamInboundPortURI URI of the inbound port to call the
+	 *                                  MiniHydroelectricDam component.
 	 * @param simArchitectureURI        URI of the simulation architecture to be
 	 *                                  created or the empty string if the component
 	 *                                  does not execute as a SIL simulation.
@@ -225,29 +225,29 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	 *                                  test, false otherwise.
 	 * @throws Exception <i>to do </i>.
 	 */
-	protected SelfControlMiniHydroelectricDam(String reflectionInboundPortURI, String WindTurbineInboundPortURI,
+	protected SelfControlMiniHydroelectricDam(String reflectionInboundPortURI, String MiniHydroelectricDamInboundPortURI,
 			String simArchitectureURI, boolean executesAsUnitTest) throws Exception {
 		super(reflectionInboundPortURI, 1, 1);
-		this.initialise(WindTurbineInboundPortURI, simArchitectureURI, executesAsUnitTest);
+		this.initialise(MiniHydroelectricDamInboundPortURI, simArchitectureURI, executesAsUnitTest);
 	}
 
 	/**
-	 * create a new WindTurbine.
+	 * create a new MiniHydroelectricDam.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
 	 * </p>
 	 * 
 	 * <pre>
-	 * pre	{@code WindTurbineInboundPortURI != null}
-	 * pre	{@code !WindTurbineInboundPortURI.isEmpty()}
+	 * pre	{@code MiniHydroelectricDamInboundPortURI != null}
+	 * pre	{@code !MiniHydroelectricDamInboundPortURI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
-	 * @param WindTurbineInboundPortURI URI of the inbound port to call the
-	 *                                  WindTurbine component.
+	 * @param MiniHydroelectricDamInboundPortURI URI of the inbound port to call the
+	 *                                  MiniHydroelectricDam component.
 	 * @param simArchitectureURI        URI of the simulation architecture to be
 	 *                                  created or the empty string if the component
 	 *                                  does not execute as a SIL simulation.
@@ -255,10 +255,10 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	 *                                  test, false otherwise.
 	 * @throws Exception <i>to do </i>.
 	 */
-	protected void initialise(String WindTurbineInboundPortURI, String simArchitectureURI, boolean executesAsUnitTest)
+	protected void initialise(String MiniHydroelectricDamInboundPortURI, String simArchitectureURI, boolean executesAsUnitTest)
 			throws Exception {
-		assert WindTurbineInboundPortURI != null;
-		assert !WindTurbineInboundPortURI.isEmpty();
+		assert MiniHydroelectricDamInboundPortURI != null;
+		assert !MiniHydroelectricDamInboundPortURI.isEmpty();
 		assert simArchitectureURI != null;
 		assert !simArchitectureURI.isEmpty() || !executesAsUnitTest;
 
@@ -270,9 +270,9 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 		this.currentState = MiniHydroelectricDamState.OFF;
 		this.accFactor = this.composesAsUnitTest ? ACC_FACTOR : CVM_SIL.ACC_FACTOR;
 		this.isWorking = false;
-		Max_tolerated_wind_speed = 100.0;
+		Max_tolerated_wind_speed = 400.0;
 
-		this.hip = new MiniHydroelectricDamInboundPort(WindTurbineInboundPortURI, this);
+		this.hip = new MiniHydroelectricDamInboundPort(MiniHydroelectricDamInboundPortURI, this);
 		this.hip.publishPort();
 
 		if (SelfControlMiniHydroelectricDam.VERBOSE) {
@@ -381,7 +381,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	// -------------------------------------------------------------------------
 
 	/**
-	 * return true if the WindTurbine is running.
+	 * return true if the MiniHydroelectricDam is running.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
@@ -392,15 +392,15 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
-	 * @return true if the WindTurbine is running.
+	 * @return true if the MiniHydroelectricDam is running.
 	 */
 	public boolean internalIsRunning() {
 		return this.currentState == MiniHydroelectricDamState.ON;
 	}
 
 	/**
-	 * make the WindTurbine start heating; this internal method is meant to be
-	 * executed by the WindTurbine thermostat when the room wind speed is below the
+	 * make the MiniHydroelectricDam start heating; this internal method is meant to be
+	 * executed by the MiniHydroelectricDam thermostat when the room wind speed is below the
 	 * target wind speed.
 	 * 
 	 * <p>
@@ -425,8 +425,8 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	}
 
 	/**
-	 * make the WindTurbine stop heating; this internal method is meant to be
-	 * executed by the WindTurbine thermostat when the room wind speed comes over
+	 * make the MiniHydroelectricDam stop heating; this internal method is meant to be
+	 * executed by the MiniHydroelectricDam thermostat when the room wind speed comes over
 	 * the target wind speed after a period of heating.
 	 * 
 	 * <p>
@@ -467,9 +467,8 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	 * @param u      time unit allowing to interpret the value of {@code period}.
 	 */
 	protected void internalController(long period, TimeUnit u) {
-		// when the WindTurbine is on, perform the control, but if the WindTurbine is
+		// when the MiniHydroelectricDam is on, perform the control, but if the MiniHydroelectricDam is
 		// switched off, stop the controller
-		System.out.print("**********************");
 		if (this.currentState == SelfControlMiniHydroelectricDam.MiniHydroelectricDamState.ON) {
 			try {
 				if (this.isWorking && this.getCurrentWaterVolume() > this.Max_tolerated_wind_speed + HYSTERESIS) {
@@ -502,7 +501,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.production_unities.windTurbine.WindTurbineImplementation#isRunning()
+	 * @see fr.sorbonne_u.production_unities.miniHydroelectricDam.MiniHydroelectricDamImplementation#isRunning()
 	 */
 	@Override
 	public boolean isRunning() throws Exception {
@@ -513,7 +512,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	}
 
 	/**
-	 * @see fr.sorbonne_u.production_unities.windTurbine.WindTurbineImplementation#startWindTurbine()
+	 * @see fr.sorbonne_u.production_unities.MiniHydroelectricDam.MiniHydroelectricDamImplementation#startMiniHydroelectricDam()
 	 */
 	@Override
 	public void startMiniHydroelectricDam() throws Exception {
@@ -530,7 +529,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 			this.simulatorPlugin.triggerExternalEvent(MiniHydroelectricDamStateModel.URI, t -> new StartMiniHydroelectricDam(t));
 		}
 
-		// when starting the WindTurbine, its internal controller is also started
+		// when starting the MiniHydroelectricDam, its internal controller is also started
 		// to execute at the predefined period to check the current wind speed
 		// and decide when to start or stop heating
 		long accPeriod = (long) (PERIOD / this.accFactor);
@@ -539,7 +538,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	}
 
 	/**
-	 * @see fr.sorbonne_u.production_unities.windTurbine.WindTurbineImplementation#stopWindTurbine()
+	 * @see fr.sorbonne_u.production_unities.MiniHydroelectricDam.MiniHydroelectricDamImplementation#stopMiniHydroelectricDam()
 	 */
 	@Override
 	public void stopMiniHydroelectricDam() throws Exception {
@@ -557,7 +556,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	}
 
 	/**
-	 * @see fr.sorbonne_u.production_unities.windTurbine.WindTurbineImplementation#getCurrentWindSpeed()
+	 * @see fr.sorbonne_u.production_unities.MiniHydroelectricDam.MiniHydroelectricDamImplementation#getCurrentWindSpeed()
 	 */
 	@Override
 	public double getCurrentWaterVolume() throws Exception {

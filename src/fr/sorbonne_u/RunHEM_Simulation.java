@@ -47,8 +47,26 @@ import fr.sorbonne_u.meter.mil.ElectricMeterElectricityModel;
 
 //Battery
 import fr.sorbonne_u.storage.battery.mil.BatteryElectricityModel;
+import fr.sorbonne_u.storage.battery.mil.BatteryPercentageModel;
+import fr.sorbonne_u.storage.battery.mil.BatteryUnitTesterModel;
 import fr.sorbonne_u.storage.battery.mil.BatteryUserModel;
 import fr.sorbonne_u.storage.battery.mil.events.*;
+
+//miniHydroelectricDam
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.MiniHydroelectricDamUnitTester;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUnitTesterModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUserModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterVolumeModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
+
+//Wind turbine
+import fr.sorbonne_u.production_unities.windTurbine.WindTurbineUnitTester;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindSpeedModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUnitTesterModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUserModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 
 //devs_simulation
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
@@ -66,16 +84,6 @@ import fr.sorbonne_u.devs_simulation.models.architectures.RTAtomicModelDescripto
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUserModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterSpeedModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotMiniHydroelectricDam;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniHydroelectricDam;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindSpeedModel;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUserModel;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.DoNotUseWindTurbine;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
 
 
 // -----------------------------------------------------------------------------
@@ -184,6 +192,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
             atomicModelDescriptors.put(
                     WaterHeaterTemperatureModel.URI,
                     AtomicHIOA_Descriptor.create(
@@ -192,6 +201,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
             atomicModelDescriptors.put(
                     WaterHeaterExternalTemperatureModel.URI,
                     AtomicHIOA_Descriptor.create(
@@ -210,6 +220,7 @@ public class			RunHEM_Simulation
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
 
+            
             // the Refrigerator models
             atomicModelDescriptors.put(
                     RefrigeratorElectricityModel.URI,
@@ -219,6 +230,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
             atomicModelDescriptors.put(
                     RefrigeratorTemperatureModel.URI,
                     AtomicHIOA_Descriptor.create(
@@ -227,6 +239,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
             atomicModelDescriptors.put(
                     RefrigeratorExternalTemperatureModel.URI,
                     AtomicHIOA_Descriptor.create(
@@ -235,6 +248,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
             atomicModelDescriptors.put(
                     RefrigeratorUnitTesterModel.URI,
                     AtomicModelDescriptor.create(
@@ -243,7 +257,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
-
+            
             // the washing machine model
             atomicModelDescriptors.put(
                     WashingMachineElectricityModel.URI,
@@ -253,6 +267,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
             atomicModelDescriptors.put(
                     WashingMachineTemperatureModel.URI,
                     AtomicHIOA_Descriptor.create(
@@ -261,6 +276,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
             atomicModelDescriptors.put(
                     WashingMachineExternalTemperatureModel.URI,
                     AtomicHIOA_Descriptor.create(
@@ -278,6 +294,7 @@ public class			RunHEM_Simulation
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+                            
 
             // the electric meter model
             atomicModelDescriptors.put(
@@ -291,13 +308,14 @@ public class			RunHEM_Simulation
 
             //The battery model
             atomicModelDescriptors.put(
-                    BatteryElectricityModel.URI,
+            		BatteryElectricityModel.URI,
                     AtomicHIOA_Descriptor.create(
-                            BatteryElectricityModel.class,
-                            BatteryElectricityModel.URI,
+                    		BatteryElectricityModel.class,
+                    		BatteryElectricityModel.URI,
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
             atomicModelDescriptors.put(
                     BatteryUserModel.URI,
                     AtomicModelDescriptor.create(
@@ -307,7 +325,25 @@ public class			RunHEM_Simulation
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
             
-            // Production Unity : Mini Hydro Electric Dam
+            atomicModelDescriptors.put(
+            		BatteryPercentageModel.URI,
+                    AtomicHIOA_Descriptor.create(
+                    		BatteryPercentageModel.class,
+                    		BatteryPercentageModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
+            atomicModelDescriptors.put(
+            		BatteryUnitTesterModel.URI,
+                    AtomicHIOA_Descriptor.create(
+                    		BatteryUnitTesterModel.class,
+                    		BatteryUnitTesterModel.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
+            // Production Unit: Mini Hydro Electric Dam
             atomicModelDescriptors.put(
             		MiniHydroelectricDamElectricityModel.URI,
             		RTAtomicHIOA_Descriptor.create(
@@ -327,17 +363,25 @@ public class			RunHEM_Simulation
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
-            		WaterSpeedModel.URI,
+            		WaterVolumeModel.URI,
             		RTAtomicHIOA_Descriptor.create(
-							WaterSpeedModel.class,
-							WaterSpeedModel.URI,
+            				WaterVolumeModel.class,
+							WaterVolumeModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
+            
+            atomicModelDescriptors.put(
+            		MiniHydroelectricDamUnitTester.URI,
+                    RTAtomicModelDescriptor.create(
+                    		MiniHydroelectricDamUnitTester.class,
+                    		MiniHydroelectricDamUnitTester.URI,
+                            TimeUnit.SECONDS,
+                            null,
+                            SimulationEngineCreationMode.ATOMIC_ENGINE));
 
             
-            // Production Unity : Wind Turbine
-            
+            // Production Unit: Wind Turbine
             atomicModelDescriptors.put(
             		WindTurbineElectricityModel.URI,
             		RTAtomicHIOA_Descriptor.create(
@@ -365,7 +409,15 @@ public class			RunHEM_Simulation
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
             
-
+            atomicModelDescriptors.put(
+            		WindTurbineUnitTester.URI,
+            		RTAtomicHIOA_Descriptor.create(
+            				WindTurbineUnitTester.class,
+            				WindTurbineUnitTester.URI,
+							TimeUnit.SECONDS,
+							null,
+							SimulationEngineCreationMode.ATOMIC_ENGINE));
+			
 
             // map that will contain the coupled model descriptors to construct
             // the simulation architecture
@@ -373,6 +425,7 @@ public class			RunHEM_Simulation
                     new HashMap<>();
 
             // the set of submodels of the coupled model, given by their URIs
+            
             //Fan
             Set<String> submodels = new HashSet<String>();
             submodels.add(FanElectricityModel.URI);
@@ -399,23 +452,28 @@ public class			RunHEM_Simulation
             submodels.add(WashingMachineTemperatureModel.URI);
             submodels.add(WashingMachineExternalTemperatureModel.URI);
             submodels.add(WashingMachineUnitTesterModel.URI);
-
+            
             //meter
             submodels.add(ElectricMeterElectricityModel.URI);
 
             //battery
             submodels.add(BatteryElectricityModel.URI);
             submodels.add(BatteryUserModel.URI);
+            submodels.add(BatteryPercentageModel.URI);
+            submodels.add(BatteryUnitTesterModel.URI);
             
-            // Productions unities 
-            
+            // MiniHydroelectricDam
             submodels.add(MiniHydroelectricDamElectricityModel.URI);
-            submodels.add(WaterSpeedModel.URI);
+            submodels.add(WaterVolumeModel.URI);
             submodels.add(MiniHydroelectricDamUserModel.URI);
+            submodels.add(MiniHydroelectricDamUnitTesterModel.URI);
             
+            // WindTurbine
             submodels.add(WindTurbineElectricityModel.URI);
             submodels.add(WindSpeedModel.URI);
             submodels.add(WindTurbineUserModel.URI);
+            submodels.add(WindTurbineUnitTesterModel.URI);
+            
             
             // event exchanging connections between exporting and importing
             // models
@@ -473,6 +531,7 @@ public class			RunHEM_Simulation
                             new EventSink(VacuumCleanerElectricityModel.URI,
                                     SetLowVacuumCleaner.class)
                     });
+            
 
             //Water heater
             connections.put(
@@ -498,7 +557,6 @@ public class			RunHEM_Simulation
                                     HeatWater.class)
                             });
             
-           
             connections.put(
                     new EventSource(WaterHeaterUnitTesterModel.URI, DoNotHeatWater.class),
                     new EventSink[] {
@@ -507,6 +565,7 @@ public class			RunHEM_Simulation
                             new EventSink(WaterHeaterTemperatureModel.URI,
                                     DoNotHeatWater.class)
                     });
+            
 
             //Refrigerator
             connections.put(
@@ -618,26 +677,54 @@ public class			RunHEM_Simulation
                             new EventSink(WashingMachineTemperatureModel.URI,
                                     fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
                     });
+                    
             //Battery
             connections.put(
-                    new EventSource(BatteryUserModel.URI, ChargeBattery.class),
+                    new EventSource(BatteryUnitTesterModel.URI,
+                    		UseBattery.class),
                     new EventSink[] {
                             new EventSink(BatteryElectricityModel.URI,
-                                    ChargeBattery.class)
-                    });
-            connections.put(
-                    new EventSource(BatteryUserModel.URI, UseBattery.class),
-                    new EventSink[] {
-                            new EventSink(BatteryElectricityModel.URI,
-                                    UseBattery.class)
+                            		UseBattery.class),
+                            new EventSink(BatteryPercentageModel.URI,
+                            		UseBattery.class)
                     });
             
-            // Productions unities
             connections.put(
-                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotMiniHydroelectricDam.class),
+                    new EventSource(BatteryUnitTesterModel.URI,
+                    		DoNotUseBattery.class),
+                    new EventSink[] {
+                            new EventSink(BatteryElectricityModel.URI,
+                            		DoNotUseBattery.class),
+                            new EventSink(BatteryPercentageModel.URI,
+                            		DoNotUseBattery.class)
+                    });
+            
+            connections.put(
+                    new EventSource(BatteryUnitTesterModel.URI,
+                    		ChargeBattery.class),
+                    new EventSink[] {
+                            new EventSink(BatteryElectricityModel.URI,
+                            		ChargeBattery.class),
+                            new EventSink(BatteryPercentageModel.URI,
+                            		ChargeBattery.class)
+                    });
+            
+            connections.put(
+                    new EventSource(BatteryUnitTesterModel.URI,
+                    		DoNotChargeBattery.class),
+                    new EventSink[] {
+                            new EventSink(BatteryElectricityModel.URI,
+                            		DoNotChargeBattery.class),
+                            new EventSink(BatteryPercentageModel.URI,
+                            		DoNotChargeBattery.class)
+                    });
+            
+            // MiniHydroelectricDam
+            connections.put(
+                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotUseMiniHydroelectricDam.class),
                     new EventSink[] {
                             new EventSink(MiniHydroelectricDamElectricityModel.URI,
-                            		DoNotMiniHydroelectricDam.class)
+                            		DoNotUseMiniHydroelectricDam.class)
                     });
         
             
@@ -646,10 +733,29 @@ public class			RunHEM_Simulation
 					new EventSink[] {
 							new EventSink(MiniHydroelectricDamElectricityModel.URI,
 									UseMiniHydroelectricDam.class),
-							new EventSink(WaterSpeedModel.URI,
+							new EventSink(WaterVolumeModel.URI,
 									UseMiniHydroelectricDam.class)
 					});
             
+            connections.put(
+					new EventSource(MiniHydroelectricDamUserModel.URI, StartMiniHydroelectricDam.class),
+					new EventSink[] {
+							new EventSink(MiniHydroelectricDamElectricityModel.URI,
+									StartMiniHydroelectricDam.class),
+							new EventSink(WaterVolumeModel.URI,
+									StartMiniHydroelectricDam.class)
+					});
+            
+            connections.put(
+					new EventSource(MiniHydroelectricDamUserModel.URI, StopMiniHydroelectricDam.class),
+					new EventSink[] {
+							new EventSink(MiniHydroelectricDamElectricityModel.URI,
+									StopMiniHydroelectricDam.class),
+							new EventSink(WaterVolumeModel.URI,
+									StopMiniHydroelectricDam.class)
+					});
+            
+         // Wind Turbine
             connections.put(
                     new EventSource(WindTurbineUserModel.URI, DoNotUseWindTurbine.class),
                     new EventSink[] {
@@ -665,13 +771,31 @@ public class			RunHEM_Simulation
 							new EventSink(WindSpeedModel.URI,
 									UseWindTurbine.class)
 					});
-
+            
+            connections.put(
+					new EventSource(WindTurbineUserModel.URI, StartWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindTurbineElectricityModel.URI,
+									StartWindTurbine.class),
+							new EventSink(WindSpeedModel.URI,
+									StartWindTurbine.class)
+					});
+            
+            connections.put(
+					new EventSource(WindTurbineUserModel.URI, StopWindTurbine.class),
+					new EventSink[] {
+							new EventSink(WindTurbineElectricityModel.URI,
+									StopWindTurbine.class),
+							new EventSink(WindSpeedModel.URI,
+									StopWindTurbine.class)
+					});
 
 
             // variable bindings between exporting and importing models
             Map<VariableSource,VariableSink[]> bindings =
                     new HashMap<VariableSource,VariableSink[]>();
 
+                    
             // bindings among water heater models
             VariableSource source1 =
                     new VariableSource("externalTemperature",
@@ -685,6 +809,7 @@ public class			RunHEM_Simulation
                     };
             bindings.put(source1, sinks1);
 
+            
             // bindings among Refrigerator models
             VariableSource source2 =
                     new VariableSource("externalTemperature",
@@ -710,151 +835,168 @@ public class			RunHEM_Simulation
                                     WashingMachineTemperatureModel.URI)
                     };
             bindings.put(source3, sinks3);
-
-            // bindings among WindTurbine models
+            
+            // bindings among battery models Battery
             VariableSource source4 =
+                    new VariableSource("electricityState",
+                    		BatteryElectricityModel.State.class,
+                    		BatteryElectricityModel.URI);
+            VariableSink[] sinks4 =
+                    new VariableSink[] {
+                            new VariableSink("electricityState",
+                            		BatteryElectricityModel.State.class,
+                            		BatteryPercentageModel.URI)
+                    };
+            bindings.put(source4, sinks4);
+            
+            
+            // bindings among WindTurbine models
+            VariableSource source5 =
                     new VariableSource("windSpeed",
                             Double.class,
                             WindSpeedModel.URI);
-            VariableSink[] sinks4 =
+            VariableSink[] sinks5 =
                     new VariableSink[] {
                             new VariableSink("windSpeed",
                                     Double.class,
                                     WindTurbineElectricityModel.URI)
                     };
-            bindings.put(source4, sinks4);
+            bindings.put(source5, sinks5);
+            
 
             // bindings among  MiniHydroelectricDam models
-            VariableSource source5 =
-                    new VariableSource("waterSpeed",
+            VariableSource source6 =
+                    new VariableSource("waterVolume",
                             Double.class,
-                            WaterSpeedModel.URI);
-            VariableSink[] sinks5 =
+                            WaterVolumeModel.URI);
+            VariableSink[] sinks6 =
                     new VariableSink[] {
-                            new VariableSink("waterSpeed",
+                            new VariableSink("waterVolume",
                                     Double.class,
                                     MiniHydroelectricDamElectricityModel.URI)
                     };
-            bindings.put(source5, sinks5);
+            bindings.put(source6, sinks6);
+            
 
             // bindings between components models to the electric meter model
             //Fan
-            VariableSource source6 =
+            VariableSource source7 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             FanElectricityModel.URI);
-            VariableSink[] sinks6 =
+            VariableSink[] sinks7 =
                     new VariableSink[] {
                             new VariableSink("currentFanIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source6, sinks6);
+            bindings.put(source7, sinks7);
 
             // Vacuum Cleaner
-            VariableSource source7 =
+            VariableSource source8 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             VacuumCleanerElectricityModel.URI);
-            VariableSink[] sinks7 =
+            VariableSink[] sinks8 =
                     new VariableSink[] {
                             new VariableSink("currentVacuumCleanerIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source7, sinks7);
+            bindings.put(source8, sinks8);
 
+            
             //water heater
-            VariableSource source8 =
+            VariableSource source9 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             WaterHeaterElectricityModel.URI);
-            VariableSink[] sinks8 =
+            VariableSink[] sinks9 =
                     new VariableSink[] {
                             new VariableSink("currentWaterHeaterIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source8, sinks8);
+            bindings.put(source9, sinks9);
 
             //Refrigerator
-            VariableSource source9 =
+            VariableSource source10 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             RefrigeratorElectricityModel.URI);
-            VariableSink[] sinks9 =
+            VariableSink[] sinks10 =
                     new VariableSink[] {
                             new VariableSink("currentRefrigeratorIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source9, sinks9);
-
+            bindings.put(source10, sinks10);
+            
             //washing machine
-            VariableSource source10 =
+            VariableSource source11 =
                     new VariableSource("currentIntensity",
                             Double.class,
                             WashingMachineElectricityModel.URI);
-            VariableSink[] sinks10 =
+            VariableSink[] sinks11 =
                     new VariableSink[] {
                             new VariableSink("currentWashingMachineIntensity",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source10, sinks10);
+            bindings.put(source11, sinks11);
+            
 
             //Battery
-            VariableSource source11 =
+            VariableSource source12 =
                     new VariableSource("currentIntensity_consumption",
                             Double.class,
                             BatteryElectricityModel.URI);
-            VariableSink[] sinks11 =
+            VariableSink[] sinks12 =
                     new VariableSink[] {
                             new VariableSink("currentBatteryIntensity_consumption",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source11, sinks11);
+            bindings.put(source12, sinks12);
 
-            VariableSource source12 =
+            VariableSource source13 =
                     new VariableSource("currentIntensity_production",
                             Double.class,
                             BatteryElectricityModel.URI);
-            VariableSink[] sinks12 =
+            VariableSink[] sinks13 =
                     new VariableSink[] {
                             new VariableSink("currentBatteryIntensity_production",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source12, sinks12);
+            bindings.put(source13, sinks13);
 
             //Wind turbine
-            VariableSource source13 =
+            VariableSource source14 =
                     new VariableSource("currentIntensity_production",
                             Double.class,
                             WindTurbineElectricityModel.URI);
-            VariableSink[] sinks13 =
+            VariableSink[] sinks14 =
                     new VariableSink[] {
                             new VariableSink("currentWindTurbineIntensity_production",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source13, sinks13);
-
+            bindings.put(source14, sinks14);
+            
             //MiniHydroelectricDam
-            VariableSource source14 =
-                    new VariableSource("currentIntensity_production",
+            VariableSource source15 =
+                    new VariableSource("currentMiniHydroelectricDamIntensity_production",
                             Double.class,
                             MiniHydroelectricDamElectricityModel.URI);
-            VariableSink[] sinks14 =
+            VariableSink[] sinks15 =
                     new VariableSink[] {
                             new VariableSink("currentMiniHydroelectricDamIntensity_production",
                                     Double.class,
                                     ElectricMeterElectricityModel.URI)
                     };
-            bindings.put(source14, sinks14);
-
-
+            bindings.put(source15, sinks15);
+            
             // coupled model descriptor: an HIOA requires a
             // CoupledHIOA_Descriptor
             coupledModelDescriptors.put(

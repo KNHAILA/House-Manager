@@ -274,11 +274,11 @@ extends		RTAtomicSimulatorPlugin
 		Map<VariableSource,VariableSink[]> bindings =
 							new HashMap<VariableSource,VariableSink[]>();
 
-		bindings.put(new VariableSource("waterSpeed",
+		bindings.put(new VariableSource("waterVolume",
 										Double.class,
 										WaterVolumeSILModel.URI),
 					 new VariableSink[] {
-							 new VariableSink("waterSpeed",
+							 new VariableSink("waterVolume",
 									 		  Double.class,
 									 		 MiniHydroelectricDamElectricitySILModel.URI)
 					 });
