@@ -469,21 +469,18 @@ public class SelfControlWindTurbine extends AbstractCyPhyComponent implements Wi
 	protected void internalController(long period, TimeUnit u) {
 		// when the WindTurbine is on, perform the control, but if the WindTurbine is
 		// switched off, stop the controller
-		System.out.print("**********************");
 		if (this.currentState == SelfControlWindTurbine.WindTurbineState.ON) {
 			try {
 				if (this.isWorking && this.getCurrentWindSpeed() > this.Max_tolerated_wind_speed + HYSTERESIS) {
 					if (SelfControlWindTurbine.VERBOSE) {
 						this.traceMessage("WindTurbine decides to stop.\n");
 					}
-					System.out.print("**********************");
 					this.stopWindTurbine();
 				} 
 				else if (!this.isWorking && this.getCurrentWindSpeed() < this.Max_tolerated_wind_speed + HYSTERESIS) {
 					if (SelfControlWindTurbine.VERBOSE) {
 						this.traceMessage("WindTurbine decides to start.\n");
 					}
-					System.out.print("**********************");
 					this.startWindTurbine();
 				} else {
 					if (SelfControlWindTurbine.VERBOSE) {

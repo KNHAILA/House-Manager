@@ -115,23 +115,6 @@ public class RunMiniHydroelectricDamUnitarySimulation
                     new HashMap<EventSource,EventSink[]>();
 
             connections.put(
-                    new EventSource(MiniHydroelectricDamUnitTesterModel.URI, DoNotUseMiniHydroelectricDam.class),
-                    new EventSink[] {
-                            new EventSink(MiniHydroelectricDamElectricityModel.URI,
-                            		DoNotUseMiniHydroelectricDam.class)
-                    });
-        
-            
-            connections.put(
-					new EventSource(MiniHydroelectricDamUnitTesterModel.URI, UseMiniHydroelectricDam.class),
-					new EventSink[] {
-							new EventSink(MiniHydroelectricDamElectricityModel.URI,
-									UseMiniHydroelectricDam.class),
-							new EventSink(WaterVolumeModel.URI,
-									UseMiniHydroelectricDam.class)
-					});
-            
-            connections.put(
 					new EventSource(MiniHydroelectricDamUnitTesterModel.URI, StartMiniHydroelectricDam.class),
 					new EventSink[] {
 							new EventSink(MiniHydroelectricDamElectricityModel.URI,

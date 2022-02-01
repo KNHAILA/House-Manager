@@ -1,13 +1,15 @@
 package fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events;
 
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel.State;
+import fr.sorbonne_u.devs_simulation.es.events.ES_Event;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
 
 public class			StopMiniHydroelectricDam
-extends		AbstractMiniHydroelectricDamEvent
+extends		ES_Event
+implements	MiniHydroelectricDamEventI
 {
 	// -------------------------------------------------------------------------
 	// Constants and variables
@@ -44,7 +46,7 @@ extends		AbstractMiniHydroelectricDamEvent
 	@Override
 	public boolean		hasPriorityOver(EventI e)
 	{
-		// if many windTurbine events occur at the same time, the
+		// if many events occur at the same time, the
 		// StopWindTurbine one will be executed first.
 		return true;
 	}
@@ -57,9 +59,9 @@ extends		AbstractMiniHydroelectricDamEvent
 	{
 		assert	model instanceof MiniHydroelectricDamElectricityModel;
 
-		MiniHydroelectricDamElectricityModel windTurbine = (MiniHydroelectricDamElectricityModel)model;
-		assert	windTurbine.getState() == State.USE;
-		windTurbine.setState(State.NOT_USE);
+		MiniHydroelectricDamElectricityModel miniHydroelectricDam = (MiniHydroelectricDamElectricityModel)model;
+		assert	miniHydroelectricDam.getState() == State.ON;
+		miniHydroelectricDam.setState(State.OFF);
 	}
 }
 // -----------------------------------------------------------------------------

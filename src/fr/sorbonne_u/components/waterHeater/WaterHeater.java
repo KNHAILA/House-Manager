@@ -176,7 +176,6 @@ implements	WaterHeaterImplementationI {
 		this.rop = new RegistrationOutboundPort(this);
 		this.rop.publishPort();
 		this.doPortConnection(this.rop.getPortURI(), HEM.INBOUND_PORT_URI, RegistrationConnector.class.getCanonicalName());
-		System.out.println("hereeeeee");
 	    this.rop.register("", this.wip.getPortURI(), "src/fr/sorbonne_u/xml/waterHeater.xml");
 	}
 

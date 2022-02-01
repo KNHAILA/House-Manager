@@ -32,9 +32,7 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
 // -----------------------------------------------------------------------------
-@ModelExternalEvents(exported = {UseMiniHydroelectricDam.class,
-								 DoNotUseMiniHydroelectricDam.class,
-								 StopMiniHydroelectricDam.class,
+@ModelExternalEvents(exported = {StopMiniHydroelectricDam.class,
 								 StartMiniHydroelectricDam.class})
 // -----------------------------------------------------------------------------
 public class			MiniHydroelectricDamUnitTesterModel
@@ -110,19 +108,13 @@ extends		AtomicModel
 	{
 		// Simple way to implement a test scenario. Here each step generates
 		// an event sent to the other models in the standard order.
-		if (this.step > 0 && this.step < 5) {
+		if (this.step > 0 && this.step < 3) {
 			ArrayList<EventI> ret = new ArrayList<EventI>();
 			switch (this.step) {
 			case 1:
 				ret.add(new StartMiniHydroelectricDam(this.getTimeOfNextEvent()));
 				break;
 			case 2:
-				ret.add(new UseMiniHydroelectricDam(this.getTimeOfNextEvent()));
-				break;
-			case 3:
-				ret.add(new DoNotUseMiniHydroelectricDam(this.getTimeOfNextEvent()));
-				break;
-			case 4:
 				ret.add(new StopMiniHydroelectricDam(this.getTimeOfNextEvent()));
 				break;
 			}
@@ -141,7 +133,7 @@ extends		AtomicModel
 		// As long as events have to be created and sent, the next internal
 		// transition is set at one second later, otherwise, no more internal
 		// transitions are triggered (delay = infinity).
-		if (this.step < 5) {
+		if (this.step < 3) {
 			return new Duration(1.0, this.getSimulatedTimeUnit());
 		} else {
 			return Duration.INFINITY;

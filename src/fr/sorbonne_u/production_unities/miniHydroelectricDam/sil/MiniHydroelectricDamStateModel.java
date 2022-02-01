@@ -59,8 +59,8 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 */
 //-----------------------------------------------------------------------------
 @ModelExternalEvents(
-		imported = {StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class,DoNotUseMiniHydroelectricDam.class, StartMiniHydroelectricDam.class},
-		exported = {StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class,DoNotUseMiniHydroelectricDam.class, StartMiniHydroelectricDam.class})
+		imported = {StopMiniHydroelectricDam.class, StartMiniHydroelectricDam.class},
+		exported = {StopMiniHydroelectricDam.class, StartMiniHydroelectricDam.class})
 //-----------------------------------------------------------------------------
 public class			MiniHydroelectricDamStateModel
 extends		AtomicModel
@@ -77,7 +77,7 @@ extends		AtomicModel
 	/** current state of the MiniHydroelectricDam.									*/
 	protected State						currentState;
 	/** last received event or null if none.								*/
-	protected AbstractMiniHydroelectricDamEvent lastReceived;
+	protected MiniHydroelectricDamEventI lastReceived;
 
 	/** owner component.													*/
 	protected SelfControlMiniHydroelectricDam		owner;
@@ -148,7 +148,7 @@ extends		AtomicModel
 		super.initialiseState(initialTime);
 
 		this.lastReceived = null;
-		this.currentState = State.NOT_USE;
+		this.currentState = State.OFF;
 
 		this.toggleDebugMode();
 		this.logMessage("simulation begins.\n");
@@ -198,7 +198,7 @@ extends		AtomicModel
 		// construction.
 		assert	currentEvents != null && currentEvents.size() == 1;
 
-		this.lastReceived = (AbstractMiniHydroelectricDamEvent) currentEvents.get(0);
+		this.lastReceived = (MiniHydroelectricDamEventI) currentEvents.get(0);
 
 		StringBuffer message = new StringBuffer(this.uri);
 		message.append(" executes the external event ");

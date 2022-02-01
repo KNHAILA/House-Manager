@@ -18,23 +18,22 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.AbstractMiniHydroelectricDamEvent;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.DoNotUseMiniHydroelectricDam;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniHydroelectricDam;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.StopMiniHydroelectricDam;
 
 /**
- * The class <code>HeaterElectricityModel</code> defines a simulation model
- * for the electricity consumption of the heater.
+ * The class <code>Mini Hydro Electric Dam ElectricityModel</code> defines a simulation model
+ * for the electricity consumption of the Mini Hydro Electric Dam .
  *
  * <p><strong>Description</strong></p>
  * 
  * <p>
  * The model is a simple state-based one: the electricity consumption is
- * assumed to be constant in each possible state of the heater
+ * assumed to be constant in each possible state of the Mini Hydro Electric Dam 
  * ({@code State.OFF => 0.0}, {@code State.ON => NOT_HEATING_POWER} and
- * {@code State.HEATING => HEATING_POWER}). The state of the heater is
- * modified by the reception of external events ({@code SwitchOnHeater},
- * {@code SwitchOffHeater}, {@code Heat} and {@code DoNotHeat}). The
+ * {@code State.HEATING => HEATING_POWER}). The state of the Mini Hydro Electric Dam  is
+ * modified by the reception of external events ({@code SwitchOnMini Hydro Electric Dam },
+ * {@code SwitchOffMini Hydro Electric Dam }, {@code Heat} and {@code DoNotHeat}). The
  * electricity consumption is stored in the exported variable
  * {@code currentIntensity}.
  * </p>
@@ -55,25 +54,25 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.UseMiniH
  * 
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-@ModelExternalEvents(imported = {DoNotUseMiniHydroelectricDam.class,
-        UseMiniHydroelectricDam.class
+@ModelExternalEvents(imported = {StopMiniHydroelectricDam.class,
+		StartMiniHydroelectricDam.class
         })
 // -----------------------------------------------------------------------------
 public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 {
 	/**
 	 * The enumeration <code>State</code> defines the state in which the
-	 * heater can be.
+	 * Mini Hydro Electric Dam can be.
 	 *
 	 * <p>Created on : 2021-09-24</p>
 	 * 
 	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
 	 */
     public static enum State {
-    	/** heater is on but not heating.									*/
-        USE,
-        /** heater is on but not heating.									*/
-        NOT_USE
+    	/** Dam is producing the energy.									*/
+        ON,
+        /** water volume is too high and Dam is off.									*/
+        OFF
     }
 
     // -------------------------------------------------------------------------
@@ -83,9 +82,9 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     private static final long		serialVersionUID = 1L;
 	/** URI for a model; works when only one instance is created.			*/
     public static final String		URI = MiniHydroelectricDamElectricityModel.class.getSimpleName();
-    /** power of the heater in watts.										*/
-    public static double			MODE_PRODUCTION = 200000.0; // Watts
-    /** power of the heater in watts.										*/
+    /** power of the Mini Hydro Electric Dam in watts.										*/
+    public static double			MODE_PRODUCTION = 2000.0; // Watts
+    /** power of the Mini Hydro Electric Dam in watts.										*/
     public static double			TENSION = 220.0; // Volts
 
     /** current intensity in amperes; intensity is power/tension.			*/
@@ -96,11 +95,8 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     /** current intensity in amperes; intensity is power/tension.			*/
     @ImportedVariable(type = Double.class)
     protected Value<Double>			waterVolume;
-    /** power of the heater in watts.										*/
-    protected State currentState = State.NOT_USE;
-    /** power of the heater in watts.										*/
+    protected State currentState = State.OFF;
     protected boolean				consumptionHasChanged = false;
-    /** power of the heater in watts.										*/
     protected double				totalProduction;
 
     // -------------------------------------------------------------------------
@@ -109,7 +105,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 
   
     /**
-	 * create a heater MIL model instance.
+	 * create a Mini Hydro Electric Dam MIL model instance.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -139,7 +135,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     }
 
 	/**
-	 * set the state of the heater.
+	 * set the state of the Mini Hydro Electric Dam.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -152,11 +148,15 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 	 */
     public void	setState(State s)
     {
-        this.currentState = s;
+        State old = this.currentState;
+		this.currentState = s;
+		if (old != this.currentState) {
+			this.consumptionHasChanged = true;
+		}
     }
 
     /**
-	 * return the state of the heater.
+	 * return the state of the Mini Hydro Electric Dam.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -193,7 +193,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     protected void	initialiseVariables(Time startTime)
     {
         super.initialiseVariables(startTime);
-
         this.currentIntensity_production.v = 0.0;
     }
 
@@ -205,7 +204,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     {
         super.initialiseState(startTime);
 
-        this.currentState = State.NOT_USE;
+        this.currentState = State.OFF;
         this.consumptionHasChanged = false;
         this.totalProduction = 0.0;
 
@@ -228,13 +227,17 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     @Override
     public Duration	timeAdvance()
     {
-     
-        if (this.consumptionHasChanged) {
-            this.toggleConsumptionHasChanged();
-            return new Duration(0.0, this.getSimulatedTimeUnit());
-        } else {
-            return Duration.INFINITY;
-        }
+    	if (this.consumptionHasChanged) {
+			// When the consumption has changed, an immediate (delay = 0.0)
+			// internal transition must be made to update the electricity
+			// consumption.
+			this.consumptionHasChanged = false;
+			return Duration.zero(this.getSimulatedTimeUnit());
+		} else {
+			// As long as the state does not change, no internal transition
+			// is made (delay = infinity).
+			return Duration.INFINITY;
+		}
     }
 
 
@@ -245,13 +248,13 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     public void	userDefinedInternalTransition(Duration elapsedTime)
     {
         super.userDefinedInternalTransition(elapsedTime);
-
+        
         switch (this.currentState)
         {
-            case NOT_USE :
+            case OFF :
                 this.currentIntensity_production.v = 0.0;
                 break;
-            case USE:
+            case ON:
             	this.currentIntensity_production.v = waterVolume.v*MODE_PRODUCTION/TENSION;
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
@@ -281,7 +284,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 
         Event ce = (Event) currentEvents.get(0);
 
-        if(ce instanceof UseMiniHydroelectricDam) {
+        if(ce instanceof StartMiniHydroelectricDam) {
             this.totalProduction +=
                     Electricity.computeProduction(elapsedTime,
                             TENSION*this.currentIntensity_production.v);
@@ -296,7 +299,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         message.append(")\n");
         this.logMessage(message.toString());
 
-        assert	ce instanceof AbstractMiniHydroelectricDamEvent;
+        assert	ce instanceof MiniHydroelectricDamEventI;
         ce.executeOn(this);
 
         super.userDefinedExternalTransition(elapsedTime);
@@ -356,8 +359,8 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
 
     /**
-	 * The class <code>HeaterElectricityReport</code> implements the
-	 * simulation report for the <code>HeaterElectricityModel</code>.
+	 * The class <code>Mini Hydro Electric Dam ElectricityReport</code> implements the
+	 * simulation report for the <code>Mini Hydro Electric Dam ElectricityModel</code>.
 	 *
 	 * <p><strong>Description</strong></p>
 	 * 

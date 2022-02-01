@@ -613,7 +613,7 @@ implements	RefrigeratorImplementationI
 	public void			stopRefrigerator() throws Exception
 	{
 		if (ThermostatedRefrigerator.VERBOSE) {
-			this.traceMessage("Thermostated heater stops.\n");
+			this.traceMessage("Thermostated Refrigerator stops.\n");
 		}
 		assert	this.internalIsRunning();
 

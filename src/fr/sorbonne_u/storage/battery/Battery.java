@@ -2,9 +2,6 @@ package fr.sorbonne_u.storage.battery;
 
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
-import fr.sorbonne_u.storage.battery.BatteryCI;
-import fr.sorbonne_u.storage.battery.BatteryImplementation;
-import fr.sorbonne_u.storage.battery.BatteryInboundPort;
 import fr.sorbonne_u.storage.battery.mil.BatteryCoupledModel;
 import fr.sorbonne_u.storage.battery.mil.events.*;
 import fr.sorbonne_u.CVM_SIL;

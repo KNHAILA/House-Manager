@@ -123,7 +123,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	protected static final double ACC_FACTOR = 1.0;
 	/** actual acceleration factor. */
 	protected double accFactor;
-	/** Maximum tolerated wind speed. miles/kilometer */
+	/** Maximum tolerated water volume. miles/kilometer */
 	protected double Max_tolerated_wind_speed;
 
 	// Control
@@ -399,60 +399,8 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	}
 
 	/**
-	 * make the MiniHydroelectricDam start heating; this internal method is meant to be
-	 * executed by the MiniHydroelectricDam thermostat when the room wind speed is below the
-	 * target wind speed.
-	 * 
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 * pre	{@code internalIsRunning()}
-	 * post	true		// no postcondition.
-	 * </pre>
-	 *
-	 * @throws Exception <i>to do</i>.
-	 */
-	protected void use() throws Exception {
-		assert this.internalIsRunning();
-
-		this.isWorking = true;
-
-		if (this.isSILsimulated) {
-			this.simulatorPlugin.triggerExternalEvent(MiniHydroelectricDamStateModel.URI, t -> new UseMiniHydroelectricDam(t));
-		}
-	}
-
-	/**
-	 * make the MiniHydroelectricDam stop heating; this internal method is meant to be
-	 * executed by the MiniHydroelectricDam thermostat when the room wind speed comes over
-	 * the target wind speed after a period of heating.
-	 * 
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 * pre	{@code internalIsRunning()}
-	 * post	true		// no postcondition.
-	 * </pre>
-	 *
-	 * @throws Exception <i>to do</i>.
-	 */
-	protected void doNotUse() throws Exception {
-		assert this.internalIsRunning();
-
-		this.isWorking = true;
-
-		if (this.isSILsimulated) {
-			this.simulatorPlugin.triggerExternalEvent(MiniHydroelectricDamStateModel.URI, t -> new DoNotUseMiniHydroelectricDam(t));
-		}
-	}
-
-	/**
 	 * implement the controller task that will be executed to decide when to start
-	 * or stop heating.
+	 * or stop Dam.
 	 * 
 	 * <p>
 	 * <strong>Contract</strong>
@@ -469,20 +417,18 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	protected void internalController(long period, TimeUnit u) {
 		// when the MiniHydroelectricDam is on, perform the control, but if the MiniHydroelectricDam is
 		// switched off, stop the controller
-		if (this.currentState == SelfControlMiniHydroelectricDam.MiniHydroelectricDamState.ON) {
+		
 			try {
 				if (this.isWorking && this.getCurrentWaterVolume() > this.Max_tolerated_wind_speed + HYSTERESIS) {
 					if (SelfControlMiniHydroelectricDam.VERBOSE) {
-						this.traceMessage("MiniHydroelectricDam decides to stop.\n");
+						this.traceMessage("MiniHydroelectricDam decides to stop. Water volume is too high.\n");
 					}
-					System.out.print("**********************");
 					this.stopMiniHydroelectricDam();
 				} 
 				else if (!this.isWorking && this.getCurrentWaterVolume() < this.Max_tolerated_wind_speed + HYSTERESIS) {
 					if (SelfControlMiniHydroelectricDam.VERBOSE) {
-						this.traceMessage("MiniHydroelectricDam decides to start.\n");
+						this.traceMessage("MiniHydroelectricDam decides to start. Water volume is good.\n");
 					}
-					System.out.print("**********************");
 					this.startMiniHydroelectricDam();
 				} else {
 					if (SelfControlMiniHydroelectricDam.VERBOSE) {
@@ -493,7 +439,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 				;
 			}
 			this.scheduleTask(o -> ((SelfControlMiniHydroelectricDam) o).internalController(period, u), period, u);
-		}
+		
 	}
 
 	// -------------------------------------------------------------------------
@@ -522,7 +468,6 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 		assert !this.internalIsRunning();
 
 		this.isWorking = true;
-		
 		this.currentState = MiniHydroelectricDamState.ON;
 		
 		if (this.isSILsimulated) {
@@ -530,8 +475,8 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 		}
 
 		// when starting the MiniHydroelectricDam, its internal controller is also started
-		// to execute at the predefined period to check the current wind speed
-		// and decide when to start or stop heating
+		// to execute at the predefined period to check the current water volume
+		// and decide when to start or stop Dam
 		long accPeriod = (long) (PERIOD / this.accFactor);
 		this.scheduleTask(o -> ((SelfControlMiniHydroelectricDam) o).internalController(accPeriod, CONTROL_TIME_UNIT), accPeriod,
 				CONTROL_TIME_UNIT);
@@ -556,24 +501,24 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	}
 
 	/**
-	 * @see fr.sorbonne_u.production_unities.MiniHydroelectricDam.MiniHydroelectricDamImplementation#getCurrentWindSpeed()
+	 * @see fr.sorbonne_u.production_unities.MiniHydroelectricDam.MiniHydroelectricDamImplementation#getCurrentWaterVolume()
 	 */
 	@Override
 	public double getCurrentWaterVolume() throws Exception {
-		double currentWindSpeed = 0.0;
+		double currentWaterVolume = 0.0;
 		if (this.isSILsimulated) {
-			currentWindSpeed = (double) this.simulatorPlugin.getModelStateValue(WaterVolumeSILModel.URI,
+			currentWaterVolume = (double) this.simulatorPlugin.getModelStateValue(WaterVolumeSILModel.URI,
 					SelfControlMiniHydroelectricDamRTAtomicSimulatorPlugin.CURRENT_WIND_SPEED);
 		} else {
-			// Temporary implementation; would need a wind speed sensor.
+			// Temporary implementation; would need a water volume sensor.
 		}
 		if (SelfControlMiniHydroelectricDam.VERBOSE) {
 			StringBuffer message = new StringBuffer("MiniHydroelectricDam returns the current water volume ");
-			message.append(currentWindSpeed);
+			message.append(currentWaterVolume);
 			message.append(".\n");
 			this.traceMessage(message.toString());
 		}
-		return currentWindSpeed;
+		return currentWaterVolume;
 	}
 }
 //-----------------------------------------------------------------------------

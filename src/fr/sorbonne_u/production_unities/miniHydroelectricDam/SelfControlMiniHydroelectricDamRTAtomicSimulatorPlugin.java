@@ -216,43 +216,10 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(MiniHydroelectricDamElectricitySILModel.URI,
 										  StopMiniHydroelectricDam.class)
 					});
-			connections.put(
-					new EventSource(MiniHydroelectricDamStateModel.URI,
-									UseMiniHydroelectricDam.class),
-					new EventSink[] {
-							new EventSink(MiniHydroelectricDamElectricitySILModel.URI,
-										  UseMiniHydroelectricDam.class),
-							new EventSink(WaterVolumeSILModel.URI,
-									  	  UseMiniHydroelectricDam.class)
-					});
-			connections.put(
-					new EventSource(MiniHydroelectricDamStateModel.URI,
-							DoNotUseMiniHydroelectricDam.class),
-					new EventSink[] {
-							new EventSink(MiniHydroelectricDamElectricitySILModel.URI,
-									DoNotUseMiniHydroelectricDam.class),
-							new EventSink(WaterVolumeSILModel.URI,
-									DoNotUseMiniHydroelectricDam.class)
-					});
 		} else {
 			// when *not* executed as a unit test, the simulation architecture
-			// does not include the hair dryer electricity model and events
+			// does not include the Dam electricity model and events
 			// exported by the state model are reexported by the coupled model
-
-			connections.put(
-					new EventSource(MiniHydroelectricDamStateModel.URI,
-									UseMiniHydroelectricDam.class),
-					new EventSink[] {
-							new EventSink(WaterVolumeSILModel.URI,
-									  	  UseMiniHydroelectricDam.class)
-					});
-			connections.put(
-					new EventSource(MiniHydroelectricDamStateModel.URI,
-							DoNotUseMiniHydroelectricDam.class),
-					new EventSink[] {
-							new EventSink(WaterVolumeSILModel.URI,
-									DoNotUseMiniHydroelectricDam.class)
-					});
 
 			reexported =
 					new HashMap<Class<? extends EventI>,ReexportedEvent>();
@@ -262,12 +229,6 @@ extends		RTAtomicSimulatorPlugin
 			reexported.put(StopMiniHydroelectricDam.class,
 					   new ReexportedEvent(MiniHydroelectricDamStateModel.URI,
 							   			   StopMiniHydroelectricDam.class));
-			reexported.put(UseMiniHydroelectricDam.class,
-					   new ReexportedEvent(MiniHydroelectricDamStateModel.URI,
-							   			   UseMiniHydroelectricDam.class));
-			reexported.put(DoNotUseMiniHydroelectricDam.class,
-					   new ReexportedEvent(MiniHydroelectricDamStateModel.URI,
-							   DoNotUseMiniHydroelectricDam.class));
 		}
 
 		// variable bindings between exporting and importing models

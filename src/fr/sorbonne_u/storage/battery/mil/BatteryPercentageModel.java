@@ -3,13 +3,11 @@ package fr.sorbonne_u.storage.battery.mil;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.HEM_ReportI;
 import fr.sorbonne_u.storage.battery.mil.events.*;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ImportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.InternalVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
-import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
@@ -60,9 +58,9 @@ extends		AtomicHIOAwithDE
 	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
 	 */
 	public static enum	State {
-		/** battery is heating.												*/
+		/** battery is charging.												*/
 		CHARGING,
-		/** battery is not heating.											*/
+		/** battery is not charging.											*/
 		NOT_CHARGING,
 		/** battery is discharging.											*/
 		DISCHARGING
