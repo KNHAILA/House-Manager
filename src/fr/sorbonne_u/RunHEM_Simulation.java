@@ -56,7 +56,6 @@ import fr.sorbonne_u.storage.battery.mil.events.*;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.MiniHydroelectricDamUnitTester;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUnitTesterModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUserModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterVolumeModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 
@@ -317,10 +316,10 @@ public class			RunHEM_Simulation
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
-                    BatteryUserModel.URI,
+                    BatteryUnitTesterModel.URI,
                     AtomicModelDescriptor.create(
-                            BatteryUserModel.class,
-                            BatteryUserModel.URI,
+                            BatteryUnitTesterModel.class,
+                            BatteryUnitTesterModel.URI,
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -334,14 +333,6 @@ public class			RunHEM_Simulation
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
             
-            atomicModelDescriptors.put(
-            		BatteryUnitTesterModel.URI,
-                    AtomicHIOA_Descriptor.create(
-                    		BatteryUnitTesterModel.class,
-                    		BatteryUnitTesterModel.URI,
-                            TimeUnit.SECONDS,
-                            null,
-                            SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             // Production Unit: Mini Hydro Electric Dam
             atomicModelDescriptors.put(
@@ -349,15 +340,6 @@ public class			RunHEM_Simulation
             		RTAtomicHIOA_Descriptor.create(
                     		MiniHydroelectricDamElectricityModel.class,
                     		MiniHydroelectricDamElectricityModel.URI,
-                            TimeUnit.SECONDS,
-                            null,
-                            SimulationEngineCreationMode.ATOMIC_ENGINE));
-            
-            atomicModelDescriptors.put(
-            		MiniHydroelectricDamUserModel.URI,
-                    RTAtomicModelDescriptor.create(
-                    		MiniHydroelectricDamUserModel.class,
-                    		MiniHydroelectricDamUserModel.URI,
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -372,10 +354,10 @@ public class			RunHEM_Simulation
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
-            		MiniHydroelectricDamUnitTester.URI,
+            		MiniHydroelectricDamUnitTesterModel.URI,
                     RTAtomicModelDescriptor.create(
-                    		MiniHydroelectricDamUnitTester.class,
-                    		MiniHydroelectricDamUnitTester.URI,
+                    		MiniHydroelectricDamUnitTesterModel.class,
+                    		MiniHydroelectricDamUnitTesterModel.URI,
                             TimeUnit.SECONDS,
                             null,
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -392,15 +374,6 @@ public class			RunHEM_Simulation
                             SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
-            		WindTurbineUserModel.URI,
-                    RTAtomicModelDescriptor.create(
-                    		WindTurbineUserModel.class,
-                    		WindTurbineUserModel.URI,
-                            TimeUnit.SECONDS,
-                            null,
-                            SimulationEngineCreationMode.ATOMIC_ENGINE));
-            
-            atomicModelDescriptors.put(
             		WindSpeedModel.URI,
             		RTAtomicHIOA_Descriptor.create(
             				WindSpeedModel.class,
@@ -410,10 +383,10 @@ public class			RunHEM_Simulation
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
             
             atomicModelDescriptors.put(
-            		WindTurbineUnitTester.URI,
+            		WindTurbineUnitTesterModel.URI,
             		RTAtomicHIOA_Descriptor.create(
-            				WindTurbineUnitTester.class,
-            				WindTurbineUnitTester.URI,
+            				WindTurbineUnitTesterModel.class,
+            				WindTurbineUnitTesterModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -458,20 +431,17 @@ public class			RunHEM_Simulation
 
             //battery
             submodels.add(BatteryElectricityModel.URI);
-            submodels.add(BatteryUserModel.URI);
             submodels.add(BatteryPercentageModel.URI);
             submodels.add(BatteryUnitTesterModel.URI);
             
             // MiniHydroelectricDam
             submodels.add(MiniHydroelectricDamElectricityModel.URI);
             submodels.add(WaterVolumeModel.URI);
-            submodels.add(MiniHydroelectricDamUserModel.URI);
             submodels.add(MiniHydroelectricDamUnitTesterModel.URI);
             
             // WindTurbine
             submodels.add(WindTurbineElectricityModel.URI);
             submodels.add(WindSpeedModel.URI);
-            submodels.add(WindTurbineUserModel.URI);
             submodels.add(WindTurbineUnitTesterModel.URI);
             
             
@@ -721,63 +691,24 @@ public class			RunHEM_Simulation
             
             // MiniHydroelectricDam
             connections.put(
-                    new EventSource(MiniHydroelectricDamUserModel.URI, DoNotUseMiniHydroelectricDam.class),
-                    new EventSink[] {
-                            new EventSink(MiniHydroelectricDamElectricityModel.URI,
-                            		DoNotUseMiniHydroelectricDam.class)
-                    });
-        
-            
-            connections.put(
-					new EventSource(MiniHydroelectricDamUserModel.URI, UseMiniHydroelectricDam.class),
+					new EventSource(MiniHydroelectricDamUnitTesterModel.URI, StartMiniHydroelectricDam.class),
 					new EventSink[] {
 							new EventSink(MiniHydroelectricDamElectricityModel.URI,
-									UseMiniHydroelectricDam.class),
-							new EventSink(WaterVolumeModel.URI,
-									UseMiniHydroelectricDam.class)
-					});
-            
-            connections.put(
-					new EventSource(MiniHydroelectricDamUserModel.URI, StartMiniHydroelectricDam.class),
-					new EventSink[] {
-							new EventSink(MiniHydroelectricDamElectricityModel.URI,
-									StartMiniHydroelectricDam.class),
-							new EventSink(WaterVolumeModel.URI,
 									StartMiniHydroelectricDam.class)
 					});
             
             connections.put(
-					new EventSource(MiniHydroelectricDamUserModel.URI, StopMiniHydroelectricDam.class),
+					new EventSource(MiniHydroelectricDamUnitTesterModel.URI, StopMiniHydroelectricDam.class),
 					new EventSink[] {
 							new EventSink(MiniHydroelectricDamElectricityModel.URI,
-									StopMiniHydroelectricDam.class),
-							new EventSink(WaterVolumeModel.URI,
 									StopMiniHydroelectricDam.class)
 					});
             
          // Wind Turbine
             connections.put(
-                    new EventSource(WindTurbineUserModel.URI, DoNotUseWindTurbine.class),
-                    new EventSink[] {
-                            new EventSink(WindTurbineElectricityModel.URI,
-                            		DoNotUseWindTurbine.class)
-                    });
-            
-            connections.put(
-					new EventSource(WindTurbineUserModel.URI, UseWindTurbine.class),
-					new EventSink[] {
-							new EventSink(WindTurbineElectricityModel.URI,
-									UseWindTurbine.class),
-							new EventSink(WindSpeedModel.URI,
-									UseWindTurbine.class)
-					});
-            
-            connections.put(
 					new EventSource(WindTurbineUserModel.URI, StartWindTurbine.class),
 					new EventSink[] {
 							new EventSink(WindTurbineElectricityModel.URI,
-									StartWindTurbine.class),
-							new EventSink(WindSpeedModel.URI,
 									StartWindTurbine.class)
 					});
             
@@ -785,8 +716,6 @@ public class			RunHEM_Simulation
 					new EventSource(WindTurbineUserModel.URI, StopWindTurbine.class),
 					new EventSink[] {
 							new EventSink(WindTurbineElectricityModel.URI,
-									StopWindTurbine.class),
-							new EventSink(WindSpeedModel.URI,
 									StopWindTurbine.class)
 					});
 
@@ -986,7 +915,7 @@ public class			RunHEM_Simulation
             
             //MiniHydroelectricDam
             VariableSource source15 =
-                    new VariableSource("currentMiniHydroelectricDamIntensity_production",
+                    new VariableSource("currentIntensity_production",
                             Double.class,
                             MiniHydroelectricDamElectricityModel.URI);
             VariableSink[] sinks15 =

@@ -50,6 +50,16 @@ import fr.sorbonne_u.storage.battery.mil.BatteryElectricityModel;
 import fr.sorbonne_u.storage.battery.mil.BatteryUserModel;
 import fr.sorbonne_u.storage.battery.mil.events.*;
 
+//Wind turbine
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindSpeedModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUserModel;
+
+//Dam
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterVolumeModel;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
+
 //devs_simulation
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.architectures.ArchitectureI;
@@ -66,16 +76,6 @@ import fr.sorbonne_u.devs_simulation.models.architectures.RTAtomicModelDescripto
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUserModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterVolumeModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindSpeedModel;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUserModel;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.DoNotUseWindTurbine;
-import fr.sorbonne_u.production_unities.windTurbine.mil.events.UseWindTurbine;
-
 // -----------------------------------------------------------------------------
 /**
  * The class <code>RunHEM_RT_Simulation</code> creates the real time simulator
