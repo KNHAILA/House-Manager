@@ -521,5 +521,7 @@ public class SelfControlWindTurbine extends AbstractCyPhyComponent implements Wi
 		}
 		return currentWindSpeed;
 	}
+	
+	
 }
 //-----------------------------------------------------------------------------

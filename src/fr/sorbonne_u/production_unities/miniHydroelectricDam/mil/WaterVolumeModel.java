@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
+import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
@@ -218,6 +219,12 @@ extends		AtomicHIOAwithDE
 	{
 		this.logMessage("simulation ends.\n");
 		super.endSimulation(endTime);
+	}
+	
+	@Override
+	public SimulationReportI	getFinalReport() throws Exception
+	{
+		return null;
 	}
 }
 

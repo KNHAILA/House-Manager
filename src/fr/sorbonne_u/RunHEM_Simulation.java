@@ -49,22 +49,18 @@ import fr.sorbonne_u.meter.mil.ElectricMeterElectricityModel;
 import fr.sorbonne_u.storage.battery.mil.BatteryElectricityModel;
 import fr.sorbonne_u.storage.battery.mil.BatteryPercentageModel;
 import fr.sorbonne_u.storage.battery.mil.BatteryUnitTesterModel;
-import fr.sorbonne_u.storage.battery.mil.BatteryUserModel;
 import fr.sorbonne_u.storage.battery.mil.events.*;
 
 //miniHydroelectricDam
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.MiniHydroelectricDamUnitTester;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUnitTesterModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterVolumeModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 
 //Wind turbine
-import fr.sorbonne_u.production_unities.windTurbine.WindTurbineUnitTester;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindSpeedModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUnitTesterModel;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUserModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 
 //devs_simulation
@@ -365,28 +361,28 @@ public class			RunHEM_Simulation
             
             // Production Unit: Wind Turbine
             atomicModelDescriptors.put(
-            		WindTurbineElectricityModel.URI,
-            		RTAtomicHIOA_Descriptor.create(
-            				WindTurbineElectricityModel.class,
-            				WindTurbineElectricityModel.URI,
-                            TimeUnit.SECONDS,
-                            null,
-                            SimulationEngineCreationMode.ATOMIC_ENGINE));
-            
-            atomicModelDescriptors.put(
-            		WindSpeedModel.URI,
-            		RTAtomicHIOA_Descriptor.create(
-            				WindSpeedModel.class,
-            				WindSpeedModel.URI,
+					WindTurbineElectricityModel.URI,
+					AtomicHIOA_Descriptor.create(
+							WindTurbineElectricityModel.class,
+							WindTurbineElectricityModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
-            
-            atomicModelDescriptors.put(
-            		WindTurbineUnitTesterModel.URI,
-            		RTAtomicHIOA_Descriptor.create(
-            				WindTurbineUnitTesterModel.class,
-            				WindTurbineUnitTesterModel.URI,
+			atomicModelDescriptors.put(
+					WindSpeedModel.URI,
+					AtomicHIOA_Descriptor.create(
+							WindSpeedModel.class,
+							WindSpeedModel.URI,
+							TimeUnit.SECONDS,
+							null,
+							SimulationEngineCreationMode.ATOMIC_ENGINE));
+			// the WindTurbine unit tester model only exchanges event, an
+			// atomic model hence we use an AtomicModelDescriptor
+			atomicModelDescriptors.put(
+					WindTurbineUnitTesterModel.URI,
+					AtomicModelDescriptor.create(
+							WindTurbineUnitTesterModel.class,
+							WindTurbineUnitTesterModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
@@ -440,9 +436,9 @@ public class			RunHEM_Simulation
             submodels.add(MiniHydroelectricDamUnitTesterModel.URI);
             
             // WindTurbine
-            submodels.add(WindTurbineElectricityModel.URI);
-            submodels.add(WindSpeedModel.URI);
-            submodels.add(WindTurbineUnitTesterModel.URI);
+			submodels.add(WindTurbineElectricityModel.URI);
+			submodels.add(WindSpeedModel.URI);
+			submodels.add(WindTurbineUnitTesterModel.URI);
             
             
             // event exchanging connections between exporting and importing
@@ -705,18 +701,19 @@ public class			RunHEM_Simulation
 					});
             
          // Wind Turbine
-            connections.put(
-					new EventSource(WindTurbineUserModel.URI, StartWindTurbine.class),
+        	connections.put(
+					new EventSource(WindTurbineUnitTesterModel.URI,
+									StartWindTurbine.class),
 					new EventSink[] {
 							new EventSink(WindTurbineElectricityModel.URI,
-									StartWindTurbine.class)
+										  StartWindTurbine.class),							
 					});
-            
-            connections.put(
-					new EventSource(WindTurbineUserModel.URI, StopWindTurbine.class),
+			connections.put(
+					new EventSource(WindTurbineUnitTesterModel.URI,
+									StopWindTurbine.class),
 					new EventSink[] {
 							new EventSink(WindTurbineElectricityModel.URI,
-									StopWindTurbine.class)
+										  StopWindTurbine.class)
 					});
 
 
@@ -781,12 +778,12 @@ public class			RunHEM_Simulation
             
             // bindings among WindTurbine models
             VariableSource source5 =
-                    new VariableSource("windSpeed",
+                    new VariableSource("currentWindSpeed",
                             Double.class,
                             WindSpeedModel.URI);
             VariableSink[] sinks5 =
                     new VariableSink[] {
-                            new VariableSink("windSpeed",
+                            new VariableSink("currentWindSpeed",
                                     Double.class,
                                     WindTurbineElectricityModel.URI)
                     };
