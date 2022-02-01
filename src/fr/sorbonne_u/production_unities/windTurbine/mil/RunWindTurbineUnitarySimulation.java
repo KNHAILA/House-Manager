@@ -91,18 +91,6 @@ public class RunWindTurbineUnitarySimulation {
 							new EventSink(WindTurbineElectricityModel.URI,
 										  StopWindTurbine.class)
 					});
-			connections.put(
-					new EventSource(WindTurbineUnitTesterModel.URI, UseWindTurbine.class),
-					new EventSink[] {
-							new EventSink(WindTurbineElectricityModel.URI,
-										  UseWindTurbine.class)
-					});
-			connections.put(
-					new EventSource(WindTurbineUnitTesterModel.URI, DoNotUseWindTurbine.class),
-					new EventSink[] {
-							new EventSink(WindTurbineElectricityModel.URI,
-										  DoNotUseWindTurbine.class)
-					});
 			
 			// variable bindings between exporting and importing models
 			Map<VariableSource,VariableSink[]> bindings = new HashMap<VariableSource,VariableSink[]>();

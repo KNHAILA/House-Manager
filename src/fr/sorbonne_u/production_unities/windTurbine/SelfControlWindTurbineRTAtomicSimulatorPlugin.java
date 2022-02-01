@@ -216,44 +216,10 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(WindTurbineElectricitySILModel.URI,
 										  StopWindTurbine.class)
 					});
-			connections.put(
-					new EventSource(WindTurbineStateModel.URI,
-									UseWindTurbine.class),
-					new EventSink[] {
-							new EventSink(WindTurbineElectricitySILModel.URI,
-										  UseWindTurbine.class),
-							new EventSink(WindSpeedSILModel.URI,
-									  	  UseWindTurbine.class)
-					});
-			connections.put(
-					new EventSource(WindTurbineStateModel.URI,
-									DoNotUseWindTurbine.class),
-					new EventSink[] {
-							new EventSink(WindTurbineElectricitySILModel.URI,
-										  DoNotUseWindTurbine.class),
-							new EventSink(WindSpeedSILModel.URI,
-										  DoNotUseWindTurbine.class)
-					});
 		} else {
 			// when *not* executed as a unit test, the simulation architecture
 			// does not include the hair dryer electricity model and events
 			// exported by the state model are reexported by the coupled model
-
-			connections.put(
-					new EventSource(WindTurbineStateModel.URI,
-									UseWindTurbine.class),
-					new EventSink[] {
-							new EventSink(WindSpeedSILModel.URI,
-									  	  UseWindTurbine.class)
-					});
-			connections.put(
-					new EventSource(WindTurbineStateModel.URI,
-									DoNotUseWindTurbine.class),
-					new EventSink[] {
-							new EventSink(WindSpeedSILModel.URI,
-										  DoNotUseWindTurbine.class)
-					});
-
 			reexported =
 					new HashMap<Class<? extends EventI>,ReexportedEvent>();
 			reexported.put(StartWindTurbine.class,
@@ -262,12 +228,6 @@ extends		RTAtomicSimulatorPlugin
 			reexported.put(StopWindTurbine.class,
 					   new ReexportedEvent(WindTurbineStateModel.URI,
 							   			   StopWindTurbine.class));
-			reexported.put(UseWindTurbine.class,
-					   new ReexportedEvent(WindTurbineStateModel.URI,
-							   			   UseWindTurbine.class));
-			reexported.put(DoNotUseWindTurbine.class,
-					   new ReexportedEvent(WindTurbineStateModel.URI,
-							   			   DoNotUseWindTurbine.class));
 		}
 
 		// variable bindings between exporting and importing models

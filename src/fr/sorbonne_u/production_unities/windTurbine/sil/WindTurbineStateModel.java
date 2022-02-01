@@ -59,8 +59,8 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 */
 //-----------------------------------------------------------------------------
 @ModelExternalEvents(
-		imported = {StopWindTurbine.class, UseWindTurbine.class,DoNotUseWindTurbine.class, StartWindTurbine.class},
-		exported = {StopWindTurbine.class, UseWindTurbine.class,DoNotUseWindTurbine.class, StartWindTurbine.class})
+		imported = {StopWindTurbine.class, StartWindTurbine.class},
+		exported = {StopWindTurbine.class, StartWindTurbine.class})
 //-----------------------------------------------------------------------------
 public class			WindTurbineStateModel
 extends		AtomicModel
@@ -148,7 +148,7 @@ extends		AtomicModel
 		super.initialiseState(initialTime);
 
 		this.lastReceived = null;
-		this.currentState = State.NOT_USE;
+		this.currentState = State.OFF;
 
 		this.toggleDebugMode();
 		this.logMessage("simulation begins.\n");

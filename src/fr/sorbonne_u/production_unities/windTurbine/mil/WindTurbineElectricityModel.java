@@ -18,6 +18,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
+import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel.State;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 
 /**
@@ -53,8 +54,7 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
  * 
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-@ModelExternalEvents(imported = {DoNotUseWindTurbine.class,
-        UseWindTurbine.class,
+@ModelExternalEvents(imported = {
         StopWindTurbine.class,
         StartWindTurbine.class
         })
@@ -72,9 +72,9 @@ public class WindTurbineElectricityModel extends AtomicHIOA
 	 */
     public static enum State {
     	/** WindTurbine is on but not working.									*/
-        USE,
+        ON,
         /** WindTurbine is on but not working.									*/
-        NOT_USE
+        OFF
     }
 
     // -------------------------------------------------------------------------
@@ -87,7 +87,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
      *  created.															*/
     public static final String		URI = WindTurbineElectricityModel.class.getSimpleName();
     /** power of the WindTurbine in watts.										*/
-    public static double			MODE_PRODUCTION = 200000.0; // Watts	
+    public static double			MODE_PRODUCTION = 3000.0; // Watts	
     /** power of the WindTurbine in watts.										*/
     public static double			TENSION = 220.0; // Volts
 
@@ -101,7 +101,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     @ImportedVariable(type = Double.class)
     protected Value<Double>			currentWindSpeed;
     /** current state of the Battery.					*/
-    protected State currentState = State.NOT_USE;
+    protected State currentState = State.OFF;
     /** power of the WindTurbine in watts.										*/
     protected boolean				consumptionHasChanged = false;
     /** power of the WindTurbine in watts.										*/
@@ -156,7 +156,11 @@ public class WindTurbineElectricityModel extends AtomicHIOA
 	 */
     public void	setState(State s)
     {
-        this.currentState = s;
+    	State old = this.currentState;
+		this.currentState = s;
+		if (old != this.currentState) {
+			this.consumptionHasChanged = true;
+		}
     }
 
     /**
@@ -209,7 +213,7 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         super.initialiseState(startTime);
 
       
-        this.currentState = State.NOT_USE;
+        this.currentState = State.OFF;
         this.consumptionHasChanged = false;
         this.totalProduction = 0.0;
 
@@ -233,7 +237,6 @@ public class WindTurbineElectricityModel extends AtomicHIOA
     @Override
     public Duration	timeAdvance()
     {
-       
         if (this.consumptionHasChanged) {
             this.toggleConsumptionHasChanged();
             return new Duration(0.0, this.getSimulatedTimeUnit());
@@ -254,10 +257,10 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         // set the current electricity consumption from the current state
         switch (this.currentState)
         {
-            case NOT_USE :
+            case OFF:
                 this.currentIntensity_production.v = 0.0;
                 break;
-            case USE:
+            case ON:
             	this.currentIntensity_production.v = currentWindSpeed.v*MODE_PRODUCTION/TENSION;
         }
         this.currentIntensity_production.time = this.getCurrentStateTime();
@@ -266,10 +269,10 @@ public class WindTurbineElectricityModel extends AtomicHIOA
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
 
-            message.append("with current production ");
-            message.append(this.currentIntensity_production.v);
-            message.append(" at ");
-            message.append(this.currentIntensity_production.time);
+        message.append("with current production ");
+        message.append(this.currentIntensity_production.v);
+        message.append(" at ");
+        message.append(this.currentIntensity_production.time);
 
         message.append(".\n");
         this.logMessage(message.toString());

@@ -61,8 +61,8 @@ implements	WindTurbineEventI
 		assert	model instanceof WindTurbineElectricityModel;
 
 		WindTurbineElectricityModel windTurbine = (WindTurbineElectricityModel)model;
-		assert	windTurbine.getState() == State.NOT_USE;
-		windTurbine.setState(State.USE);
+		assert	windTurbine.getState() == State.OFF;
+		windTurbine.setState(State.ON);
 	}
 }
 // -----------------------------------------------------------------------------

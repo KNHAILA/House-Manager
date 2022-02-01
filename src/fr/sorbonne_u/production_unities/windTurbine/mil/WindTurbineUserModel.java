@@ -32,8 +32,7 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
  * 
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-@ModelExternalEvents(exported = {DoNotUseWindTurbine.class,
-        UseWindTurbine.class,
+@ModelExternalEvents(exported = {
         StopWindTurbine.class,
         StartWindTurbine.class
         })

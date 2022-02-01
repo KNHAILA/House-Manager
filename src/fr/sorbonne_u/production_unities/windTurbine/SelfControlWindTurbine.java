@@ -98,7 +98,7 @@ public class SelfControlWindTurbine extends AbstractCyPhyComponent implements Wi
 	/** current state (on, off) of the WindTurbine. */
 	protected WindTurbineState currentState;
 	/** inbound port offering the <code>WindTurbineCI</code> interface. */
-	protected WindTurbineInboundPort hip;
+	protected WindTurbineInboundPort wtip;
 
 	// SIL simulation
 
@@ -270,10 +270,10 @@ public class SelfControlWindTurbine extends AbstractCyPhyComponent implements Wi
 		this.currentState = WindTurbineState.OFF;
 		this.accFactor = this.composesAsUnitTest ? ACC_FACTOR : CVM_SIL.ACC_FACTOR;
 		this.isWorking = false;
-		Max_tolerated_wind_speed = 100.0;
+		Max_tolerated_wind_speed = 300.0;
 
-		this.hip = new WindTurbineInboundPort(WindTurbineInboundPortURI, this);
-		this.hip.publishPort();
+		this.wtip = new WindTurbineInboundPort(WindTurbineInboundPortURI, this);
+		this.wtip.publishPort();
 
 		if (SelfControlWindTurbine.VERBOSE) {
 			this.tracer.get().setTitle("WindTurbine component");
@@ -369,7 +369,7 @@ public class SelfControlWindTurbine extends AbstractCyPhyComponent implements Wi
 		this.currentState = WindTurbineState.OFF;
 
 		try {
-			this.hip.unpublishPort();
+			this.wtip.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e);
 		}
@@ -399,58 +399,6 @@ public class SelfControlWindTurbine extends AbstractCyPhyComponent implements Wi
 	}
 
 	/**
-	 * make the WindTurbine start heating; this internal method is meant to be
-	 * executed by the WindTurbine thermostat when the room wind speed is below the
-	 * target wind speed.
-	 * 
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 * pre	{@code internalIsRunning()}
-	 * post	true		// no postcondition.
-	 * </pre>
-	 *
-	 * @throws Exception <i>to do</i>.
-	 */
-	protected void use() throws Exception {
-		assert this.internalIsRunning();
-
-		this.isWorking = true;
-
-		if (this.isSILsimulated) {
-			this.simulatorPlugin.triggerExternalEvent(WindTurbineStateModel.URI, t -> new UseWindTurbine(t));
-		}
-	}
-
-	/**
-	 * make the WindTurbine stop heating; this internal method is meant to be
-	 * executed by the WindTurbine thermostat when the room wind speed comes over
-	 * the target wind speed after a period of heating.
-	 * 
-	 * <p>
-	 * <strong>Contract</strong>
-	 * </p>
-	 * 
-	 * <pre>
-	 * pre	{@code internalIsRunning()}
-	 * post	true		// no postcondition.
-	 * </pre>
-	 *
-	 * @throws Exception <i>to do</i>.
-	 */
-	protected void doNotUse() throws Exception {
-		assert this.internalIsRunning();
-
-		this.isWorking = true;
-
-		if (this.isSILsimulated) {
-			this.simulatorPlugin.triggerExternalEvent(WindTurbineStateModel.URI, t -> new DoNotUseWindTurbine(t));
-		}
-	}
-
-	/**
 	 * implement the controller task that will be executed to decide when to start
 	 * or stop heating.
 	 * 
@@ -473,13 +421,13 @@ public class SelfControlWindTurbine extends AbstractCyPhyComponent implements Wi
 			try {
 				if (this.isWorking && this.getCurrentWindSpeed() > this.Max_tolerated_wind_speed + HYSTERESIS) {
 					if (SelfControlWindTurbine.VERBOSE) {
-						this.traceMessage("WindTurbine decides to stop.\n");
+						this.traceMessage("WindTurbine decides to stop. Wind speed is too high.\n");
 					}
 					this.stopWindTurbine();
 				} 
 				else if (!this.isWorking && this.getCurrentWindSpeed() < this.Max_tolerated_wind_speed + HYSTERESIS) {
 					if (SelfControlWindTurbine.VERBOSE) {
-						this.traceMessage("WindTurbine decides to start.\n");
+						this.traceMessage("WindTurbine decides to start. Wind speed is good.\n");
 					}
 					this.startWindTurbine();
 				} else {
