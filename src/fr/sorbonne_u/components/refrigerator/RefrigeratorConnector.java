@@ -86,7 +86,6 @@ implements	SuspensionEquipmentControlCI
 	@Override
 	public boolean		on() throws Exception
 	{
-		System.out.println("connector on ******");
 		return this.isSuspended || ((RefrigeratorCI)this.offering).isRunning();
 	}
 
@@ -96,7 +95,6 @@ implements	SuspensionEquipmentControlCI
 	@Override
 	public boolean		switchOn() throws Exception
 	{
-		System.out.println("connector switchOn ******");
 		((RefrigeratorCI)this.offering).startRefrigerator();
 		return true;
 	}
@@ -107,7 +105,6 @@ implements	SuspensionEquipmentControlCI
 	@Override
 	public boolean		switchOff() throws Exception
 	{
-		System.out.println("connector switchOff ******");
 		((RefrigeratorCI)this.offering).stopRefrigerator();
 		return true;
 	}
@@ -174,7 +171,6 @@ implements	SuspensionEquipmentControlCI
 	@Override
 	public boolean		suspend() throws Exception
 	{
-		System.out.println("connector suspend ******");
 		((RefrigeratorCI)this.offering).stopRefrigerator();
 		this.isSuspended = true;
 		return true;
@@ -186,7 +182,6 @@ implements	SuspensionEquipmentControlCI
 	@Override
 	public boolean		resume() throws Exception
 	{
-		System.out.println("connector resume ******");
 		((RefrigeratorCI)this.offering).startRefrigerator();
 		this.isSuspended = false;
 		return true;
@@ -198,7 +193,6 @@ implements	SuspensionEquipmentControlCI
 	@Override
 	public double		emergency() throws Exception
 	{
-		System.out.println("connector emergency ******");
 		double currentTemperature =
 					((RefrigeratorCI)this.offering).getCurrentTemperature();
 		double targetTemperature =

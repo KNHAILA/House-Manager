@@ -24,7 +24,8 @@ import fr.sorbonne_u.utils.Electricity;
         CloseRefrigeratorDoor.class,
         OffRefrigerator.class,
         OnRefrigerator.class,
-        Resting.class
+        Resting.class,
+        OpenRefrigeratorDoor.class
 })
 // -----------------------------------------------------------------------------
 public class			RefrigeratorElectricityModel

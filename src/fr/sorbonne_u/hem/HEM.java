@@ -1,5 +1,4 @@
 
-
 package fr.sorbonne_u.hem;
 
 
@@ -27,8 +26,6 @@ import fr.sorbonne_u.meter.ElectricMeterConnector;
 import fr.sorbonne_u.meter.ElectricMeterOutboundPort;
 import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
 import fr.sorbonne_u.production_unities.windTurbine.WindTurbineConnector;
-
-
 
 @RequiredInterfaces(required = {StandardEquipmentControlCI.class,
 		SuspensionEquipmentControlCI.class,
@@ -151,11 +148,9 @@ public class			HEM
 					ThermostatedWaterHeater.INBOUND_PORT_URI,
 					WaterHeaterConnector.class.getCanonicalName());
 			
-			System.out.println("hem ******");
+			
 			this.refrigeratorop = new SuspensionEquipmentControlOutboundPort(this);
 			this.refrigeratorop.publishPort();
-			
-			System.out.println("hem 2******");
 			this.doPortConnection(
 					this.refrigeratorop.getPortURI(),
 					ThermostatedRefrigerator.INBOUND_PORT_URI,

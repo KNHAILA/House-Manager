@@ -295,7 +295,7 @@ extends		AbstractCyPhyComponent
 						ThermostatedWaterHeater.REFLECTION_INBOUND_PORT_URI));
 		
 		// The Refrigerator simulation model held by the ThermostatedRefrigerator component.
-				/*atomicModelDescriptors.put(
+				atomicModelDescriptors.put(
 						RefrigeratorCoupledModel.URI,
 						RTComponentAtomicModelDescriptor.create(
 								RefrigeratorCoupledModel.URI,
@@ -305,9 +305,10 @@ extends		AbstractCyPhyComponent
 										Freezing.class, OffRefrigerator.class, OnRefrigerator.class, Resting.class},
 								TimeUnit.SECONDS,
 								ThermostatedRefrigerator.REFLECTION_INBOUND_PORT_URI));
-								*/
+								
 		
 		// The WindTurbine simulation model held by the SelfControlWindTurbine component.
+				/*
 				atomicModelDescriptors.put(
 						WindTurbineCoupledModel.URI,
 						RTComponentAtomicModelDescriptor.create(
@@ -317,6 +318,7 @@ extends		AbstractCyPhyComponent
 										StopWindTurbine.class, StartWindTurbine.class},
 								TimeUnit.SECONDS,
 								SelfControlWindTurbine.REFLECTION_INBOUND_PORT_URI));
+								*/
 								
 
 		// The electric meter simulation model held by the ElectricMeter
@@ -333,10 +335,16 @@ extends		AbstractCyPhyComponent
 								SetHighFan.class, SetLowFan.class, SwitchOnVacuumCleaner.class,
 								SwitchOffVacuumCleaner.class,
 								SetHighVacuumCleaner.class, SetLowVacuumCleaner.class, 
-								StopWindTurbine.class, StartWindTurbine.class},
+								CloseRefrigeratorDoor.class, OpenRefrigeratorDoor.class,
+								Freezing.class, OffRefrigerator.class, OnRefrigerator.class, Resting.class
+								},
 						new Class[]{},
 						TimeUnit.SECONDS,
 						ElectricMeter.REFLECTION_INBOUND_PORT_URI));
+		
+		/*
+		 * StopWindTurbine.class, StartWindTurbine.class
+		 */
 		
 		/*,
 		CloseRefrigeratorDoor.class, OpenRefrigeratorDoor.class,
@@ -347,8 +355,8 @@ extends		AbstractCyPhyComponent
 		submodels.add(FanCoupledModel.URI);
 		submodels.add(VacuumCleanerCoupledModel.URI);
 		submodels.add(WaterHeaterCoupledModel.URI);
-		//submodels.add(RefrigeratorCoupledModel.URI);
-		submodels.add(WindTurbineCoupledModel.URI);
+		submodels.add(RefrigeratorCoupledModel.URI);
+	//	submodels.add(WindTurbineCoupledModel.URI);
 		submodels.add(ElectricMeterCoupledModel.URI);
 
 		Map<EventSource,EventSink[]> connections =

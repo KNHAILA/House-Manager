@@ -285,7 +285,7 @@ implements	RefrigeratorImplementationI
 		boolean executesAsUnitTest
 		) throws Exception
 	{
-		System.out.println("in thermostad frigo");
+		
 		assert	refrigeratorInboundPortURI != null;
 		assert	!refrigeratorInboundPortURI.isEmpty();
 		assert	simArchitectureURI != null;
@@ -310,7 +310,7 @@ implements	RefrigeratorImplementationI
 
 		if (ThermostatedRefrigerator.VERBOSE) {
 			this.tracer.get().setTitle("Thermostated refrigerator component");
-			this.tracer.get().setRelativePosition(2, 1);
+			this.tracer.get().setRelativePosition(1, 2);
 			this.toggleTracing();		
 		}
 	}
@@ -327,7 +327,6 @@ implements	RefrigeratorImplementationI
 	{
 		super.start();
 		
-		System.out.println("in thermostad frigo 2");
 
 		this.traceMessage("Refrigerator starts.\n");
 
@@ -340,14 +339,14 @@ implements	RefrigeratorImplementationI
 			this.simulatorPlugin.setSimulationExecutorService(
 											SCHEDULED_EXECUTOR_SERVICE_URI);
 			
-			System.out.println("in thermostad frigo 3");
+			
 			try {
-				System.out.println("in thermostad frigo 4");
+				
 				this.simulatorPlugin.initialiseSimulationArchitecture(
 													this.simArchitectureURI,
 													this.accFactor);
 				
-				System.out.println("in thermostad frigo 5");
+				
 				this.installPlugin(this.simulatorPlugin);
 			} catch (Exception e) {
 				throw new ComponentStartException(e) ;
@@ -361,7 +360,7 @@ implements	RefrigeratorImplementationI
 	@Override
 	public synchronized void	execute() throws Exception
 	{
-		System.out.println("in thermostad frigo 6");
+		
 		if (this.composesAsUnitTest && this.executesAsUnitTest) {
 			this.simulatorPlugin.setSimulationRunParameters(
 												new HashMap<String, Object>());
@@ -375,7 +374,7 @@ implements	RefrigeratorImplementationI
 			// (possibly accelerated) so that code execution can occur on
 			// the same time reference in order to get coherent exchanges
 			// between the two.
-			System.out.println("in thermostad frigo 7");
+			
 			this.scheduleTask(
 					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
 					new AbstractComponent.AbstractTask() {
@@ -392,7 +391,7 @@ implements	RefrigeratorImplementationI
 					(long)(2.0/this.accFactor),
 					TimeUnit.SECONDS);
 			
-			System.out.println("in thermostad frigo 8");
+			
 			this.scheduleTask(
 					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
 					new AbstractComponent.AbstractTask() {
@@ -428,7 +427,7 @@ implements	RefrigeratorImplementationI
 					(long)(8.0/this.accFactor),
 					TimeUnit.SECONDS);
 			
-			System.out.println("in thermostad frigo 9");
+			
 		}
 	}
 
@@ -441,7 +440,7 @@ implements	RefrigeratorImplementationI
 		this.traceMessage("Refrigerator");
 		this.currentState = RefrigeratorState.OFF;
 
-		System.out.println("in thermostad frigo 10");
+		
 		try {
 			this.rip.unpublishPort();
 		} catch (Exception e) {
@@ -543,7 +542,7 @@ implements	RefrigeratorImplementationI
 	{
 		// when the refrigerator is on, perform the control, but if the refrigerator is
 		// switched off, stop the controller
-		System.out.println("in thermostad frigo 14");
+		
 		if (this.currentState == ThermostatedRefrigerator.RefrigeratorState.ON) {
 			try {
 				if (this.isFreezing &&
@@ -553,9 +552,9 @@ implements	RefrigeratorImplementationI
 						this.traceMessage(
 								"Thermostated refrigerator decides to freeze.\n");
 					}
-					System.out.println("in thermostad frigo 15");
+					
 					this.doNotFreeze();
-					System.out.println("in thermostad frigo 16");
+					
 				} else if (!this.isFreezing &&
 								this.getCurrentTemperature() <
 										this.targetTemperature - HYSTERESIS) {
@@ -602,7 +601,7 @@ implements	RefrigeratorImplementationI
 	@Override
 	public void			startRefrigerator() throws Exception
 	{
-		System.out.println("in thermostad frigo 12");
+		
 		if (ThermostatedRefrigerator.VERBOSE) {
 			this.traceMessage("Thermostated refrigerator starts.\n");
 		}
@@ -620,14 +619,12 @@ implements	RefrigeratorImplementationI
 		// to execute at the predefined period to check the current temperature
 		// and decide when to start or stop freezing 
 		
-		System.out.println("in thermostad frigo 13");
+		
 		long accPeriod = (long)(PERIOD/this.accFactor);
 		this.scheduleTask(
 				o -> ((ThermostatedRefrigerator)o).
 							internalController(accPeriod, CONTROL_TIME_UNIT),
 				accPeriod, CONTROL_TIME_UNIT);
-		
-		System.out.println("in thermostad frigo 11");
 	}
 
 	/**

@@ -115,7 +115,6 @@ extends		AbstractCVM
 				// second 'true' that it must be executed as a unit test.
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
 		
-		System.out.println("cvm ******");
 		//refrigerator
 		AbstractComponent.createComponent(
 				ThermostatedRefrigerator.class.getCanonicalName(),

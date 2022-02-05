@@ -44,7 +44,6 @@ implements	RefrigeratorCI
 	@Override
 	public boolean		isRunning() throws Exception
 	{
-		System.out.println("ob isRunning ******");
 		return ((RefrigeratorCI)this.getConnector()).isRunning();
 	}
 
@@ -54,7 +53,6 @@ implements	RefrigeratorCI
 	@Override
 	public void			startRefrigerator() throws Exception
 	{
-		System.out.println("ob startRefrigerator ******");
 		((RefrigeratorCI)this.getConnector()).startRefrigerator();
 	}
 
@@ -64,7 +62,6 @@ implements	RefrigeratorCI
 	@Override
 	public void			stopRefrigerator() throws Exception
 	{
-		System.out.println("ob stopRefrigerator ******");
 		((RefrigeratorCI)this.getConnector()).stopRefrigerator();
 	}
 
@@ -74,7 +71,6 @@ implements	RefrigeratorCI
 	@Override
 	public void			setTargetTemperature(double target) throws Exception
 	{
-		System.out.println("ob setTargetTemperature ******");
 		((RefrigeratorCI)this.getConnector()).setTargetTemperature(target);
 	}
 
@@ -84,7 +80,6 @@ implements	RefrigeratorCI
 	@Override
 	public double		getTargetTemperature() throws Exception
 	{
-		System.out.println("ob getTargetTemperature ******");
 		return ((RefrigeratorCI)this.getConnector()).getTargetTemperature();
 	}
 
@@ -94,7 +89,6 @@ implements	RefrigeratorCI
 	@Override
 	public double		getCurrentTemperature() throws Exception
 	{
-		System.out.println("ob getCurrentTemperature ******");
 		return ((RefrigeratorCI)this.getConnector()).getCurrentTemperature();
 	}
 }

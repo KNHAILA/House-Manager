@@ -20,7 +20,6 @@ import fr.sorbonne_u.components.ports.AbstractInboundPort;
  * 
  * @author	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
 */
-
 public class RefrigeratorInboundPort extends AbstractInboundPort implements RefrigeratorCI {
 	
 	private static final long serialVersionUID = 1L;
@@ -40,7 +39,6 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 
 	@Override
 	public boolean isRunning() throws Exception {
-		System.out.println("ib isRunning ******");
 		return this.getOwner().handleRequest(
 				o -> ((RefrigeratorImplementationI)o).isRunning());
 	}
@@ -51,7 +49,6 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 
 	@Override
 	public void startRefrigerator() throws Exception {
-		System.out.println("ib startRefrigerator ******");
 		this.getOwner().handleRequest(
 				o -> {	((RefrigeratorImplementationI)o).startRefrigerator();
 						return null;
@@ -64,7 +61,6 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 	
 	@Override
 	public void stopRefrigerator() throws Exception {
-		System.out.println("ib stopRefrigerator ******");
 		this.getOwner().handleRequest(
 				o -> {	((RefrigeratorImplementationI)o).stopRefrigerator();
 						return null;
@@ -78,7 +74,6 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 	
 	@Override
 	public void setTargetTemperature(double target) throws Exception {
-		System.out.println("ib setTargetTemperature ******");
 		this.getOwner().handleRequest(
 				o -> {	((RefrigeratorImplementationI)o).setTargetTemperature(target);
 						return null;
@@ -92,7 +87,6 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 	
 	@Override
 	public double getTargetTemperature() throws Exception {
-		System.out.println("ib getTargetTemperature ******");
 		return this.getOwner().handleRequest(
 				o -> ((RefrigeratorImplementationI)o).getTargetTemperature());
 	}
@@ -103,9 +97,7 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 	
 	@Override
 	public double getCurrentTemperature() throws Exception {
-		System.out.println("ib getCurrentTemperature ******");
 		return this.getOwner().handleRequest(
 				o -> ((RefrigeratorImplementationI)o).getCurrentTemperature());
 	}
 }
-

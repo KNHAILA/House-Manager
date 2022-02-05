@@ -186,7 +186,7 @@ extends		RTAtomicSimulatorPlugin
 					  this.getOwner());
 		
 		//refrigerator
-		System.out.println("meter plugin 1 ******");
+		
 		simParams.put(ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 				OWNER_REFERENCE_NAME,
                   this.getOwner());
@@ -314,7 +314,7 @@ extends		RTAtomicSimulatorPlugin
 						accFactor));
 		*/
 		//refrigerator
-		System.out.println("meter plugin 2 ******");
+		
 		atomicModelDescriptors.put(
 						REFRIGERATOR_ELECTRICITY_MODEL_URI,
 						RTAtomicHIOA_Descriptor.create(
@@ -373,7 +373,7 @@ extends		RTAtomicSimulatorPlugin
 					});
 			
 			//refrigerator
-			System.out.println("meter plugin 3 ******");
+			
 			imported.put(
 					CloseRefrigeratorDoor.class,
 					new EventSink[] {
@@ -522,7 +522,7 @@ extends		RTAtomicSimulatorPlugin
 				});
 		
 		//refrigerator
-		System.out.println("meter plugin 4 ******");
+		
 		bindings.put(
 				new VariableSource("currentIntensity",
 								   Double.class,
