@@ -72,10 +72,10 @@ extends		RTAtomicSimulatorPlugin
 															"UnitTestMiniHydroelectricDam";
 	/** name used to pass the owner component reference as simulation
 	 *  parameter.															*/
-	public static final String	OWNER_REFERENCE_NAME = "THCRN";
+	public static final String	OWNER_REFERENCE_NAME = "MHDRN";
 	/** name used to access the current room temperature in the
 	 *  {@code WindSpeedSILModel}.								 	*/
-	public static final String	CURRENT_WIND_SPEED = "cws";
+	public static final String	CURRENT_WATER_VOLUME = "cwv";
 
 	// -------------------------------------------------------------------------
 	// DEVS simulation protocol
@@ -114,10 +114,10 @@ extends		RTAtomicSimulatorPlugin
 	{
 		assert	modelURI != null && name != null;
 
-		// In the WindTurbine model, the only accessible model state value is
+		// In the Dam model, the only accessible model state value is
 		// the current room temperature in the WindSpeedModel
 		assert	modelURI.equals(WaterVolumeSILModel.URI);
-		assert	name.equals(CURRENT_WIND_SPEED);
+		assert	name.equals(CURRENT_WATER_VOLUME);
 
 		// Get a Java reference on the object representing the corresponding
 		// simulation model.

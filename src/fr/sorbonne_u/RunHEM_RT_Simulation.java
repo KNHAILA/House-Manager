@@ -58,10 +58,11 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineUnitTesterMod
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 
 //Dam
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
+/*import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUnitTesterModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterVolumeModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
+*/
 
 //devs_simulation
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
@@ -446,8 +447,8 @@ public class			RunHEM_RT_Simulation
             submodels.add(BatteryUnitTesterModel.URI);
             submodels.add(BatteryPercentageModel.URI);
             
-            //MiniHydroelectricDam 
             /*
+            //MiniHydroelectricDam 
             submodels.add(MiniHydroelectricDamElectricityModel.URI);
             submodels.add(WaterVolumeModel.URI);
             submodels.add(MiniHydroelectricDamUnitTesterModel.URI);

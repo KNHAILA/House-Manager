@@ -62,16 +62,16 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 {
 	/**
 	 * The enumeration <code>State</code> defines the state in which the
-	 * Mini Hydro Electric Dam can be.
+	 * MiniHydroelectricDam can be.
 	 *
 	 * <p>Created on : 2021-09-24</p>
 	 * 
 	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
 	 */
     public static enum State {
-    	/** Dam is producing the energy.									*/
+    	/** MiniHydroelectricDam is ON.									*/
         ON,
-        /** water volume is too high and Dam is off.									*/
+        /** MiniHydroelectricDam is OFF.									*/
         OFF
     }
 
@@ -80,13 +80,16 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
 
     private static final long		serialVersionUID = 1L;
-	/** URI for a model; works when only one instance is created.			*/
+
+    /** URI for an instance model; works as long as only one instance is
+     *  created.															*/
     public static final String		URI = MiniHydroelectricDamElectricityModel.class.getSimpleName();
-    /** power of the Mini Hydro Electric Dam in watts.										*/
-    public static double			MODE_PRODUCTION = 2000.0; // Watts
-    /** power of the Mini Hydro Electric Dam in watts.										*/
+    /** power of the MiniHydroelectricDam in watts.										*/
+    public static double			MODE_PRODUCTION = 3000.0; // Watts	
+    /** power of the MiniHydroelectricDam in watts.										*/
     public static double			TENSION = 220.0; // Volts
 
+  
     /** current intensity in amperes; intensity is power/tension.			*/
     @ExportedVariable(type = Double.class)
     protected final Value<Double>	currentIntensity_production =
@@ -95,17 +98,20 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     /** current intensity in amperes; intensity is power/tension.			*/
     @ImportedVariable(type = Double.class)
     protected Value<Double>			waterVolume;
+    /** current state of the Battery.					*/
     protected State currentState = State.OFF;
+    /** power of the MiniHydroelectricDam in watts.										*/
     protected boolean				consumptionHasChanged = false;
+    /** power of the MiniHydroelectricDam in watts.										*/
     protected double				totalProduction;
 
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
 
-  
+   
     /**
-	 * create a Mini Hydro Electric Dam MIL model instance.
+	 * create a MiniHydroelectricDam MIL model instance.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -135,7 +141,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     }
 
 	/**
-	 * set the state of the Mini Hydro Electric Dam.
+	 * set the state of the MiniHydroelectricDam.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -148,7 +154,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
 	 */
     public void	setState(State s)
     {
-        State old = this.currentState;
+    	State old = this.currentState;
 		this.currentState = s;
 		if (old != this.currentState) {
 			this.consumptionHasChanged = true;
@@ -156,7 +162,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     }
 
     /**
-	 * return the state of the Mini Hydro Electric Dam.
+	 * return the state of the MiniHydroelectricDam.
 	 * 
 	 * <p><strong>Contract</strong></p>
 	 * 
@@ -172,7 +178,6 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         return this.currentState;
     }
 
- 
     public void	toggleConsumptionHasChanged()
     {
         if (this.consumptionHasChanged) {
@@ -196,6 +201,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         this.currentIntensity_production.v = 0.0;
     }
 
+   
     /**
 	 * @see fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOA#initialiseState(fr.sorbonne_u.devs_simulation.models.time.Time)
 	 */
@@ -204,6 +210,7 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     {
         super.initialiseState(startTime);
 
+      
         this.currentState = State.OFF;
         this.consumptionHasChanged = false;
         this.totalProduction = 0.0;
@@ -218,29 +225,25 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     @Override
     public ArrayList<EventI>	output()
     {
+        // the model does not export events.
         return null;
     }
 
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
-	 */
+    /**
+     * @see fr.sorbonne_u.devs_simulation.models.interfaces.ModelI#timeAdvance()
+     */
     @Override
     public Duration	timeAdvance()
     {
-    	if (this.consumptionHasChanged) {
-			// When the consumption has changed, an immediate (delay = 0.0)
-			// internal transition must be made to update the electricity
-			// consumption.
-			this.consumptionHasChanged = false;
-			return Duration.zero(this.getSimulatedTimeUnit());
-		} else {
-			// As long as the state does not change, no internal transition
-			// is made (delay = infinity).
-			return Duration.INFINITY;
-		}
+        if (this.consumptionHasChanged) {
+            this.toggleConsumptionHasChanged();
+            return new Duration(0.0, this.getSimulatedTimeUnit());
+        } else {
+            return Duration.INFINITY;
+        }
     }
 
-
+ 
     /**
 	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedInternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
 	 */
@@ -248,10 +251,11 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     public void	userDefinedInternalTransition(Duration elapsedTime)
     {
         super.userDefinedInternalTransition(elapsedTime);
-        
+
+        // set the current electricity consumption from the current state
         switch (this.currentState)
         {
-            case OFF :
+            case OFF:
                 this.currentIntensity_production.v = 0.0;
                 break;
             case ON:
@@ -263,62 +267,64 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         StringBuffer message =
                 new StringBuffer("executes an internal transition ");
 
-            message.append("with current production ");
-            message.append(this.currentIntensity_production.v);
-            message.append(" at ");
-            message.append(this.currentIntensity_production.time);
+        message.append("with current production ");
+        message.append(this.currentIntensity_production.v);
+        message.append(" at ");
+        message.append(this.currentIntensity_production.time);
 
         message.append(".\n");
         this.logMessage(message.toString());
     }
 
     /**
-	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedExternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
-	 */
+     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#userDefinedExternalTransition(fr.sorbonne_u.devs_simulation.models.time.Duration)
+     */
     @Override
-    public void	userDefinedExternalTransition(Duration elapsedTime)
-    {
-        ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
-        
-        assert	currentEvents != null && currentEvents.size() == 1;
+	public void userDefinedExternalTransition(Duration elapsedTime) {
+    	
+		// get the vector of current external events
+		ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
+		
+		// when this method is called, there is at least one external event,
+		// and for the heater model, there will be exactly one by
+		// construction.
+		assert currentEvents != null && currentEvents.size() == 1;
 
-        Event ce = (Event) currentEvents.get(0);
+		Event ce = (Event) currentEvents.get(0);
+		assert ce instanceof MiniHydroelectricDamEventI;
 
-        if(ce instanceof StartMiniHydroelectricDam) {
-            this.totalProduction +=
-                    Electricity.computeProduction(elapsedTime,
-                            TENSION*this.currentIntensity_production.v);
-        }
+		// compute the total consumption for the simulation report.
+		this.totalProduction += Electricity.computeProduction(elapsedTime,
+				TENSION * this.currentIntensity_production.v);
 
-        // Tracing
-        StringBuffer message =
-                new StringBuffer("executes an external transition ");
-        message.append(ce.getClass().getSimpleName());
-        message.append("(");
-        message.append(ce.getTimeOfOccurrence().getSimulatedTime());
-        message.append(")\n");
-        this.logMessage(message.toString());
+		StringBuffer sb = new StringBuffer("execute the external event: ");
+		sb.append(ce.eventAsString());
+		sb.append(".\n");
+		this.logMessage(sb.toString());
 
-        assert	ce instanceof MiniHydroelectricDamEventI;
-        ce.executeOn(this);
+		// the next call will update the current state of the heater and if
+		// this state has changed, it put the boolean consumptionHasChanged
+		// at true, which in turn will trigger an immediate internal transition
+		// to update the current intensity of the heater electricity
+		// consumption.
+		ce.executeOn(this);
 
-        super.userDefinedExternalTransition(elapsedTime);
-    }
+		super.userDefinedExternalTransition(elapsedTime);
+	}
 
     /**
-	 * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
-	 */
+     * @see fr.sorbonne_u.devs_simulation.models.AtomicModel#endSimulation(fr.sorbonne_u.devs_simulation.models.time.Time)
+     */
     @Override
     public void	endSimulation(Time endTime) throws Exception
     {
         Duration d = endTime.subtract(this.getCurrentStateTime());
-     
+      
         this.totalProduction +=
                 Electricity.computeProduction(d,
                         TENSION*this.currentIntensity_production.v);
 
-        
-        this.logMessage(this.currentIntensity_production.v+"simulation ends.\n");
+        this.logMessage("simulation ends.\n");
         super.endSimulation(endTime);
     }
 
@@ -333,17 +339,17 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     /** run parameter name for {@code TENSION}.								*/
     public static final String		TENSION_RUNPNAME = URI + ":TENSION";
 
-
     /**
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
-	 */
+     * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
+     */
+
     @Override
     public void	setSimulationRunParameters(
             Map<String, Object> simParams
     ) throws Exception
     {
         super.setSimulationRunParameters(simParams);
-      
+        
         if (simParams.containsKey(MODE_PRODUCTION_RUNPNAME)) {
             MODE_PRODUCTION =
                     (double) simParams.get(MODE_PRODUCTION_RUNPNAME);
@@ -359,8 +365,8 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
     // -------------------------------------------------------------------------
 
     /**
-	 * The class <code>Mini Hydro Electric Dam ElectricityReport</code> implements the
-	 * simulation report for the <code>Mini Hydro Electric Dam ElectricityModel</code>.
+	 * The class <code>MiniHydroelectricDamElectricityReport</code> implements the
+	 * simulation report for the <code>MiniHydroelectricDamElectricityModel</code>.
 	 *
 	 * <p><strong>Description</strong></p>
 	 * 
@@ -417,9 +423,9 @@ public class MiniHydroelectricDamElectricityModel extends AtomicHIOA
         }
     }
 
-	/**
-	 * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
-	 */
+    /**
+     * @see fr.sorbonne_u.devs_simulation.models.Model#getFinalReport()
+     */
     @Override
     public SimulationReportI	getFinalReport() throws Exception
     {

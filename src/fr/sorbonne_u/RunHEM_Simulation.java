@@ -52,10 +52,12 @@ import fr.sorbonne_u.storage.battery.mil.BatteryUnitTesterModel;
 import fr.sorbonne_u.storage.battery.mil.events.*;
 
 //miniHydroelectricDam
+
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamElectricityModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamUnitTesterModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.WaterVolumeModel;
 import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
+
 
 //Wind turbine
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindSpeedModel;
@@ -69,13 +71,11 @@ import fr.sorbonne_u.devs_simulation.architectures.ArchitectureI;
 import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
 import fr.sorbonne_u.devs_simulation.hioa.architectures.AtomicHIOA_Descriptor;
 import fr.sorbonne_u.devs_simulation.hioa.architectures.CoupledHIOA_Descriptor;
-import fr.sorbonne_u.devs_simulation.hioa.architectures.RTAtomicHIOA_Descriptor;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.VariableSink;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.VariableSource;
 import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.architectures.AtomicModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor;
-import fr.sorbonne_u.devs_simulation.models.architectures.RTAtomicModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
@@ -333,30 +333,29 @@ public class			RunHEM_Simulation
             // Production Unit: Mini Hydro Electric Dam
             atomicModelDescriptors.put(
             		MiniHydroelectricDamElectricityModel.URI,
-            		RTAtomicHIOA_Descriptor.create(
-                    		MiniHydroelectricDamElectricityModel.class,
-                    		MiniHydroelectricDamElectricityModel.URI,
-                            TimeUnit.SECONDS,
-                            null,
-                            SimulationEngineCreationMode.ATOMIC_ENGINE));
-            
-            atomicModelDescriptors.put(
-            		WaterVolumeModel.URI,
-            		RTAtomicHIOA_Descriptor.create(
-            				WaterVolumeModel.class,
+					AtomicHIOA_Descriptor.create(
+							MiniHydroelectricDamElectricityModel.class,
+							MiniHydroelectricDamElectricityModel.URI,
+							TimeUnit.SECONDS,
+							null,
+							SimulationEngineCreationMode.ATOMIC_ENGINE));
+			atomicModelDescriptors.put(
+					WaterVolumeModel.URI,
+					AtomicHIOA_Descriptor.create(
+							WaterVolumeModel.class,
 							WaterVolumeModel.URI,
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
-            
-            atomicModelDescriptors.put(
-            		MiniHydroelectricDamUnitTesterModel.URI,
-                    RTAtomicModelDescriptor.create(
-                    		MiniHydroelectricDamUnitTesterModel.class,
-                    		MiniHydroelectricDamUnitTesterModel.URI,
-                            TimeUnit.SECONDS,
-                            null,
-                            SimulationEngineCreationMode.ATOMIC_ENGINE));
+
+			atomicModelDescriptors.put(
+					MiniHydroelectricDamUnitTesterModel.URI,
+					AtomicModelDescriptor.create(
+							MiniHydroelectricDamUnitTesterModel.class,
+							MiniHydroelectricDamUnitTesterModel.URI,
+							TimeUnit.SECONDS,
+							null,
+							SimulationEngineCreationMode.ATOMIC_ENGINE));
 
             
             // Production Unit: Wind Turbine
@@ -376,8 +375,7 @@ public class			RunHEM_Simulation
 							TimeUnit.SECONDS,
 							null,
 							SimulationEngineCreationMode.ATOMIC_ENGINE));
-			// the WindTurbine unit tester model only exchanges event, an
-			// atomic model hence we use an AtomicModelDescriptor
+
 			atomicModelDescriptors.put(
 					WindTurbineUnitTesterModel.URI,
 					AtomicModelDescriptor.create(
@@ -434,6 +432,7 @@ public class			RunHEM_Simulation
             submodels.add(MiniHydroelectricDamElectricityModel.URI);
             submodels.add(WaterVolumeModel.URI);
             submodels.add(MiniHydroelectricDamUnitTesterModel.URI);
+            
             
             // WindTurbine
 			submodels.add(WindTurbineElectricityModel.URI);

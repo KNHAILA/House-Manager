@@ -271,7 +271,7 @@ implements	VacuumCleanerImplementation
 
 		if (VacuumCleaner.VERBOSE) {
 			this.tracer.get().setTitle("Vacuum Cleaner component");
-			this.tracer.get().setRelativePosition(2, 0);
+			this.tracer.get().setRelativePosition(2, 2);
 			this.toggleTracing();
 		}
 	}

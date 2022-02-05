@@ -42,28 +42,41 @@ import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDes
 import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
+import fr.sorbonne_u.meter.mil.ElectricMeterElectricityModel;
+import fr.sorbonne_u.components.cyphy.plugins.devs.RTAtomicSimulatorPlugin;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import fr.sorbonne_u.components.fan.mil.events.SetHighFan;
-import fr.sorbonne_u.components.fan.mil.events.SetLowFan;
-import fr.sorbonne_u.components.fan.mil.events.SwitchOffFan;
-import fr.sorbonne_u.components.fan.mil.events.SwitchOnFan;
-import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
-import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
-import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
-import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
-import fr.sorbonne_u.meter.mil.ElectricMeterElectricityModel;
-import fr.sorbonne_u.components.cyphy.plugins.devs.RTAtomicSimulatorPlugin;
-import fr.sorbonne_u.components.fan.FanRTAtomicSimulatorPlugin;
-import fr.sorbonne_u.components.fan.sil.FanElectricitySILModel;
-import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeaterRTAtomicSimulatorPlugin;
-import fr.sorbonne_u.components.waterHeater.sil.WaterHeaterElectricitySILModel;
 import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
 import fr.sorbonne_u.meter.sil.ElectricMeterElectricitySILModel;
 
+//fan
+import fr.sorbonne_u.components.fan.mil.events.*;
+import fr.sorbonne_u.components.fan.FanRTAtomicSimulatorPlugin;
+import fr.sorbonne_u.components.fan.sil.FanElectricitySILModel;
+
+//water heater
+import fr.sorbonne_u.components.waterHeater.mil.events.*;
+import fr.sorbonne_u.components.waterHeater.sil.WaterHeaterElectricitySILModel;
+import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeaterRTAtomicSimulatorPlugin;
+
+//refrigerator
+import fr.sorbonne_u.components.refrigerator.ThermostatedRefrigeratorRTAtomicSimulatorPlugin;
+import fr.sorbonne_u.components.refrigerator.mil.events.*;
+import fr.sorbonne_u.components.refrigerator.sil.RefrigeratorElectricitySILModel;
+
+//Wind turbine
+import fr.sorbonne_u.production_unities.windTurbine.sil.WindTurbineElectricitySILModel;
+import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbineRTAtomicSimulatorPlugin;
+import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
+
+//vacuum cleaner
+import fr.sorbonne_u.components.vacuumCleaner.VacuumCleanerRTAtomicSimulatorPlugin;
+import fr.sorbonne_u.components.vacuumCleaner.mil.events.*;
+import fr.sorbonne_u.components.vacuumCleaner.sil.VacuumCleanerElectricitySILModel;
 // -----------------------------------------------------------------------------
 /**
  * The class <code>ElectricMeterRTAtomicSimulatorPlugin</code> implements
@@ -111,10 +124,16 @@ extends		RTAtomicSimulatorPlugin
 	/** URI of the fan electricity model.								*/
 	protected static final String	FAN_ELECTRICITY_MODEL_URI =
 											FanElectricitySILModel.URI;
+	protected static final String	VACUUMCLEANER_ELECTRICITY_MODEL_URI =
+			VacuumCleanerElectricitySILModel.URI;
 	/** class implementing the FAN electricity model.					*/
 	protected static final Class<FanElectricitySILModel>
 									FAN_ELECTRICITY_MODEL_CLASS =
 											FanElectricitySILModel.class;
+	
+	protected static final Class<VacuumCleanerElectricitySILModel>
+	                               VACUUMCLEANER_ELECTRICITY_MODEL_CLASS =
+	                            		   VacuumCleanerElectricitySILModel.class;
 	/** URI of the heater electricity model.								*/
 	protected static final String	WATER_HEATER_ELECTRICITY_MODEL_URI =
 											WaterHeaterElectricitySILModel.URI;
@@ -122,6 +141,23 @@ extends		RTAtomicSimulatorPlugin
 	protected static final Class<WaterHeaterElectricitySILModel>
 	                                WATER_HEATER_ELECTRICITY_MODEL_CLASS =
 											WaterHeaterElectricitySILModel.class;
+	
+	/** URI of the wind turbine electricity model.								*/
+	protected static final String	WIND_TURBINE_ELECTRICITY_MODEL_URI =
+											WindTurbineElectricitySILModel.URI;
+	/** class implementing the wind turbine electricity model.					*/
+	protected static final Class<WindTurbineElectricitySILModel>
+	                                WIND_TURBINE_ELECTRICITY_MODEL_CLASS =
+	                                		WindTurbineElectricitySILModel.class;
+	
+	/** URI of the refrigerator electricity model.								*/
+	protected static final String	REFRIGERATOR_ELECTRICITY_MODEL_URI =
+											RefrigeratorElectricitySILModel.URI;
+	/** class implementing the refrigerator electricity model.					*/
+	protected static final Class<RefrigeratorElectricitySILModel>
+	                                REFRIGERATOR_ELECTRICITY_MODEL_CLASS =
+	                                		RefrigeratorElectricitySILModel.class;
+	
 
 	// -------------------------------------------------------------------------
 	// DEVS simulation protocol
@@ -140,12 +176,35 @@ extends		RTAtomicSimulatorPlugin
 		// models; because each model has been defined to retrieve the
 		// reference to its owner component using its own parameter name,
 		// we must pass the reference under each different name
+		
+		//meter
 		simParams.put(METER_REFERENCE_NAME, this.getOwner());
+		
+		//water heater
 		simParams.put(ThermostatedWaterHeaterRTAtomicSimulatorPlugin.
 														OWNER_REFERENCE_NAME,
 					  this.getOwner());
+		
+		//refrigerator
+		System.out.println("meter plugin 1 ******");
+		simParams.put(ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
+				OWNER_REFERENCE_NAME,
+                  this.getOwner());
+                  
+		
+		//wind turbine
+	/*	simParams.put(SelfControlWindTurbineRTAtomicSimulatorPlugin.
+																OWNER_REFERENCE_NAME,
+							  this.getOwner());
+							  */
+		
+		//fan
 		simParams.put(FanRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME,
 					  this.getOwner());
+		
+		//VacuumCleaner
+		simParams.put(VacuumCleanerRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME,
+					this.getOwner());
 
 		// this will pass the parameters to the simulation models that will
 		// then be able to get their own parameters
@@ -156,7 +215,14 @@ extends		RTAtomicSimulatorPlugin
 		simParams.remove(METER_REFERENCE_NAME);
 		simParams.remove(ThermostatedWaterHeaterRTAtomicSimulatorPlugin.
 														OWNER_REFERENCE_NAME);
+		simParams.remove(ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
+				OWNER_REFERENCE_NAME);
+				
+	/*	simParams.remove(SelfControlWindTurbineRTAtomicSimulatorPlugin.
+				OWNER_REFERENCE_NAME);
+				*/
 		simParams.remove(FanRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME);
+		simParams.remove(VacuumCleanerRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME);
 	}
 
 	// -------------------------------------------------------------------------
@@ -196,9 +262,13 @@ extends		RTAtomicSimulatorPlugin
 
 		Set<String> submodels = new HashSet<String>();
 		submodels.add(FAN_ELECTRICITY_MODEL_URI);
+		submodels.add(VACUUMCLEANER_ELECTRICITY_MODEL_URI);
 		submodels.add(WATER_HEATER_ELECTRICITY_MODEL_URI);
+		submodels.add(REFRIGERATOR_ELECTRICITY_MODEL_URI);
+		//submodels.add(WIND_TURBINE_ELECTRICITY_MODEL_URI);
 		submodels.add(ElectricMeterElectricitySILModel.URI);
 
+		//fan
 		atomicModelDescriptors.put(
 				FAN_ELECTRICITY_MODEL_URI,
 				RTAtomicHIOA_Descriptor.create(
@@ -208,6 +278,19 @@ extends		RTAtomicSimulatorPlugin
 						null,
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						accFactor));
+		
+		//vacuumCleaner
+		atomicModelDescriptors.put(
+						VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+						RTAtomicHIOA_Descriptor.create(
+								VACUUMCLEANER_ELECTRICITY_MODEL_CLASS,
+								VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+								TimeUnit.SECONDS,
+								null,
+								SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+								accFactor));
+		
+		//water heater
 		atomicModelDescriptors.put(
 				WATER_HEATER_ELECTRICITY_MODEL_URI,
 				RTAtomicHIOA_Descriptor.create(
@@ -217,6 +300,33 @@ extends		RTAtomicSimulatorPlugin
 						null,
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						accFactor));
+		
+		//Wind turbine
+		/*
+		atomicModelDescriptors.put(
+						WIND_TURBINE_ELECTRICITY_MODEL_URI,
+						RTAtomicHIOA_Descriptor.create(
+						WIND_TURBINE_ELECTRICITY_MODEL_CLASS,
+						WIND_TURBINE_ELECTRICITY_MODEL_URI,
+						TimeUnit.SECONDS,
+						null,
+						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+						accFactor));
+		*/
+		//refrigerator
+		System.out.println("meter plugin 2 ******");
+		atomicModelDescriptors.put(
+						REFRIGERATOR_ELECTRICITY_MODEL_URI,
+						RTAtomicHIOA_Descriptor.create(
+								REFRIGERATOR_ELECTRICITY_MODEL_CLASS,
+								REFRIGERATOR_ELECTRICITY_MODEL_URI,
+								TimeUnit.SECONDS,
+								null,
+								SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+								accFactor));
+								
+		
+		//meter
 		atomicModelDescriptors.put(
 				ElectricMeterElectricitySILModel.URI,
 				RTAtomicHIOA_Descriptor.create(
@@ -235,6 +345,8 @@ extends		RTAtomicSimulatorPlugin
 			// be imported from the corresponding components simulation models
 
 			imported = new HashMap<>();
+			
+			//water heater
 			imported.put(
 					SwitchOnWaterHeater.class,
 					new EventSink[] {
@@ -259,7 +371,64 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(WATER_HEATER_ELECTRICITY_MODEL_URI,
 										  DoNotHeatWater.class)
 					});
+			
+			//refrigerator
+			System.out.println("meter plugin 3 ******");
+			imported.put(
+					CloseRefrigeratorDoor.class,
+					new EventSink[] {
+							new EventSink(REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									CloseRefrigeratorDoor.class)
+					});
+			imported.put(
+					OpenRefrigeratorDoor.class,
+					new EventSink[] {
+							new EventSink(REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									OpenRefrigeratorDoor.class)
+					});
+			imported.put(
+					Freezing.class,
+					new EventSink[] {
+							new EventSink(REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									Freezing.class)
+					});
+			imported.put(
+					OffRefrigerator.class,
+					new EventSink[] {
+							new EventSink(REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									OffRefrigerator.class)
+					});
+			imported.put(
+					OnRefrigerator.class,
+					new EventSink[] {
+							new EventSink(REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									OnRefrigerator.class)
+					});
+			imported.put(
+					Resting.class,
+					new EventSink[] {
+							new EventSink(REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									Resting.class)
+					});
+			
 
+			//wind turbine
+			/*
+			imported.put(
+					StartWindTurbine.class,
+					new EventSink[] {
+							new EventSink(WIND_TURBINE_ELECTRICITY_MODEL_URI,
+									StartWindTurbine.class)
+					});
+			imported.put(
+					StopWindTurbine.class,
+					new EventSink[] {
+							new EventSink(WIND_TURBINE_ELECTRICITY_MODEL_URI,
+									StopWindTurbine.class)
+					});
+					*/
+			
+			//fan
 			imported.put(
 					SwitchOnFan.class,
 					new EventSink[] {
@@ -284,14 +453,42 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(FAN_ELECTRICITY_MODEL_URI,
 										  SetLowFan.class)
 					});
+			
+			//vacuum cleaner
+			imported.put(
+					SwitchOnVacuumCleaner.class,
+					new EventSink[] {
+							new EventSink(VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+										  SwitchOnVacuumCleaner.class)
+					});
+			imported.put(
+					SwitchOffVacuumCleaner.class,
+					new EventSink[] {
+							new EventSink(VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+										  SwitchOffVacuumCleaner.class)
+					});
+			imported.put(
+					SetHighVacuumCleaner.class,
+					new EventSink[] {
+							new EventSink(VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+										  SetHighVacuumCleaner.class)
+					});
+			imported.put(
+					SetLowVacuumCleaner.class,
+					new EventSink[] {
+							new EventSink(VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+										  SetLowVacuumCleaner.class)
+					});
 		}
 
 		// variable bindings between exporting and importing models
 		Map<VariableSource,VariableSink[]> bindings =
 								new HashMap<VariableSource,VariableSink[]>();
 
-		// bindings between hair dryer and heater models to the electric
+		// bindings between hair fan and heater models to the electric
 		// meter model
+								
+		//fan						
 		bindings.put(
 				new VariableSource("currentIntensity",
 								   Double.class,
@@ -301,6 +498,19 @@ extends		RTAtomicSimulatorPlugin
 										 Double.class,
 										 ElectricMeterElectricityModel.URI)
 				});
+		
+		//vacuum cleaner						
+		bindings.put(
+				new VariableSource("currentIntensity",
+										   Double.class,
+										   VACUUMCLEANER_ELECTRICITY_MODEL_URI),
+				new VariableSink[] {
+						new VariableSink("currentVacuumCleanerIntensity",
+												 Double.class,
+												 ElectricMeterElectricityModel.URI)
+						});
+		
+		//water heater
 		bindings.put(
 				new VariableSource("currentIntensity",
 								   Double.class,
@@ -310,6 +520,33 @@ extends		RTAtomicSimulatorPlugin
 										 Double.class,
 										 ElectricMeterElectricityModel.URI)
 				});
+		
+		//refrigerator
+		System.out.println("meter plugin 4 ******");
+		bindings.put(
+				new VariableSource("currentIntensity",
+								   Double.class,
+								   REFRIGERATOR_ELECTRICITY_MODEL_URI),
+				new VariableSink[] {
+						new VariableSink("currentRefrigeratorIntensity",
+										 Double.class,
+										 ElectricMeterElectricityModel.URI)
+				});
+				
+		
+		//Wind turbine
+		/*
+		bindings.put(
+					new VariableSource("currentIntensity_production",
+										   Double.class,
+										   WIND_TURBINE_ELECTRICITY_MODEL_URI),
+					new VariableSink[] {
+							new VariableSink("currentWindTurbineIntensity_production",
+												 Double.class,
+												 ElectricMeterElectricityModel.URI)
+						});
+						*/
+
 
 		// coupled model descriptor: an HIOA requires a
 		// RTCoupledHIOA_Descriptor

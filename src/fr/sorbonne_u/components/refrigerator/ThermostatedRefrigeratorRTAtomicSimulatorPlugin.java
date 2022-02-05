@@ -54,10 +54,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorCoupledModel;
-import fr.sorbonne_u.components.refrigerator.mil.events.Freezing;
-import fr.sorbonne_u.components.refrigerator.mil.events.Resting;
-import fr.sorbonne_u.components.refrigerator.mil.events.OffRefrigerator;
-import fr.sorbonne_u.components.refrigerator.mil.events.OnRefrigerator;
+import fr.sorbonne_u.components.refrigerator.mil.events.*;
 import fr.sorbonne_u.components.refrigerator.sil.ExternalTemperatureSILModel;
 import fr.sorbonne_u.components.refrigerator.sil.RefrigeratorElectricitySILModel;
 import fr.sorbonne_u.components.refrigerator.sil.RefrigeratorStateModel;
@@ -201,6 +198,8 @@ extends		RTAtomicSimulatorPlugin
 		Map<EventSource, EventSink[]> connections =
 									new HashMap<EventSource, EventSink[]>();
 
+									
+		System.out.println("in termos frig plugin 1");
 		atomicModelDescriptors.put(
 				RefrigeratorStateModel.URI,
 				RTAtomicModelDescriptor.create(
@@ -236,6 +235,7 @@ extends		RTAtomicSimulatorPlugin
 			// model
 			submodels.add(RefrigeratorElectricitySILModel.URI);
 
+			System.out.println("in termos frig plugin 2");
 			atomicModelDescriptors.put(
 					RefrigeratorElectricitySILModel.URI,
 					RTAtomicHIOA_Descriptor.create(
@@ -258,7 +258,25 @@ extends		RTAtomicSimulatorPlugin
 							 		OffRefrigerator.class),
 					new EventSink[] {
 							new EventSink(RefrigeratorElectricitySILModel.URI,
-										  OffRefrigerator.class)
+										  OffRefrigerator.class),
+							new EventSink(RefrigeratorTemperatureSILModel.URI,
+									OffRefrigerator.class)
+					});
+			connections.put(
+					new EventSource(RefrigeratorStateModel.URI,
+							 		OpenRefrigeratorDoor.class),
+					new EventSink[] {
+							new EventSink(RefrigeratorTemperatureSILModel.URI,
+									OpenRefrigeratorDoor.class)
+					});
+			connections.put(
+					new EventSource(RefrigeratorStateModel.URI,
+							 		CloseRefrigeratorDoor.class),
+					new EventSink[] {
+							new EventSink(RefrigeratorElectricitySILModel.URI,
+									CloseRefrigeratorDoor.class),
+							new EventSink(RefrigeratorTemperatureSILModel.URI,
+									CloseRefrigeratorDoor.class)
 					});
 			connections.put(
 					new EventSource(RefrigeratorStateModel.URI,
@@ -283,6 +301,7 @@ extends		RTAtomicSimulatorPlugin
 			// does not include the hair dryer electricity model and events
 			// exported by the state model are reexported by the coupled model
 
+			System.out.println("in termos frig plugin 3");
 			connections.put(
 					new EventSource(RefrigeratorStateModel.URI,
 									Freezing.class),
@@ -296,6 +315,20 @@ extends		RTAtomicSimulatorPlugin
 					new EventSink[] {
 							new EventSink(RefrigeratorTemperatureSILModel.URI,
 									Resting.class)
+					});
+			connections.put(
+					new EventSource(RefrigeratorStateModel.URI,
+							CloseRefrigeratorDoor.class),
+					new EventSink[] {
+							new EventSink(RefrigeratorTemperatureSILModel.URI,
+									CloseRefrigeratorDoor.class)
+					});
+			connections.put(
+					new EventSource(RefrigeratorStateModel.URI,
+							OffRefrigerator.class),
+					new EventSink[] {
+							new EventSink(RefrigeratorTemperatureSILModel.URI,
+									OffRefrigerator.class)
 					});
 
 			reexported =
@@ -312,8 +345,15 @@ extends		RTAtomicSimulatorPlugin
 			reexported.put(Resting.class,
 					   new ReexportedEvent(RefrigeratorStateModel.URI,
 							   			   Resting.class));
+			reexported.put(OpenRefrigeratorDoor.class,
+					   new ReexportedEvent(RefrigeratorStateModel.URI,
+							   OpenRefrigeratorDoor.class));
+			reexported.put(CloseRefrigeratorDoor.class,
+					   new ReexportedEvent(RefrigeratorStateModel.URI,
+							   CloseRefrigeratorDoor.class));
 		}
 
+		System.out.println("in termos frig plugin 4");
 		// variable bindings between exporting and importing models
 		Map<VariableSource,VariableSink[]> bindings =
 							new HashMap<VariableSource,VariableSink[]>();
@@ -326,6 +366,7 @@ extends		RTAtomicSimulatorPlugin
 									 		  Double.class,
 									 		 RefrigeratorTemperatureSILModel.URI)
 					 });
+		System.out.println("in termos frig plugin 5");
 
 		coupledModelDescriptors.put(
 				RefrigeratorCoupledModel.URI,

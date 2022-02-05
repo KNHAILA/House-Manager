@@ -22,42 +22,45 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
  * 
  * @author	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
  */
-public interface RefrigeratorCI extends OfferedCI, RefrigeratorImplementationI, RequiredCI {
+public interface		RefrigeratorCI
+extends		RefrigeratorImplementationI,
+			RequiredCI,
+			OfferedCI
+{
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI#isRunning()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#isRunning()
 	 */
 	@Override
 	public boolean		isRunning() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI#startRefrigerator()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#startRefrigerator()
 	 */
 	@Override
 	public void			startRefrigerator() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI#stopRefrigerator()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#stopRefrigerator()
 	 */
 	@Override
 	public void			stopRefrigerator() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI#setTargetTemperature(double)
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#setTargetTemperature(double)
 	 */
 	@Override
 	public void			setTargetTemperature(double target) throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI#getTargetTemperature()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#getTargetTemperature()
 	 */
 	@Override
 	public double		getTargetTemperature() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI#getCurrentTemperature()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#getCurrentTemperature()
 	 */
 	@Override
 	public double		getCurrentTemperature() throws Exception;
 }
 // -----------------------------------------------------------------------------
-

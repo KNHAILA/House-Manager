@@ -21,70 +21,80 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 * * @author	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
 */
 
-public class RefrigeratorOutboundPort extends AbstractOutboundPort implements RefrigeratorCI {
-	
+public class			RefrigeratorOutboundPort
+extends		AbstractOutboundPort
+implements	RefrigeratorCI
+{
 	private static final long serialVersionUID = 1L;
 
-	public RefrigeratorOutboundPort(ComponentI owner)
-			throws Exception {
+	public				RefrigeratorOutboundPort(ComponentI owner) throws Exception
+	{
 		super(RefrigeratorCI.class, owner);
 	}
 
-	public RefrigeratorOutboundPort(String uri, ComponentI owner)
-			throws Exception {
+	public				RefrigeratorOutboundPort(String uri, ComponentI owner)
+	throws Exception
+	{
 		super(uri, RefrigeratorCI.class, owner);
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#isRunning()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#isRunning()
 	 */
-	
 	@Override
-	public boolean isRunning() throws Exception {
+	public boolean		isRunning() throws Exception
+	{
+		System.out.println("ob isRunning ******");
 		return ((RefrigeratorCI)this.getConnector()).isRunning();
 	}
-	
+
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#startRefrigerator()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#startRefrigerator()
 	 */
 	@Override
-	public void startRefrigerator() throws Exception {
+	public void			startRefrigerator() throws Exception
+	{
+		System.out.println("ob startRefrigerator ******");
 		((RefrigeratorCI)this.getConnector()).startRefrigerator();
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#stopRefrigerator()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#stopRefrigerator()
 	 */
-	
 	@Override
-	public void stopRefrigerator() throws Exception {
+	public void			stopRefrigerator() throws Exception
+	{
+		System.out.println("ob stopRefrigerator ******");
 		((RefrigeratorCI)this.getConnector()).stopRefrigerator();
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#setTargetTemperature(double)
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#setTargetTemperature(double)
 	 */
-	
 	@Override
-	public void setTargetTemperature(double target) throws Exception {
+	public void			setTargetTemperature(double target) throws Exception
+	{
+		System.out.println("ob setTargetTemperature ******");
 		((RefrigeratorCI)this.getConnector()).setTargetTemperature(target);
 	}
-	
-	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#getTargetTemperature()
-	 */
 
+	/**
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#getTargetTemperature()
+	 */
 	@Override
-	public double getTargetTemperature() throws Exception {
+	public double		getTargetTemperature() throws Exception
+	{
+		System.out.println("ob getTargetTemperature ******");
 		return ((RefrigeratorCI)this.getConnector()).getTargetTemperature();
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#getCurrentTemperature()
+	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#getCurrentTemperature()
 	 */
-	
 	@Override
-	public double getCurrentTemperature() throws Exception {
+	public double		getCurrentTemperature() throws Exception
+	{
+		System.out.println("ob getCurrentTemperature ******");
 		return ((RefrigeratorCI)this.getConnector()).getCurrentTemperature();
 	}
 }

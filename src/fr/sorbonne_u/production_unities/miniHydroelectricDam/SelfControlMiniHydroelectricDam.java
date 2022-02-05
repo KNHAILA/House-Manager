@@ -124,7 +124,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 	/** actual acceleration factor. */
 	protected double accFactor;
 	/** Maximum tolerated water volume. miles/kilometer */
-	protected double Max_tolerated_wind_speed;
+	protected double Max_tolerated_water_volume;
 
 	// Control
 
@@ -270,7 +270,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 		this.currentState = MiniHydroelectricDamState.OFF;
 		this.accFactor = this.composesAsUnitTest ? ACC_FACTOR : CVM_SIL.ACC_FACTOR;
 		this.isWorking = false;
-		Max_tolerated_wind_speed = 400.0;
+		Max_tolerated_water_volume = 400.0;
 
 		this.hip = new MiniHydroelectricDamInboundPort(MiniHydroelectricDamInboundPortURI, this);
 		this.hip.publishPort();
@@ -419,13 +419,13 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 		// switched off, stop the controller
 		
 			try {
-				if (this.isWorking && this.getCurrentWaterVolume() > this.Max_tolerated_wind_speed + HYSTERESIS) {
+				if (this.isWorking && this.getCurrentWaterVolume() > this.Max_tolerated_water_volume + HYSTERESIS) {
 					if (SelfControlMiniHydroelectricDam.VERBOSE) {
 						this.traceMessage("MiniHydroelectricDam decides to stop. Water volume is too high.\n");
 					}
 					this.stopMiniHydroelectricDam();
 				} 
-				else if (!this.isWorking && this.getCurrentWaterVolume() < this.Max_tolerated_wind_speed + HYSTERESIS) {
+				else if (!this.isWorking && this.getCurrentWaterVolume() < this.Max_tolerated_water_volume + HYSTERESIS) {
 					if (SelfControlMiniHydroelectricDam.VERBOSE) {
 						this.traceMessage("MiniHydroelectricDam decides to start. Water volume is good.\n");
 					}
@@ -508,7 +508,7 @@ public class SelfControlMiniHydroelectricDam extends AbstractCyPhyComponent impl
 		double currentWaterVolume = 0.0;
 		if (this.isSILsimulated) {
 			currentWaterVolume = (double) this.simulatorPlugin.getModelStateValue(WaterVolumeSILModel.URI,
-					SelfControlMiniHydroelectricDamRTAtomicSimulatorPlugin.CURRENT_WIND_SPEED);
+					SelfControlMiniHydroelectricDamRTAtomicSimulatorPlugin.CURRENT_WATER_VOLUME);
 		} else {
 			// Temporary implementation; would need a water volume sensor.
 		}

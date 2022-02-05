@@ -199,20 +199,20 @@ implements	WaterHeaterImplementationI
 	 * <p><strong>Contract</strong></p>
 	 * 
 	 * <pre>
-	 * pre	{@code heaterInboundPortURI != null}
-	 * pre	{@code !heaterInboundPortURI.isEmpty()}
+	 * pre	{@code waterHeaterInboundPortURI != null}
+	 * pre	{@code !waterHeaterInboundPortURI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 * 
-	 * @param heaterInboundPortURI	URI of the inbound port to call the heater component.
+	 * @param waterHeaterInboundPortURI	URI of the inbound port to call the heater component.
 	 * @param simArchitectureURI	URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest	true if the component executes as a unit test, false otherwise.
 	 * @throws Exception			<i>to do </i>.
 	 */
 	protected			ThermostatedWaterHeater(
-		String heaterInboundPortURI,
+		String waterHeaterInboundPortURI,
 		String simArchitectureURI,
 		boolean executesAsUnitTest
 		) throws Exception
@@ -220,7 +220,7 @@ implements	WaterHeaterImplementationI
 		// one standard thread pool used to execute the services and one
 		// schedulable pool thread to execute the controller task
 		super(REFLECTION_INBOUND_PORT_URI, 1, 1);
-		this.initialise(heaterInboundPortURI, simArchitectureURI,
+		this.initialise(waterHeaterInboundPortURI, simArchitectureURI,
 						executesAsUnitTest);
 	}
 
@@ -232,28 +232,28 @@ implements	WaterHeaterImplementationI
 	 * <pre>
 	 * pre	{@code reflectionInboundPortURI != null}
 	 * pre	{@code !reflectionInboundPortURI.isEmpty()}
-	 * pre	{@code heaterInboundPortURI != null}
-	 * pre	{@code !heaterInboundPortURI.isEmpty()}
+	 * pre	{@code waterHeaterInboundPortURI != null}
+	 * pre	{@code !waterHeaterInboundPortURI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 * 
 	 * @param reflectionInboundPortURI	URI of the reflection inbound port of the component.
-	 * @param heaterInboundPortURI		URI of the inbound port to call the heater component.
+	 * @param waterHeaterInboundPortURI		URI of the inbound port to call the heater component.
 	 * @param simArchitectureURI		URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest		true if the component executes as a unit test, false otherwise.
 	 * @throws Exception				<i>to do </i>.
 	 */
 	protected			ThermostatedWaterHeater(
 		String reflectionInboundPortURI,
-		String heaterInboundPortURI,
+		String waterHeaterInboundPortURI,
 		String simArchitectureURI,
 		boolean executesAsUnitTest
 		) throws Exception
 	{
 		super(reflectionInboundPortURI, 1, 1);
-		this.initialise(heaterInboundPortURI, simArchitectureURI,
+		this.initialise(waterHeaterInboundPortURI, simArchitectureURI,
 						executesAsUnitTest);
 	}
 
@@ -263,26 +263,26 @@ implements	WaterHeaterImplementationI
 	 * <p><strong>Contract</strong></p>
 	 * 
 	 * <pre>
-	 * pre	{@code heaterInboundPortURI != null}
-	 * pre	{@code !heaterInboundPortURI.isEmpty()}
+	 * pre	{@code waterHeaterInboundPortURI != null}
+	 * pre	{@code !waterHeaterInboundPortURI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
 	 * post	true		// no postcondition.
 	 * </pre>
 	 *
-	 * @param heaterInboundPortURI	URI of the inbound port to call the heater component.
+	 * @param waterHeaterInboundPortURI	URI of the inbound port to call the heater component.
 	 * @param simArchitectureURI	URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest	true if the component executes as a unit test, false otherwise.
 	 * @throws Exception			<i>to do </i>.
 	 */
 	protected void		initialise(
-		String heaterInboundPortURI,
+		String waterHeaterInboundPortURI,
 		String simArchitectureURI,
 		boolean executesAsUnitTest
 		) throws Exception
 	{
-		assert	heaterInboundPortURI != null;
-		assert	!heaterInboundPortURI.isEmpty();
+		assert	waterHeaterInboundPortURI != null;
+		assert	!waterHeaterInboundPortURI.isEmpty();
 		assert	simArchitectureURI != null;
 		assert	!simArchitectureURI.isEmpty() || !executesAsUnitTest;
 
@@ -300,7 +300,7 @@ implements	WaterHeaterImplementationI
 						 :	CVM_SIL.ACC_FACTOR;
 		this.isHeating = false;
 
-		this.hip = new WaterHeaterInboundPort(heaterInboundPortURI, this);
+		this.hip = new WaterHeaterInboundPort(waterHeaterInboundPortURI, this);
 		this.hip.publishPort();
 
 		if (ThermostatedWaterHeater.VERBOSE) {

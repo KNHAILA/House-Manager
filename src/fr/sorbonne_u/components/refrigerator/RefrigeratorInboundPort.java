@@ -35,21 +35,23 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#isRunning()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#isRunning()
 	 */
 
 	@Override
 	public boolean isRunning() throws Exception {
+		System.out.println("ib isRunning ******");
 		return this.getOwner().handleRequest(
 				o -> ((RefrigeratorImplementationI)o).isRunning());
 	}
 	
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#startRefrigerator()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#startRefrigerator()
 	 */
 
 	@Override
 	public void startRefrigerator() throws Exception {
+		System.out.println("ib startRefrigerator ******");
 		this.getOwner().handleRequest(
 				o -> {	((RefrigeratorImplementationI)o).startRefrigerator();
 						return null;
@@ -57,11 +59,12 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#stopRefrigerator()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#stopRefrigerator()
 	 */
 	
 	@Override
 	public void stopRefrigerator() throws Exception {
+		System.out.println("ib stopRefrigerator ******");
 		this.getOwner().handleRequest(
 				o -> {	((RefrigeratorImplementationI)o).stopRefrigerator();
 						return null;
@@ -70,11 +73,12 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#setTargetTemperature(double)
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#setTargetTemperature(double)
 	 */
 	
 	@Override
 	public void setTargetTemperature(double target) throws Exception {
+		System.out.println("ib setTargetTemperature ******");
 		this.getOwner().handleRequest(
 				o -> {	((RefrigeratorImplementationI)o).setTargetTemperature(target);
 						return null;
@@ -83,23 +87,25 @@ public class RefrigeratorInboundPort extends AbstractInboundPort implements Refr
 	}
 	
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#getTargetTemperature()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#getTargetTemperature()
 	 */
 	
 	@Override
 	public double getTargetTemperature() throws Exception {
+		System.out.println("ib getTargetTemperature ******");
 		return this.getOwner().handleRequest(
 				o -> ((RefrigeratorImplementationI)o).getTargetTemperature());
 	}
 	
 	/**
-	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorCI#getCurrentTemperature()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#getCurrentTemperature()
 	 */
 	
 	@Override
 	public double getCurrentTemperature() throws Exception {
+		System.out.println("ib getCurrentTemperature ******");
 		return this.getOwner().handleRequest(
 				o -> ((RefrigeratorImplementationI)o).getCurrentTemperature());
 	}
-
 }
+

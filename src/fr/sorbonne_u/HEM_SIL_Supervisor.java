@@ -1,60 +1,68 @@
 package fr.sorbonne_u;
 
-// Copyright Jacques Malenfant, Sorbonne Universite.
-// Jacques.Malenfant@lip6.fr
+//Copyright Jacques Malenfant, Sorbonne Universite.
+//Jacques.Malenfant@lip6.fr
 //
-// This software is a computer program whose purpose is to provide a basic
-// household management systems as an example of a cyber-physical system.
+//This software is a computer program whose purpose is to provide a basic
+//household management systems as an example of a cyber-physical system.
 //
-// This software is governed by the CeCILL-C license under French law and
-// abiding by the rules of distribution of free software.  You can use,
-// modify and/ or redistribute the software under the terms of the
-// CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
-// URL "http://www.cecill.info".
+//This software is governed by the CeCILL-C license under French law and
+//abiding by the rules of distribution of free software.  You can use,
+//modify and/ or redistribute the software under the terms of the
+//CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+//URL "http://www.cecill.info".
 //
-// As a counterpart to the access to the source code and  rights to copy,
-// modify and redistribute granted by the license, users are provided only
-// with a limited warranty  and the software's author,  the holder of the
-// economic rights,  and the successive licensors  have only  limited
-// liability. 
+//As a counterpart to the access to the source code and  rights to copy,
+//modify and redistribute granted by the license, users are provided only
+//with a limited warranty  and the software's author,  the holder of the
+//economic rights,  and the successive licensors  have only  limited
+//liability. 
 //
-// In this respect, the user's attention is drawn to the risks associated
-// with loading,  using,  modifying and/or developing or reproducing the
-// software by the user in light of its specific status of free software,
-// that may mean  that it is complicated to manipulate,  and  that  also
-// therefore means  that it is reserved for developers  and  experienced
-// professionals having in-depth computer knowledge. Users are therefore
-// encouraged to load and test the software's suitability as regards their
-// requirements in conditions enabling the security of their systems and/or 
-// data to be ensured and,  more generally, to use and operate it in the 
-// same conditions as regards security. 
+//In this respect, the user's attention is drawn to the risks associated
+//with loading,  using,  modifying and/or developing or reproducing the
+//software by the user in light of its specific status of free software,
+//that may mean  that it is complicated to manipulate,  and  that  also
+//therefore means  that it is reserved for developers  and  experienced
+//professionals having in-depth computer knowledge. Users are therefore
+//encouraged to load and test the software's suitability as regards their
+//requirements in conditions enabling the security of their systems and/or 
+//data to be ensured and,  more generally, to use and operate it in the 
+//same conditions as regards security. 
 //
-// The fact that you are presently reading this means that you have had
-// knowledge of the CeCILL-C license and that you accept its terms.
+//The fact that you are presently reading this means that you have had
+//knowledge of the CeCILL-C license and that you accept its terms.
 
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
-import fr.sorbonne_u.components.fan.Fan;
+import fr.sorbonne_u.HEM_CoupledModel;
+
+//fan
 import fr.sorbonne_u.components.fan.mil.FanCoupledModel;
-import fr.sorbonne_u.components.fan.mil.events.SetHighFan;
-import fr.sorbonne_u.components.fan.mil.events.SetLowFan;
-import fr.sorbonne_u.components.fan.mil.events.SwitchOffFan;
-import fr.sorbonne_u.components.fan.mil.events.SwitchOnFan;
-import fr.sorbonne_u.components.refrigerator.Refrigerator;
+import fr.sorbonne_u.components.fan.mil.events.*;
+import fr.sorbonne_u.components.fan.Fan;
+
+//Refrigerator
+import fr.sorbonne_u.components.refrigerator.ThermostatedRefrigerator;
 import fr.sorbonne_u.components.refrigerator.mil.RefrigeratorCoupledModel;
 import fr.sorbonne_u.components.refrigerator.mil.events.*;
+
+//vacuum cleaner
+import fr.sorbonne_u.components.vacuumCleaner.mil.VacuumCleanerCoupledModel;
+import fr.sorbonne_u.components.vacuumCleaner.mil.events.*;
+import fr.sorbonne_u.components.vacuumCleaner.VacuumCleaner;
+
+//water heater
 import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterCoupledModel;
-import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
-import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
-import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
-import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
+import fr.sorbonne_u.components.waterHeater.mil.events.*;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
-import fr.sorbonne_u.meter.ElectricMeter;
-import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.MiniHydroelectricDamCoupledModel;
-import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
+
+//Wind turbine
 import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineCoupledModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
+
+//meter
+import fr.sorbonne_u.meter.ElectricMeter;
+import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
 import fr.sorbonne_u.components.cyphy.plugins.devs.RTCoordinatorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.SupervisorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.architectures.ComponentModelArchitecture;
@@ -74,64 +82,64 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-// -----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 /**
- * The class <code>HEM_SIL_Supervisor</code> implements the supervisor component
- * to perform software-in-the-loop simulations of the household energy manager
- * project.
- *
- * <p><strong>Description</strong></p>
- * 
- * <p>
- * In SIL simulations for testing or other purposes, supervisor components
- * have the responsibility: 
- * </p>
- * <ul>
- * <li>to create the overall simulation architecture over components from the
- *   local simulation architectures created in each participant component,</li>
- * <li>to perform the simulation campaign by successively starting simulation
- *   runs, often with different simulation run parameters, and</li>
- * <li>to process and analyse the results of the simulation campaign from the
- *   reports returned after each run.</li>
- * </ul>
- * <p>
- * To do so, the component uses the supervisor plug-in provided by
- * BCM4Java-CyPhy to which it passes the global simulation architecture and
- * then uses its methods to create the global simulator, run simulations and
- * get back the simulation reports.
- * </p>
- * <p>
- * In SIL simulations, the simulation architecture (composed of DEVS atomic
- * and coupled models) has a specific form. Each component defines its
- * local architecture that may be a composition of atomic and coupled models
- * with a local root coupled model. Each local architecture is then seen as an
- * atomic model, thanks to the DEVS closed over composition property (the
- * composition of models under a coupled model also defines an atomic model
- * hiding its internal structure). Hence, the global architecture defined by
- * the supervisor sees all of these local architectures to be composed under
- * a (hierarchy of) coupled models.
- * </p>
- * <p>
- * Coupled models appearing in the global simulation architecture must be run
- * by components. At this time, the simulation library and BCM4Java-CyPhy
- * impose that each of these coupled models are run by distinct components
- * that are seen as simulation coordinator components. When creating the
- * simulation architecture, BCM4Java-CyPhy interconnects the involved
- * components through component interfaces, ports and connectors (all of
- * them predefined by BCM4Java-CyPhy) that will allow for managing and running
- * the simulations.
- * </p>
- * 
- * <p><strong>Invariant</strong></p>
- * 
- * <pre>
- * invariant	true
- * </pre>
- * 
- * <p>Created on : 2021-10-11</p>
- * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
- */
+* The class <code>HEM_SIL_Supervisor</code> implements the supervisor component
+* to perform software-in-the-loop simulations of the household energy manager
+* project.
+*
+* <p><strong>Description</strong></p>
+* 
+* <p>
+* In SIL simulations for testing or other purposes, supervisor components
+* have the responsibility: 
+* </p>
+* <ul>
+* <li>to create the overall simulation architecture over components from the
+*   local simulation architectures created in each participant component,</li>
+* <li>to perform the simulation campaign by successively starting simulation
+*   runs, often with different simulation run parameters, and</li>
+* <li>to process and analyse the results of the simulation campaign from the
+*   reports returned after each run.</li>
+* </ul>
+* <p>
+* To do so, the component uses the supervisor plug-in provided by
+* BCM4Java-CyPhy to which it passes the global simulation architecture and
+* then uses its methods to create the global simulator, run simulations and
+* get back the simulation reports.
+* </p>
+* <p>
+* In SIL simulations, the simulation architecture (composed of DEVS atomic
+* and coupled models) has a specific form. Each component defines its
+* local architecture that may be a composition of atomic and coupled models
+* with a local root coupled model. Each local architecture is then seen as an
+* atomic model, thanks to the DEVS closed over composition property (the
+* composition of models under a coupled model also defines an atomic model
+* hiding its internal structure). Hence, the global architecture defined by
+* the supervisor sees all of these local architectures to be composed under
+* a (hierarchy of) coupled models.
+* </p>
+* <p>
+* Coupled models appearing in the global simulation architecture must be run
+* by components. At this time, the simulation library and BCM4Java-CyPhy
+* impose that each of these coupled models are run by distinct components
+* that are seen as simulation coordinator components. When creating the
+* simulation architecture, BCM4Java-CyPhy interconnects the involved
+* components through component interfaces, ports and connectors (all of
+* them predefined by BCM4Java-CyPhy) that will allow for managing and running
+* the simulations.
+* </p>
+* 
+* <p><strong>Invariant</strong></p>
+* 
+* <pre>
+* invariant	true
+* </pre>
+* 
+* <p>Created on : 2021-10-11</p>
+* 
+* @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+*/
 public class			HEM_SIL_Supervisor
 extends		AbstractCyPhyComponent
 {
@@ -260,8 +268,21 @@ extends		AbstractCyPhyComponent
 								SetHighFan.class, SetLowFan.class},
 						TimeUnit.SECONDS,
 						Fan.REFLECTION_INBOUND_PORT_URI));
+		
+		// The vacuum cleaner simulation model held by the Fan component.
+				atomicModelDescriptors.put(
+						VacuumCleanerCoupledModel.URI,
+						RTComponentAtomicModelDescriptor.create(
+								VacuumCleanerCoupledModel.URI,
+								new Class[]{},
+								new Class[]{
+										SwitchOnVacuumCleaner.class,
+										SwitchOffVacuumCleaner.class,
+										SetHighVacuumCleaner.class, SetLowVacuumCleaner.class},
+								TimeUnit.SECONDS,
+								VacuumCleaner.REFLECTION_INBOUND_PORT_URI));
 
-		// ThermostatedHeater
+		// The WaterHeater simulation model held by the ThermostatedWaterHeater component.
 		atomicModelDescriptors.put(
 				WaterHeaterCoupledModel.URI,
 				RTComponentAtomicModelDescriptor.create(
@@ -273,45 +294,31 @@ extends		AbstractCyPhyComponent
 						TimeUnit.SECONDS,
 						ThermostatedWaterHeater.REFLECTION_INBOUND_PORT_URI));
 		
-		// Refrigerator
-		/*atomicModelDescriptors.put(
-				RefrigeratorCoupledModel.URI,
-				RTComponentAtomicModelDescriptor.create(
+		// The Refrigerator simulation model held by the ThermostatedRefrigerator component.
+				/*atomicModelDescriptors.put(
 						RefrigeratorCoupledModel.URI,
-						new Class[]{},
-						new Class[]{
-								CloseRefrigeratorDoor.class, Freezing.class,
-								OffRefrigerator.class, OnRefrigerator.class,
-								OpenRefrigeratorDoor.class, Resting.class},
-						TimeUnit.SECONDS,
-						Refrigerator.REFLECTION_INBOUND_PORT_URI));
-						*/
+						RTComponentAtomicModelDescriptor.create(
+								RefrigeratorCoupledModel.URI,
+								new Class[]{},
+								new Class[]{
+										CloseRefrigeratorDoor.class, OpenRefrigeratorDoor.class,
+										Freezing.class, OffRefrigerator.class, OnRefrigerator.class, Resting.class},
+								TimeUnit.SECONDS,
+								ThermostatedRefrigerator.REFLECTION_INBOUND_PORT_URI));
+								*/
 		
-		// Wind turbine
-			atomicModelDescriptors.put(
+		// The WindTurbine simulation model held by the SelfControlWindTurbine component.
+				atomicModelDescriptors.put(
 						WindTurbineCoupledModel.URI,
 						RTComponentAtomicModelDescriptor.create(
 								WindTurbineCoupledModel.URI,
 								new Class[]{},
 								new Class[]{
-										DoNotUseWindTurbine.class, StartWindTurbine.class,
-										StopWindTurbine.class, UseWindTurbine.class},
+										StopWindTurbine.class, StartWindTurbine.class},
 								TimeUnit.SECONDS,
 								SelfControlWindTurbine.REFLECTION_INBOUND_PORT_URI));
-						
+								
 
-		//SelfControlMiniHydroelectricDam
-			atomicModelDescriptors.put(
-					MiniHydroelectricDamCoupledModel.URI,
-					RTComponentAtomicModelDescriptor.create(
-							WindTurbineCoupledModel.URI,
-							new Class[]{},
-							new Class[]{
-									DoNotUseMiniHydroelectricDam.class, StartMiniHydroelectricDam.class,
-									StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class},
-							TimeUnit.SECONDS,
-							SelfControlWindTurbine.REFLECTION_INBOUND_PORT_URI));
-			
 		// The electric meter simulation model held by the ElectricMeter
 		// component.
 		atomicModelDescriptors.put(
@@ -319,27 +326,29 @@ extends		AbstractCyPhyComponent
 				RTComponentAtomicModelDescriptor.create(
 						ElectricMeterCoupledModel.URI,
 						new Class[]{
+								SwitchOnWaterHeater.class, SwitchOffWaterHeater.class,
+								HeatWater.class, DoNotHeatWater.class,
 								SwitchOnFan.class,
 								SwitchOffFan.class,
-								SetHighFan.class, SetLowFan.class, SwitchOnWaterHeater.class, SwitchOffWaterHeater.class,
-								HeatWater.class, DoNotHeatWater.class, DoNotUseWindTurbine.class, StartWindTurbine.class,
-								StopWindTurbine.class, UseWindTurbine.class, DoNotUseMiniHydroelectricDam.class, StartMiniHydroelectricDam.class,
-								StopMiniHydroelectricDam.class, UseMiniHydroelectricDam.class},
+								SetHighFan.class, SetLowFan.class, SwitchOnVacuumCleaner.class,
+								SwitchOffVacuumCleaner.class,
+								SetHighVacuumCleaner.class, SetLowVacuumCleaner.class, 
+								StopWindTurbine.class, StartWindTurbine.class},
 						new Class[]{},
 						TimeUnit.SECONDS,
 						ElectricMeter.REFLECTION_INBOUND_PORT_URI));
 		
-		/*, CloseRefrigeratorDoor.class, Freezing.class,
-		OffRefrigerator.class, OnRefrigerator.class,
-		OpenRefrigeratorDoor.class, Resting.class
+		/*,
+		CloseRefrigeratorDoor.class, OpenRefrigeratorDoor.class,
+		Freezing.class, OffRefrigerator.class, OnRefrigerator.class, Resting.class
 		*/
 
 		Set<String> submodels = new HashSet<String>();
 		submodels.add(FanCoupledModel.URI);
+		submodels.add(VacuumCleanerCoupledModel.URI);
 		submodels.add(WaterHeaterCoupledModel.URI);
+		//submodels.add(RefrigeratorCoupledModel.URI);
 		submodels.add(WindTurbineCoupledModel.URI);
-        //submodels.add(RefrigeratorCoupledModel.URI);
-		submodels.add(MiniHydroelectricDamCoupledModel.URI);
 		submodels.add(ElectricMeterCoupledModel.URI);
 
 		Map<EventSource,EventSink[]> connections =
@@ -352,7 +361,7 @@ extends		AbstractCyPhyComponent
 		// must pass from their components to the ElectricMeter component as
 		// shown in the next connections.
 										
-        //Fan										
+		//fan
 		connections.put(
 				new EventSource(FanCoupledModel.URI,
 								SwitchOnFan.class),
@@ -382,8 +391,37 @@ extends		AbstractCyPhyComponent
 									  SetLowFan.class)
 				});
 		
-		
-		//Water heater
+		//VacuumCleaner
+		connections.put(
+				new EventSource(VacuumCleanerCoupledModel.URI,
+								SwitchOnVacuumCleaner.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+									  SwitchOnVacuumCleaner.class)
+				});
+		connections.put(
+				new EventSource(VacuumCleanerCoupledModel.URI,
+								SwitchOffVacuumCleaner.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+									  SwitchOffVacuumCleaner.class)
+				});
+		connections.put(
+				new EventSource(VacuumCleanerCoupledModel.URI,
+								SetHighVacuumCleaner.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+									  SetHighVacuumCleaner.class)
+				});
+		connections.put(
+				new EventSource(VacuumCleanerCoupledModel.URI,
+								SetLowVacuumCleaner.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+									  SetLowVacuumCleaner.class)
+				});
+
+		//water heater
 		connections.put(
 				new EventSource(WaterHeaterCoupledModel.URI,
 								SwitchOnWaterHeater.class),
@@ -400,7 +438,7 @@ extends		AbstractCyPhyComponent
 				});
 		connections.put(
 				new EventSource(WaterHeaterCoupledModel.URI,
-								HeatWater.class),
+						HeatWater.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
 									  HeatWater.class)
@@ -412,10 +450,10 @@ extends		AbstractCyPhyComponent
 						new EventSink(ElectricMeterCoupledModel.URI,
 									  DoNotHeatWater.class)
 				});
-				
 		
-		//Refrigerator
-		/*connections.put(
+		//refrigerator
+		
+		connections.put(
 				new EventSource(RefrigeratorCoupledModel.URI,
 						CloseRefrigeratorDoor.class),
 				new EventSink[] {
@@ -431,21 +469,14 @@ extends		AbstractCyPhyComponent
 				});
 		connections.put(
 				new EventSource(RefrigeratorCoupledModel.URI,
-								Freezing.class),
+						Freezing.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
 								Freezing.class)
 				});
 		connections.put(
 				new EventSource(RefrigeratorCoupledModel.URI,
-								Resting.class),
-				new EventSink[] {
-						new EventSink(ElectricMeterCoupledModel.URI,
-								Resting.class)
-				});
-		connections.put(
-				new EventSource(RefrigeratorCoupledModel.URI,
-								OffRefrigerator.class),
+						OffRefrigerator.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
 								OffRefrigerator.class)
@@ -457,69 +488,34 @@ extends		AbstractCyPhyComponent
 						new EventSink(ElectricMeterCoupledModel.URI,
 								OnRefrigerator.class)
 				});
-				*/
-				
-
-		//Wind turbine
+		connections.put(
+				new EventSource(RefrigeratorCoupledModel.URI,
+						Resting.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								Resting.class)
+				});
+			
+		
+		//wind turbine
+		/*
 		connections.put(
 				new EventSource(WindTurbineCoupledModel.URI,
 								StartWindTurbine.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
-								StartWindTurbine.class)
+									  StartWindTurbine.class)
 				});
 		connections.put(
 				new EventSource(WindTurbineCoupledModel.URI,
-						StopWindTurbine.class),
+								StopWindTurbine.class),
 				new EventSink[] {
 						new EventSink(ElectricMeterCoupledModel.URI,
 								StopWindTurbine.class)
 				});
-		connections.put(
-				new EventSource(WindTurbineCoupledModel.URI,
-								UseWindTurbine.class),
-				new EventSink[] {
-						new EventSink(ElectricMeterCoupledModel.URI,
-									  UseWindTurbine.class)
-				});
-		connections.put(
-				new EventSource(WindTurbineCoupledModel.URI,
-								DoNotUseWindTurbine.class),
-				new EventSink[] {
-						new EventSink(ElectricMeterCoupledModel.URI,
-									  DoNotUseWindTurbine.class)
-				});
+				*/
 		
-		//SelfControlMiniHydroelectricDam
-		connections.put(
-				new EventSource(MiniHydroelectricDamCoupledModel.URI,
-										StartMiniHydroelectricDam.class),
-				new EventSink[] {
-								new EventSink(ElectricMeterCoupledModel.URI,
-										StartMiniHydroelectricDam.class)
-						});
-		connections.put(
-						new EventSource(MiniHydroelectricDamCoupledModel.URI,
-								StopMiniHydroelectricDam.class),
-						new EventSink[] {
-								new EventSink(ElectricMeterCoupledModel.URI,
-										StopMiniHydroelectricDam.class)
-						});
-		connections.put(
-						new EventSource(MiniHydroelectricDamCoupledModel.URI,
-										UseMiniHydroelectricDam.class),
-						new EventSink[] {
-								new EventSink(ElectricMeterCoupledModel.URI,
-											  UseMiniHydroelectricDam.class)
-						});
-		connections.put(
-						new EventSource(MiniHydroelectricDamCoupledModel.URI,
-										DoNotUseMiniHydroelectricDam.class),
-						new EventSink[] {
-								new EventSink(ElectricMeterCoupledModel.URI,
-											  DoNotUseMiniHydroelectricDam.class)
-						});
-		
+
 		Map<String,CoupledModelDescriptor> coupledModelDescriptors =
 															new HashMap<>();
 		coupledModelDescriptors.put(
@@ -593,4 +589,3 @@ extends		AbstractCyPhyComponent
 		super.shutdown();
 	}	
 }
-// -----------------------------------------------------------------------------

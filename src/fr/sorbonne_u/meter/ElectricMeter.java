@@ -37,14 +37,13 @@ import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.meter.ElectricMeterCI;
 import fr.sorbonne_u.meter.ElectricMeterImplementationI;
 import fr.sorbonne_u.meter.ElectricMeterInboundPort;
-import fr.sorbonne_u.components.fan.mil.events.SetHighFan;
-import fr.sorbonne_u.components.fan.mil.events.SetLowFan;
-import fr.sorbonne_u.components.fan.mil.events.SwitchOffFan;
-import fr.sorbonne_u.components.fan.mil.events.SwitchOnFan;
-import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
-import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
-import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOffWaterHeater;
-import fr.sorbonne_u.components.waterHeater.mil.events.SwitchOnWaterHeater;
+
+import fr.sorbonne_u.components.fan.mil.events.*;
+import fr.sorbonne_u.components.vacuumCleaner.mil.events.*;
+import fr.sorbonne_u.components.refrigerator.mil.events.*;
+import fr.sorbonne_u.components.waterHeater.mil.events.*;
+import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
+
 import fr.sorbonne_u.CVM_SIL;
 import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
@@ -343,6 +342,8 @@ implements	ElectricMeterImplementationI
 			// coherent exchanges between the two
 			final ElectricMeterRTAtomicSimulatorPlugin sp =
 														this.simulatorPlugin;
+			
+			//water heater
 			this.scheduleTask(
 					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
 					new AbstractComponent.AbstractTask() {
@@ -424,13 +425,14 @@ implements	ElectricMeterImplementationI
 					(long)(9.0/ACC_FACTOR),
 					TimeUnit.SECONDS);
 
+			//Fan
 			this.scheduleTask(
 					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
 					new AbstractComponent.AbstractTask() {
 						@Override
 						public void run() {
 							try {
-								// trigger the SwitchOnHairDryer event
+								// trigger the SwitchOnFan event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
 									FAN_ELECTRICITY_MODEL_URI,
@@ -470,7 +472,7 @@ implements	ElectricMeterImplementationI
 						@Override
 						public void run() {
 							try {
-								// trigger the SetLowHairDryer event
+								// trigger the SetLowFan event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
 											FAN_ELECTRICITY_MODEL_URI,
@@ -504,6 +506,245 @@ implements	ElectricMeterImplementationI
 					// execution: at 8 second, possibly accelerated
 					(long)(8.0/ACC_FACTOR),
 					TimeUnit.SECONDS);
+			
+			//VacuumCleaner
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SwitchOnVacuumCleaner event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+									VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+									t -> new SwitchOnVacuumCleaner(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 2 second, possibly accelerated
+					(long)(2.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SetHighHairDryer event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+											VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+									t -> new SetHighVacuumCleaner(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 4 second, possibly accelerated
+					(long)(4.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SetLowVacuumCleaner event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+											VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+									t -> new SetLowVacuumCleaner(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 5 second, possibly accelerated
+					(long)(5.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the SwitchOffHairDryer event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+											VACUUMCLEANER_ELECTRICITY_MODEL_URI,
+									t -> new SwitchOffVacuumCleaner(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 8 second, possibly accelerated
+					(long)(8.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			
+			//Refrigerator
+			System.out.println("elec meter 1 ******");
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									t -> new OnRefrigerator(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(1.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									t -> new OpenRefrigeratorDoor(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(8.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									t -> new Freezing(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(4.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									t -> new CloseRefrigeratorDoor(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(2.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									t -> new Resting(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(3.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												REFRIGERATOR_ELECTRICITY_MODEL_URI,
+									t -> new OffRefrigerator(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(3.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			System.out.println("elec meter 2 ******");	
+			
+			//wind turbine
+			/*
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the Start event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												WIND_TURBINE_ELECTRICITY_MODEL_URI,
+									t -> new StartWindTurbine(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 1 second, possibly accelerated
+					(long)(1.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								// trigger the stop event
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+									WIND_TURBINE_ELECTRICITY_MODEL_URI,
+									t -> new StopWindTurbine(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					// compute the real time of occurrence of this code
+					// execution: at 3 second, possibly accelerated
+					(long)(3.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			*/
+			
 		}
 	}
 
