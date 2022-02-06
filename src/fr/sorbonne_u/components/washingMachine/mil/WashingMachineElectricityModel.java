@@ -12,7 +12,6 @@ import fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater;
 import fr.sorbonne_u.components.washingMachine.mil.events.HeatWater;
 import fr.sorbonne_u.components.washingMachine.mil.events.Rinse;
 import fr.sorbonne_u.components.washingMachine.mil.events.Spin;
-import fr.sorbonne_u.components.washingMachine.mil.events.StopHeatWater;
 import fr.sorbonne_u.components.washingMachine.mil.events.SwitchOffWashingMachine;
 import fr.sorbonne_u.components.washingMachine.mil.events.SwitchOnWashingMachine;
 import fr.sorbonne_u.components.washingMachine.mil.events.WashingMachineEventI;
@@ -68,8 +67,7 @@ import fr.sorbonne_u.utils.Electricity;
 								 Rinse.class,
 								 Spin.class,
 								 HeatWater.class,
-								 DoNotHeatWater.class,
-								 StopHeatWater.class})
+								 DoNotHeatWater.class})
 public class			WashingMachineElectricityModel
 extends		AtomicHIOA
 {
@@ -82,17 +80,11 @@ extends		AtomicHIOA
 	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
 	 */
 	public static enum	State {
-		/** heater is on but not heating.									*/
 		ON,
-		/** heater is on but not heating.									*/
 		HEATING,
-		/** heater is on but not heating.									*/
 		WASHING,
-		/** heater is on but not heating.									*/
 		RINSING,
-		/** heater is on but not heating.									*/
 		SPINNING,
-		/** heater is on but not heating.									*/
 		OFF
 	}
 	

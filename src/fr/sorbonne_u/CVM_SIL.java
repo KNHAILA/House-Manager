@@ -38,6 +38,7 @@ import fr.sorbonne_u.components.cvm.AbstractCVM;
 import fr.sorbonne_u.components.fan.Fan;
 import fr.sorbonne_u.components.refrigerator.ThermostatedRefrigerator;
 import fr.sorbonne_u.components.vacuumCleaner.VacuumCleaner;
+import fr.sorbonne_u.components.washingMachine.ThermostatedWashingMachine;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
 
@@ -113,12 +114,19 @@ extends		AbstractCVM
 				// the first actual parameter tells the component to create
 				// a SIL simulation architecture for integration test and the
 				// second 'true' that it must be executed as a unit test.
-				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
+		
+		//washing machine
+		/*
+		AbstractComponent.createComponent(
+						ThermostatedWashingMachine.class.getCanonicalName(),
+						new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+						*/
 		
 		//refrigerator
 		AbstractComponent.createComponent(
 				ThermostatedRefrigerator.class.getCanonicalName(),
-				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
 				
 		
 		//WindTurbine
@@ -136,6 +144,8 @@ extends		AbstractCVM
 				// a SIL simulation architecture for integration test and the
 				// second 'false' that it must *not* be executed as a unit test.
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
+		
+		
 		AbstractComponent.createComponent(
 				HEM.class.getCanonicalName(),
 				new Object[]{false});

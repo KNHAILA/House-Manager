@@ -43,6 +43,7 @@ import fr.sorbonne_u.devs_simulation.models.architectures.CoupledModelDescriptor
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.events.EventSink;
 import fr.sorbonne_u.meter.mil.ElectricMeterElectricityModel;
+import fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI;
 import fr.sorbonne_u.components.cyphy.plugins.devs.RTAtomicSimulatorPlugin;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,6 +60,8 @@ import fr.sorbonne_u.components.fan.sil.FanElectricitySILModel;
 
 //water heater
 import fr.sorbonne_u.components.waterHeater.mil.events.*;
+import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
 import fr.sorbonne_u.components.waterHeater.sil.WaterHeaterElectricitySILModel;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeaterRTAtomicSimulatorPlugin;
 
@@ -77,6 +80,11 @@ import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 import fr.sorbonne_u.components.vacuumCleaner.VacuumCleanerRTAtomicSimulatorPlugin;
 import fr.sorbonne_u.components.vacuumCleaner.mil.events.*;
 import fr.sorbonne_u.components.vacuumCleaner.sil.VacuumCleanerElectricitySILModel;
+
+//washing machine
+import fr.sorbonne_u.components.washingMachine.ThermostatedWashingMachineRTAtomicSimulatorPlugin;
+import fr.sorbonne_u.components.washingMachine.sil.WashingMachineElectricitySILModel;
+import fr.sorbonne_u.components.washingMachine.mil.events.*;
 // -----------------------------------------------------------------------------
 /**
  * The class <code>ElectricMeterRTAtomicSimulatorPlugin</code> implements
@@ -142,6 +150,14 @@ extends		RTAtomicSimulatorPlugin
 	                                WATER_HEATER_ELECTRICITY_MODEL_CLASS =
 											WaterHeaterElectricitySILModel.class;
 	
+	/** URI of the washing machine electricity model.								*/
+	protected static final String	WASHING_MACHINE_ELECTRICITY_MODEL_URI =
+											WashingMachineElectricitySILModel.URI;
+	/** class implementing the washing machine electricity model.					*/
+	protected static final Class<WashingMachineElectricitySILModel>
+	                                WASHING_MACHINE_ELECTRICITY_MODEL_CLASS =
+											WashingMachineElectricitySILModel.class;
+	
 	/** URI of the wind turbine electricity model.								*/
 	protected static final String	WIND_TURBINE_ELECTRICITY_MODEL_URI =
 											WindTurbineElectricitySILModel.URI;
@@ -158,11 +174,49 @@ extends		RTAtomicSimulatorPlugin
 	                                REFRIGERATOR_ELECTRICITY_MODEL_CLASS =
 	                                		RefrigeratorElectricitySILModel.class;
 	
+	public static final String	CURRENT_CONSUMPTION = "cc";
+	public static final String	CURRENT_PRODUCTION = "cp";
+	
 
 	// -------------------------------------------------------------------------
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
 
+	@Override
+	public Object		getModelStateValue(
+		String modelURI,
+		String name
+		) throws Exception
+	{
+		assert	modelURI != null && name != null;
+		
+		if(name == CURRENT_CONSUMPTION) {
+			assert	modelURI.equals(ElectricMeterElectricitySILModel.URI);
+			assert	name.equals(CURRENT_CONSUMPTION);
+
+			// Get a Java reference on the object representing the corresponding
+			// simulation model.
+			ModelDescriptionI m = this.simulator.getDescendentModel(modelURI);
+
+			assert	m instanceof ElectricMeterElectricitySILModel;
+			
+			return ((ElectricMeterElectricitySILModel)m).getCurrentConsumption();
+		} 
+		else {
+			
+			assert	modelURI.equals(ElectricMeterElectricitySILModel.URI);
+			assert	name.equals(CURRENT_PRODUCTION);
+
+			// Get a Java reference on the object representing the corresponding
+			// simulation model.
+			ModelDescriptionI m = this.simulator.getDescendentModel(modelURI);
+
+			assert	m instanceof ElectricMeterElectricitySILModel;
+			
+			return ((ElectricMeterElectricitySILModel)m).getCurrentProduction();
+		}
+	}
+	
 	/**
 	 * @see fr.sorbonne_u.components.cyphy.plugins.devs.AbstractSimulatorPlugin#setSimulationRunParameters(java.util.Map)
 	 */
@@ -182,11 +236,16 @@ extends		RTAtomicSimulatorPlugin
 		
 		//water heater
 		simParams.put(ThermostatedWaterHeaterRTAtomicSimulatorPlugin.
-														OWNER_REFERENCE_NAME,
+					OWNER_REFERENCE_NAME,
 					  this.getOwner());
 		
-		//refrigerator
+		//washing machine
+		/*simParams.put(ThermostatedWashingMachineRTAtomicSimulatorPlugin.
+							OWNER_REFERENCE_NAME,
+							  this.getOwner());
+							  */
 		
+		//refrigerator
 		simParams.put(ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 				OWNER_REFERENCE_NAME,
                   this.getOwner());
@@ -215,6 +274,9 @@ extends		RTAtomicSimulatorPlugin
 		simParams.remove(METER_REFERENCE_NAME);
 		simParams.remove(ThermostatedWaterHeaterRTAtomicSimulatorPlugin.
 														OWNER_REFERENCE_NAME);
+		/*simParams.remove(ThermostatedWashingMachineRTAtomicSimulatorPlugin.
+				OWNER_REFERENCE_NAME);
+				*/
 		simParams.remove(ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 				OWNER_REFERENCE_NAME);
 				
@@ -264,6 +326,7 @@ extends		RTAtomicSimulatorPlugin
 		submodels.add(FAN_ELECTRICITY_MODEL_URI);
 		submodels.add(VACUUMCLEANER_ELECTRICITY_MODEL_URI);
 		submodels.add(WATER_HEATER_ELECTRICITY_MODEL_URI);
+		//submodels.add(WASHING_MACHINE_ELECTRICITY_MODEL_URI);
 		submodels.add(REFRIGERATOR_ELECTRICITY_MODEL_URI);
 		//submodels.add(WIND_TURBINE_ELECTRICITY_MODEL_URI);
 		submodels.add(ElectricMeterElectricitySILModel.URI);
@@ -301,6 +364,19 @@ extends		RTAtomicSimulatorPlugin
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						accFactor));
 		
+		//washing machine
+		/*
+		atomicModelDescriptors.put(
+						WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+						RTAtomicHIOA_Descriptor.create(
+						WASHING_MACHINE_ELECTRICITY_MODEL_CLASS,
+						WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+						TimeUnit.SECONDS,
+						null,
+						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+						accFactor));
+						*/
+		
 		//Wind turbine
 		/*
 		atomicModelDescriptors.put(
@@ -314,7 +390,6 @@ extends		RTAtomicSimulatorPlugin
 						accFactor));
 		*/
 		//refrigerator
-		
 		atomicModelDescriptors.put(
 						REFRIGERATOR_ELECTRICITY_MODEL_URI,
 						RTAtomicHIOA_Descriptor.create(
@@ -372,8 +447,54 @@ extends		RTAtomicSimulatorPlugin
 										  DoNotHeatWater.class)
 					});
 			
-			//refrigerator
+			//washing machine
+			/*
+			imported.put(
+					fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
+					});
+			imported.put(
+					fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class)
+					});
+			imported.put(
+					Rinse.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									Rinse.class)
+					});
+			imported.put(
+					Spin.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									Spin.class)
+					});
 			
+			imported.put(
+					SwitchOffWashingMachine.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									SwitchOffWashingMachine.class)
+					});
+			imported.put(
+					SwitchOnWashingMachine.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									SwitchOnWashingMachine.class)
+					});
+			imported.put(
+					Wash.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									Wash.class)
+					});
+					*/
+			
+			//refrigerator
 			imported.put(
 					CloseRefrigeratorDoor.class,
 					new EventSink[] {
@@ -521,8 +642,20 @@ extends		RTAtomicSimulatorPlugin
 										 ElectricMeterElectricityModel.URI)
 				});
 		
-		//refrigerator
+		//washing machine
+		/*
+		bindings.put(
+				new VariableSource("currentIntensity",
+										   Double.class,
+										   WASHING_MACHINE_ELECTRICITY_MODEL_URI),
+				new VariableSink[] {
+						new VariableSink("currentWashingMachineIntensity",
+												 Double.class,
+												 ElectricMeterElectricityModel.URI)
+						});
+						*/
 		
+		//refrigerator
 		bindings.put(
 				new VariableSource("currentIntensity",
 								   Double.class,

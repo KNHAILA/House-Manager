@@ -610,22 +610,16 @@ public class			RunHEM_RT_Simulation
                             new EventSink(WashingMachineElectricityModel.URI,
                                     Wash.class),
                             new EventSink(WashingMachineTemperatureModel.URI,
-                                    fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
+                                    Wash.class)
                     });
             connections.put(
                     new EventSource(WashingMachineUnitTesterModel.URI,
                             Rinse.class),
                     new EventSink[] {
                             new EventSink(WashingMachineElectricityModel.URI,
-                                    Rinse.class)
-                    });
-            connections.put(
-                    new EventSource(WashingMachineUnitTesterModel.URI, Rinse.class),
-                    new EventSink[] {
-                            new EventSink(WashingMachineElectricityModel.URI,
                                     Rinse.class),
                             new EventSink(WashingMachineTemperatureModel.URI,
-                                    StopHeatWater.class)
+                            		Rinse.class)
                     });
             connections.put(
                     new EventSource(WashingMachineUnitTesterModel.URI, Spin.class),
@@ -633,7 +627,7 @@ public class			RunHEM_RT_Simulation
                             new EventSink(WashingMachineElectricityModel.URI,
                                     Spin.class),
                             new EventSink(WashingMachineTemperatureModel.URI,
-                                    StopHeatWater.class)
+                                    Spin.class)
                     });
             connections.put(
                     new EventSource(WashingMachineUnitTesterModel.URI,

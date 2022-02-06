@@ -1,8 +1,12 @@
 package fr.sorbonne_u.components.washingMachine;
 
+
 import java.time.Duration;
+import java.time.LocalTime;
+import java.util.Timer;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
+import fr.sorbonne_u.interfaces.PlanningEquipmentControlCI;
 
 //-----------------------------------------------------------------------------
 /**
@@ -22,66 +26,141 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 * @author	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
 */
 
-public class WashingMachineConnector extends AbstractConnector implements WashingMachineCI {
+public class WashingMachineConnector extends AbstractConnector implements PlanningEquipmentControlCI {
 
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#isRunning()
-	 */
-	
+	public	WashingMachineConnector()
+	{
+		super();
+	}
+
 	@Override
-	public boolean isRunning() throws Exception {
+	public boolean on() throws Exception {
 		return ((WashingMachineCI)this.offering).isRunning();
 	}
-	
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#startWashingMachine()
-	 */
-	
+
 	@Override
-	public void startWashingMachine() throws Exception {
+	public boolean switchOn() throws Exception {
 		((WashingMachineCI)this.offering).startWashingMachine();
-	}
-	
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#stopWashingMachine()
-	 */
-	
-	@Override
-	public void stopWashingMachine() throws Exception {
-		((WashingMachineCI)this.offering).stopWashingMachine();
-	}
-	
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#setTargetTemperature(int)
-	 */
-	
-	@Override
-	public void setTargetTemperature(int target) throws Exception {
-		((WashingMachineCI)this.offering).setTargetTemperature(target);
-	}
-	
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#getTargetTemperature()
-	 */
-	
-	@Override
-	public int getTargetTemperature() throws Exception {
-		return ((WashingMachineCI)this.offering).getTargetTemperature();
-	}
-	
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#getCurrentTemperature()
-	 */
-	
-	@Override
-	public double getCurrentTemperature() throws Exception {
-		return ((WashingMachineCI)this.offering).getCurrentTemperature();
+		return true;
 	}
 
+	@Override
+	public boolean switchOff() throws Exception {
+		((WashingMachineCI)this.offering).stopWashingMachine();
+		return true;
+	}
+
+	@Override
+	public int maxMode() throws Exception {
+		return 1;
+	}
+
+	@Override
+	public boolean upMode() throws Exception {
+		return false;
+	}
+
+	@Override
+	public boolean downMode() throws Exception {
+		return false;
+	}
+
+	@Override
+	public boolean setMode(int modeIndex) throws Exception {
+		Program program = Program.COTON;
+		
+		switch(modeIndex) {
+		  case 2:
+			  program = Program.COTONCI;
+		  case 3:
+			  program = Program.MIX40C;
+		  case 4:
+			  program = Program.SYNTETHETIQUES;
+		  case 5:
+			  program = Program.COUETTE;
+	       default:
+	    	   break;
+		}
+		
+		((WashingMachineCI)this.offering).setMode(program);
+		return true;
+	}
+
+	@Override
+	public int currentMode() throws Exception {
+		Program program = ((WashingMachineCI)this.offering).getMode();
+		
+		switch(program) {
+		  case COTON:
+		    return 1;
+		  case COTONCI:
+		    return 2;
+		  case MIX40C:
+			  return 3;
+		  case SYNTETHETIQUES:
+			  return 4;
+		  case COUETTE:
+			  return 5;
+	       default:
+	    	   return 6;
+		}
+	}
+
+	@Override
+	public boolean hasPlan() throws Exception {
+		return true;
+	}
+
+	@Override
+	public LocalTime startTime() throws Exception {
+		LocalTime now = LocalTime.now();
+		return now.plusMinutes(3);
+	}
+
+	@Override
+	public Duration duration() throws Exception {
+		return ((WashingMachineCI)this.offering).getCurrentDuration();
+	}
+
+	@Override
+	public LocalTime deadline() throws Exception {
+		LocalTime now = LocalTime.now();
+		return now.plusMinutes(1);
+	}
+
+	@Override
+	public boolean postpone(Duration d) throws Exception {
+		((WashingMachineCI)this.offering).stopWashingMachine();
+		
+		Timer t = new Timer();
+		t.schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		            	try {
+							switchOn();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+		                t.cancel();
+		            }
+		        }, 
+		        d.toSecondsPart() 
+		);
+		
+		return true;
+	}
+
+	@Override
+	public boolean cancel() throws Exception {
+		((WashingMachineCI)this.offering).stopWashingMachine();
+		return true;
+	}
+	
 	/**
 	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#setSpinningNumber(int)
 	 */
-	@Override
+	
 	public void setSpinningNumber(int target) throws Exception {
 		((WashingMachineCI)this.offering).setSpinningNumber(target);
 	}
@@ -90,7 +169,7 @@ public class WashingMachineConnector extends AbstractConnector implements Washin
 	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#getSpinningNumber()
 	 */
 	
-	@Override
+	
 	public int getSpinningNumber() throws Exception {
 		return ((WashingMachineCI)this.offering).getSpinningNumber();
 	}
@@ -99,7 +178,7 @@ public class WashingMachineConnector extends AbstractConnector implements Washin
 	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#getCurrentSpinningNumber()
 	 */
 	
-	@Override
+	
 	public int getCurrentSpinningNumber() throws Exception {
 		return ((WashingMachineCI)this.offering).getCurrentSpinningNumber();
 	}
@@ -108,42 +187,16 @@ public class WashingMachineConnector extends AbstractConnector implements Washin
 	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#setDuration(Duration)
 	 */
 	
-	@Override
+	
 	public void setDuration(Duration duration) throws Exception {
 		((WashingMachineCI)this.offering).setDuration(duration);
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#getDuration()
-	 */
-	
-	@Override
-	public Duration getDuration() throws Exception {
-		return ((WashingMachineCI)this.offering).getDuration();
-	}
-
-	/**
 	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#getCurrentDuration()
 	 */
-	@Override
+	
 	public Duration getCurrentDuration() throws Exception {
 		return ((WashingMachineCI)this.offering).getCurrentDuration();
-	}
-	
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#setMode(Mode)
-	 */
-	@Override
-	public void setMode(Program mode) throws Exception {
-		((WashingMachineCI)this.offering).setMode(mode);
-	}
-
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineCI#getMode()
-	 */
-	
-	@Override
-	public Program getMode() throws Exception {
-		return ((WashingMachineCI)this.offering).getMode();
 	}
 }

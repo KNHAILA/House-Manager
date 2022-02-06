@@ -1,4 +1,3 @@
-
 package fr.sorbonne_u.hem;
 
 
@@ -13,7 +12,8 @@ import fr.sorbonne_u.components.exceptions.ComponentStartException;
 //refrigerator
 import fr.sorbonne_u.components.refrigerator.RefrigeratorConnector;
 import fr.sorbonne_u.components.refrigerator.ThermostatedRefrigerator;
-
+import fr.sorbonne_u.components.washingMachine.ThermostatedWashingMachine;
+import fr.sorbonne_u.components.washingMachine.WashingMachineConnector;
 //water heater
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.components.waterHeater.WaterHeaterConnector;
@@ -51,7 +51,7 @@ public class			HEM
 	/** future allowing to act upon the management task.					*/
 	protected Future<?>		managementTaskFuture;
 
-	protected PlanningEquipmentControlOutboundPort washingMachineop;
+	protected PlanningEquipmentControlOutboundPort      washingMachineop;
 	protected ElectricMeterOutboundPort					meterop;
 	protected SuspensionEquipmentControlOutboundPort	waterHeaterop;
 	protected SuspensionEquipmentControlOutboundPort	windTurbineop;
@@ -116,6 +116,53 @@ public class			HEM
 				this.meterop.getCurrentConsumption() + "\n");
 		this.traceMessage("Electric meter current production? " +
 				this.meterop.getCurrentProduction() + "\n");
+		
+		//water heater
+		this.traceMessage("WaterHeater is on? " + this.waterHeaterop.on() + "\n");
+		this.traceMessage("WaterHeater max mode index is? " +
+				this.waterHeaterop.maxMode() + "\n");
+		this.traceMessage("WaterHeater is switched on? " +
+				this.waterHeaterop.switchOn() + "\n");
+		this.traceMessage("WaterHeater current mode is? " +
+				this.waterHeaterop.currentMode() + "\n");
+		this.traceMessage("WaterHeater is suspended? " +
+				this.waterHeaterop.suspended() + "\n");
+		this.traceMessage("WaterHeater suspends? " +
+				this.waterHeaterop.suspend() + "\n");
+		this.traceMessage("WaterHeater emergency? " +
+				this.waterHeaterop.emergency() + "\n");
+		this.traceMessage("WaterHeater resumes? " +
+				this.waterHeaterop.resume() + "\n");
+		this.traceMessage("WaterHeater is suspended? " +
+				this.waterHeaterop.suspended() + "\n");
+		this.traceMessage("WaterHeater is switched off? " +
+				this.waterHeaterop.switchOff() + "\n");
+		this.traceMessage("WaterHeater is on? " + this.waterHeaterop.on() + "\n");
+		
+		
+		//refrigerator
+		this.traceMessage("Refrigerator is on? " + this.refrigeratorop.on() + "\n");
+		this.traceMessage("Refrigerator max mode index is? " +
+				this.refrigeratorop.maxMode() + "\n");
+		this.traceMessage("Refrigerator is switched on? " +
+				this.refrigeratorop.switchOn() + "\n");
+		this.traceMessage("Refrigerator current mode is? " +
+				this.refrigeratorop.currentMode() + "\n");
+		this.traceMessage("Refrigerator is suspended? " +
+				this.refrigeratorop.suspended() + "\n");
+		this.traceMessage("Refrigerator suspends? " +
+				this.refrigeratorop.suspend() + "\n");
+		this.traceMessage("Refrigerator emergency? " +
+				this.refrigeratorop.emergency() + "\n");
+		this.traceMessage("Refrigerator resumes? " +
+				this.refrigeratorop.resume() + "\n");
+		this.traceMessage("Refrigerator is suspended? " +
+				this.refrigeratorop.suspended() + "\n");
+		this.traceMessage("Refrigerator is switched off? " +
+				this.refrigeratorop.switchOff() + "\n");
+		this.traceMessage("Refrigerator is on? " + this.refrigeratorop.on() + "\n");
+
+
 	}
 
 	// -------------------------------------------------------------------------
@@ -147,6 +194,15 @@ public class			HEM
 					this.waterHeaterop.getPortURI(),
 					ThermostatedWaterHeater.INBOUND_PORT_URI,
 					WaterHeaterConnector.class.getCanonicalName());
+			
+			/*
+			this.washingMachineop = new PlanningEquipmentControlOutboundPort(this);
+			this.washingMachineop.publishPort();
+			this.doPortConnection(
+					this.washingMachineop.getPortURI(),
+					ThermostatedWashingMachine.INBOUND_PORT_URI,
+					WashingMachineConnector.class.getCanonicalName());
+					*/
 			
 			
 			this.refrigeratorop = new SuspensionEquipmentControlOutboundPort(this);
@@ -185,7 +241,6 @@ public class			HEM
 			this.traceMessage("Electric meter current production? " +
 					this.meterop.getCurrentProduction() + "\n");
 
-
 			//water heater
 			this.traceMessage("WaterHeater is on? " + this.waterHeaterop.on() + "\n");
 			this.traceMessage("WaterHeater max mode index is? " +
@@ -210,7 +265,6 @@ public class			HEM
 			
 			
 			//refrigerator
-			/*
 			this.traceMessage("Refrigerator is on? " + this.refrigeratorop.on() + "\n");
 			this.traceMessage("Refrigerator max mode index is? " +
 					this.refrigeratorop.maxMode() + "\n");
@@ -231,7 +285,7 @@ public class			HEM
 			this.traceMessage("Refrigerator is switched off? " +
 					this.refrigeratorop.switchOff() + "\n");
 			this.traceMessage("Refrigerator is on? " + this.refrigeratorop.on() + "\n");
-			*/
+
 
 			//wind turbine
 			/*
@@ -290,6 +344,7 @@ public class			HEM
 		}
 		this.doPortDisconnection(this.meterop.getPortURI());
 		this.doPortDisconnection(this.waterHeaterop.getPortURI());
+		//this.doPortDisconnection(this.washingMachineop.getPortURI());
 		this.doPortDisconnection(this.refrigeratorop.getPortURI());
 		//this.doPortDisconnection(this.windTurbineop.getPortURI());
 		super.finalise();
@@ -306,6 +361,7 @@ public class			HEM
 		try {
 			this.meterop.unpublishPort();
 			this.waterHeaterop.unpublishPort();
+			//this.washingMachineop.unpublishPort();
 			this.refrigeratorop.unpublishPort();
 			//this.windTurbineop.unpublishPort();
 		} catch (Exception e) {

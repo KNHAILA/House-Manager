@@ -61,53 +61,123 @@ public interface WashingMachineCI extends OfferedCI, WashingMachineImplementatio
 	@Override
 	public double		getCurrentTemperature() throws Exception;
 	
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#setSpinningNumber(int)
-	 */
 	@Override
 	public void setSpinningNumber(int target) throws Exception;
-	
+
 	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getSpinningNumber()
+	 * 
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code isRunning()}
+	 * post	{@code return == 400 || return == 800 || return == 1000 || return == 1100 || return == 1200}
+	 * </pre>
+	 *
+	 * @return				the current spinning number.
+	 * @throws Exception	<i>to do</i>.
 	 */
 	@Override
 	public int getSpinningNumber() throws Exception;
-	
+
 	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getCurrentSpinningNumber()
+	 * return the current spinning number.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code isRunning()}
+	 * post {@code return >= 0 || return <= 1200}
+	 * </pre>
+	 *
+	 * @return				the current spinning number.
+	 * @throws Exception	<i>to do</i>.
 	 */
 	@Override
-	public int getCurrentSpinningNumber() throws Exception ;
-	
-	
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#setDuration(Duration)
-	 */
-	@Override
-	public void setDuration(Duration duration) throws Exception ;
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getDuration()
-	 */
-	@Override
-	public Duration getDuration() throws Exception ;
-	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getCurrentDuration()
-	 */
-	@Override
-	public Duration getCurrentDuration() throws Exception ;
+	public int getCurrentSpinningNumber() throws Exception;
 	
 	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#setMode(Mode)
+	 * set the target duration for controlling the washing machine.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code isRunning()}
+	 * pre	{@code duration >= 0}
+	 * post	{@code target == getDuration()}
+	 * </pre>
+	 *
+	 * @param target		the new duration.
+	 * @throws Exception	<i>to do</i>.
+	 */
+	@Override
+	public void setDuration(Duration duration) throws Exception;
+
+	/**
+	 * 
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code isRunning()}
+	 * post	{@code return>=0}
+	 * </pre>
+	 *
+	 * @return				the current duration.
+	 * @throws Exception	<i>to do</i>.
+	 */
+	@Override
+	public Duration getDuration() throws Exception;
+
+	/**
+	 * return the current duration.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code isRunning()}
+	 * post {@code Duration>= 0}
+	 * </pre>
+	 *
+	 * @return				the current duration.
+	 * @throws Exception	<i>to do</i>.
+	 */
+	@Override
+	public Duration getCurrentDuration() throws Exception;
+	
+	/**
+	 * set the target mode for controlling the washing machine.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code isRunning()}
+	 * pre	{@code mode==Mode.COTON || mode==Mode.COTONCI || mode==Mode.MIX40C || mode==Mode.SYNTETHETIQUES || mode==Mode.COUETTE == 0}
+	 * post	{@code target == getDuration()}
+	 * </pre>
+	 *
+	 * @param target		the new mode.
+	 * @throws Exception	<i>to do</i>.
 	 */
 	@Override
 	public void setMode(Program mode) throws Exception;
-	
+
 	/**
-	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getMode()
+	 * 
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	{@code isRunning()}
+	 * post	{@code return==Mode.COTON || return==Mode.COTONCI || return==Mode.MIX40C || return==Mode.SYNTETHETIQUES || return==Mode.COUETTE == 0}
+	 * </pre>
+	 *
+	 * @return				the current mode.
+	 * @throws Exception	<i>to do</i>.
 	 */
 	@Override
-	public Program getMode() throws Exception ;
-	
+	public Program getMode() throws Exception;	
+
 }
 // -----------------------------------------------------------------------------
 

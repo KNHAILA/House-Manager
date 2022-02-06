@@ -54,10 +54,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.washingMachine.mil.WashingMachineCoupledModel;
-import fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater;
-import fr.sorbonne_u.components.washingMachine.mil.events.HeatWater;
-import fr.sorbonne_u.components.washingMachine.mil.events.SwitchOffWashingMachine;
-import fr.sorbonne_u.components.washingMachine.mil.events.SwitchOnWashingMachine;
+import fr.sorbonne_u.components.washingMachine.mil.events.*;
 import fr.sorbonne_u.components.washingMachine.sil.WashingMachineExternalTemperatureSILModel;
 import fr.sorbonne_u.components.washingMachine.sil.WashingMachineElectricitySILModel;
 import fr.sorbonne_u.components.washingMachine.sil.WashingMachineStateModel;
@@ -278,6 +275,33 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(WashingMachineTemperatureSILModel.URI,
 										  DoNotHeatWater.class)
 					});
+			connections.put(
+					new EventSource(WashingMachineStateModel.URI,
+									Rinse.class),
+					new EventSink[] {
+							new EventSink(WashingMachineElectricitySILModel.URI,
+									Rinse.class),
+							new EventSink(WashingMachineTemperatureSILModel.URI,
+									Rinse.class)
+					});
+			connections.put(
+					new EventSource(WashingMachineStateModel.URI,
+									Spin.class),
+					new EventSink[] {
+							new EventSink(WashingMachineElectricitySILModel.URI,
+									Spin.class),
+							new EventSink(WashingMachineTemperatureSILModel.URI,
+									Spin.class)
+					});
+			connections.put(
+					new EventSource(WashingMachineStateModel.URI,
+									Wash.class),
+					new EventSink[] {
+							new EventSink(WashingMachineElectricitySILModel.URI,
+									Wash.class),
+							new EventSink(WashingMachineTemperatureSILModel.URI,
+									Wash.class)
+					});
 		} else {
 			// when *not* executed as a unit test, the simulation architecture
 			// does not include the hair dryer electricity model and events
@@ -297,6 +321,27 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(WashingMachineTemperatureSILModel.URI,
 										  DoNotHeatWater.class)
 					});
+			connections.put(
+					new EventSource(WashingMachineStateModel.URI,
+									Rinse.class),
+					new EventSink[] {
+							new EventSink(WashingMachineTemperatureSILModel.URI,
+									Rinse.class)
+					});
+			connections.put(
+					new EventSource(WashingMachineStateModel.URI,
+									Wash.class),
+					new EventSink[] {
+							new EventSink(WashingMachineTemperatureSILModel.URI,
+									Wash.class)
+					});
+			connections.put(
+					new EventSource(WashingMachineStateModel.URI,
+									Spin.class),
+					new EventSink[] {
+							new EventSink(WashingMachineTemperatureSILModel.URI,
+									Spin.class)
+					});
 
 			reexported =
 					new HashMap<Class<? extends EventI>,ReexportedEvent>();
@@ -312,6 +357,15 @@ extends		RTAtomicSimulatorPlugin
 			reexported.put(DoNotHeatWater.class,
 					   new ReexportedEvent(WashingMachineStateModel.URI,
 							   			   DoNotHeatWater.class));
+			reexported.put(Rinse.class,
+					   new ReexportedEvent(WashingMachineStateModel.URI,
+							   Rinse.class));
+			reexported.put(Spin.class,
+					   new ReexportedEvent(WashingMachineStateModel.URI,
+							   Spin.class));
+			reexported.put(Wash.class,
+					   new ReexportedEvent(WashingMachineStateModel.URI,
+							   Wash.class));
 		}
 
 		// variable bindings between exporting and importing models

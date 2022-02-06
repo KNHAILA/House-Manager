@@ -40,12 +40,16 @@ import fr.sorbonne_u.meter.ElectricMeterInboundPort;
 
 import fr.sorbonne_u.components.fan.mil.events.*;
 import fr.sorbonne_u.components.vacuumCleaner.mil.events.*;
+import fr.sorbonne_u.components.washingMachine.mil.events.*;
+import fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater;
+import fr.sorbonne_u.components.washingMachine.mil.events.HeatWater;
 import fr.sorbonne_u.components.refrigerator.mil.events.*;
 import fr.sorbonne_u.components.waterHeater.mil.events.*;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 
 import fr.sorbonne_u.CVM_SIL;
 import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
+import fr.sorbonne_u.meter.sil.ElectricMeterElectricitySILModel;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import java.util.HashMap;
@@ -591,7 +595,6 @@ implements	ElectricMeterImplementationI
 			
 			
 			//Refrigerator
-			System.out.println("elec meter 1 ******");
 			this.scheduleTask(
 					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
 					new AbstractComponent.AbstractTask() {
@@ -699,7 +702,117 @@ implements	ElectricMeterImplementationI
 					},
 					(long)(3.0/ACC_FACTOR),
 					TimeUnit.SECONDS);
-			System.out.println("elec meter 2 ******");	
+			
+			//washing machine
+			/*
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									t -> new SwitchOnWashingMachine(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(1.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									t -> new Wash(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(7.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									t -> new HeatWater(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(4.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									t -> new DoNotHeatWater(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(4.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									t -> new Rinse(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(7.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									t -> new SwitchOffWashingMachine(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+					(long)(1.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+					*/
 			
 			//wind turbine
 			/*
@@ -774,14 +887,26 @@ implements	ElectricMeterImplementationI
 	@Override
 	public double		getCurrentConsumption() throws Exception
 	{
-		if (VERBOSE) {
-			this.traceMessage(
-					"Electric meter returns is current consumption.\n");
+		double currentConsumption =  0.0;
+		if (this.isSILsimulated) {
+			currentConsumption =
+				(double) this.simulatorPlugin.getModelStateValue(
+						ElectricMeterElectricitySILModel.URI,
+						ElectricMeterRTAtomicSimulatorPlugin.
+						CURRENT_CONSUMPTION);
+		} 
+		
+		if (ElectricMeter.VERBOSE) {
+			StringBuffer message =
+					new StringBuffer(
+						"Electric Meter returns the current consumption ");
+			message.append(currentConsumption);
+			message.append(".\n");
+			this.traceMessage(message.toString());
 		}
-
-		// TODO will need to be implemented for the project.
-		return 0;
+		return currentConsumption;
 	}
+
 
 	/**
 	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.meter.ElectricMeterImplementationI#getCurrentProduction()
@@ -789,13 +914,24 @@ implements	ElectricMeterImplementationI
 	@Override
 	public double		getCurrentProduction() throws Exception
 	{
-		if (VERBOSE) {
-			this.traceMessage(
-					"Electric meter returns is current production.\n");
+		double currentProduction =  0.0;
+		if (this.isSILsimulated) {
+			currentProduction =
+				(double) this.simulatorPlugin.getModelStateValue(
+						ElectricMeterElectricitySILModel.URI,
+						ElectricMeterRTAtomicSimulatorPlugin.
+						CURRENT_PRODUCTION);
+		} 
+		
+		if (ElectricMeter.VERBOSE) {
+			StringBuffer message =
+					new StringBuffer(
+						"Electric Meter returns the current production ");
+			message.append(currentProduction);
+			message.append(".\n");
+			this.traceMessage(message.toString());
 		}
-
-		// TODO will need to be implemented for the project.
-		return 0;
+		return currentProduction;
 	}
 }
 // -----------------------------------------------------------------------------

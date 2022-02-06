@@ -47,8 +47,8 @@ implements	WashingMachineEventI
 	{
 		assert	model instanceof WashingMachineElectricityModel;
 
-		WashingMachineElectricityModel heater = (WashingMachineElectricityModel)model;
-		assert	heater.getState() != State.OFF;
-		heater.setState(State.OFF);
+		WashingMachineElectricityModel washingMachine = (WashingMachineElectricityModel)model;
+		assert	washingMachine.getState() != State.OFF;
+		washingMachine.setState(State.OFF);
 	}
 }

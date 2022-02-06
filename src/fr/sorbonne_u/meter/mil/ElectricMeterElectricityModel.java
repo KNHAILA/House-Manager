@@ -136,8 +136,15 @@ public class			ElectricMeterElectricityModel
         this.currentConsumption.v = this.currentConsumption.v +
                 Electricity.computeConsumption(
                         d, TENSION*this.currentIntensity_consumption.v);
+        
+        if(this.currentConsumption.v != 0.0) {
+        	this.currentConsumption.v = this.currentConsumption.v + 100;
+        }
+        
         this.currentConsumption.time =
                 this.currentConsumption.time.add(d);
+        
+        System.out.println("in electricity model" + this.currentConsumption.v);
     }
 
     protected void		updateProduction(Duration d)
@@ -163,12 +170,11 @@ public class			ElectricMeterElectricityModel
     protected void		computeTotalIntensity()
     {
         // simple sum of all incoming intensities
-       this.currentIntensity_consumption.v = 0.0 ;
-               /* this.currentFanIntensity.v +
+       this.currentIntensity_consumption.v = 
+                this.currentFanIntensity.v +
                 this.currentWaterHeaterIntensity.v+
-                        this.currentRefrigeratorIntensity.v +
-                             this.currentVacuumCleanerIntensity.v +
-                                  this.currentWaterHeaterIntensity.v+
+                        this.currentRefrigeratorIntensity.v;
+                             /*this.currentVacuumCleanerIntensity.v +
                                       this.currentWashingMachineIntensity.v +
                                             this.currentBatteryIntensity_consumption.v ;*/
                                             

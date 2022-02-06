@@ -52,13 +52,14 @@ implements	WashingMachineEventI
 	{
 		
 		assert	model instanceof WashingMachineElectricityModel ||
-		model instanceof WashingMachineElectricityModel;
+		model instanceof WashingMachineTemperatureModel;
 
 		if (model instanceof WashingMachineElectricityModel) {
-			WashingMachineElectricityModel heater = (WashingMachineElectricityModel)model;
-			assert	heater.getState() == WashingMachineElectricityModel.State.ON || heater.getState() == WashingMachineElectricityModel.State.HEATING;
-			heater.setState(WashingMachineElectricityModel.State.WASHING);
-		} else if (model instanceof WashingMachineTemperatureModel) {
+			WashingMachineElectricityModel washingMachine = (WashingMachineElectricityModel)model;
+			assert	washingMachine.getState() == WashingMachineElectricityModel.State.ON || washingMachine.getState() == WashingMachineElectricityModel.State.HEATING;
+			washingMachine.setState(WashingMachineElectricityModel.State.WASHING);
+		}
+		else if (model instanceof WashingMachineTemperatureModel) {
 			WashingMachineTemperatureModel heaterTemperature =
 						(WashingMachineTemperatureModel)model;
 			heaterTemperature.setState(WashingMachineTemperatureModel.State.NOT_HEATING);

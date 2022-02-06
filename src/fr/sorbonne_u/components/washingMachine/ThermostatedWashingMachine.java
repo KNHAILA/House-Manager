@@ -114,9 +114,7 @@ implements	WashingMachineImplementationI
 	 */
 	protected static enum	WashingMachineState
 	{
-		/** heater is on.													*/
 		ON,
-		/** heater is off.													*/
 		OFF
 	}
 
@@ -161,8 +159,27 @@ implements	WashingMachineImplementationI
 	/** actual acceleration factor.											*/
 	protected double				accFactor;
 
-	// Control
+	public static final int		FAKE_CURRENT_TEMPERATURE = 40;
 
+	/** fake current 	*/
+	public static final int		FAKE_CURRENT_SPINNING = 400;
+	
+	/** fake current 	*/
+	public static final Program FAKE_CURRENT_MODE =Program.COTON;
+	
+	/** fake current 	*/
+	public static final Duration FAKE_CURRENT_DURATION = Duration.ofHours(1);
+	
+	/** target spinning for the washing.	*/
+	protected int targetSpinning;
+	
+	/** target mode for the washing.	*/
+	protected Program targetMode;
+	
+	/** target duration for the washing.	*/
+	protected Duration targetDuration;
+	
+	// Control
 	protected boolean				isHeating;
 	protected static long			PERIOD = 500;
 	protected static TimeUnit		CONTROL_TIME_UNIT = TimeUnit.MILLISECONDS;
@@ -687,52 +704,119 @@ implements	WashingMachineImplementationI
 		return currentTemperature;
 	}
 	
+
 	@Override
 	public void setSpinningNumber(int target) throws Exception {
-		// TODO Auto-generated method stub
-		
+		if (WashingMachine.VERBOSE) {
+			this.traceMessage("Washing Machine sets a new target "
+										+ "spinning: " + target + ".\n");
+		}
+
+		assert	this.internalIsRunning();
+		assert	target == 400 || target ==800 || target == 1000 || target ==1100 ||target == 1200;
+
+		this.targetSpinning= target;	
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getSpinningNumber()
+	 */
 	@Override
 	public int getSpinningNumber() throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		if (WashingMachine.VERBOSE) {
+			this.traceMessage("Washing machine returns its target"
+							+ " spinning " + this.targetSpinning + ".\n");
+		}
+
+		return this.targetSpinning;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getCurrentSpinningNumber()
+	 */
 	@Override
 	public int getCurrentSpinningNumber() throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		int currentSpinning = FAKE_CURRENT_SPINNING;
+		if (WashingMachine.VERBOSE) {
+			this.traceMessage("Washing Machine returns the current"
+							+ " spinning " + currentSpinning + ".\n");
+			}
+
+			return  currentSpinning;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#setDuration(Duration)
+	 */
 	@Override
 	public void setDuration(Duration duration) throws Exception {
-		// TODO Auto-generated method stub
+		if (WashingMachine.VERBOSE) {
+			this.traceMessage("Washing Machine sets a new target "
+										+ "duration: " + duration + ".\n");
+		}
+
+		assert	this.internalIsRunning();
+		assert	duration.getSeconds()>=0;
+
+		this.targetDuration= duration;	
 		
 	}
-
+	
+	/**
+	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getDuration()
+	 */
 	@Override
 	public Duration getDuration() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (WashingMachine.VERBOSE) {
+			this.traceMessage("Washing machine returns its target"
+							+ " duration " + this.targetDuration + ".\n");
+		}
+
+		return this.targetDuration;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getCurrentDuration()
+	 */
 	@Override
 	public Duration getCurrentDuration() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		// Temporary implementation; would need a temperature sensor.
+				Duration currentDuration = FAKE_CURRENT_DURATION;
+				if (WashingMachine.VERBOSE) {
+					this.traceMessage("Washing Machine returns the current"
+									+ " duration " + currentDuration + ".\n");
+					}
+					return  currentDuration;
 	}
 
+	/**
+	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#setMode(Mode)
+	 */
 	@Override
 	public void setMode(Program mode) throws Exception {
-		// TODO Auto-generated method stub
+		if (WashingMachine.VERBOSE) {
+			this.traceMessage("Washing Machine sets a new target "
+										+ "mode: " + mode + ".\n");
+		}
+
+		assert	this.internalIsRunning();
+		assert	mode == Program.COTON || mode ==Program.COTONCI || mode == Program.COUETTE || mode ==Program.MIX40C ||mode == Program.SYNTETHETIQUES;
+
+		this.targetMode= mode;	
 		
 	}
-
+	
+	/**
+	 * @see fr.sorbonne_u.components.washingMachine.WashingMachineImplementationI#getMode()
+	 */
 	@Override
 	public Program getMode() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (WashingMachine.VERBOSE) {
+			this.traceMessage("Washing machine returns its target"
+							+ " mode " + this.targetMode + ".\n");
+		}
+
+		return this.targetMode;
 	}
 }
 // -----------------------------------------------------------------------------

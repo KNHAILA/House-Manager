@@ -11,7 +11,6 @@ import fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater;
 import fr.sorbonne_u.components.washingMachine.mil.events.HeatWater;
 import fr.sorbonne_u.components.washingMachine.mil.events.Rinse;
 import fr.sorbonne_u.components.washingMachine.mil.events.Spin;
-import fr.sorbonne_u.components.washingMachine.mil.events.StopHeatWater;
 import fr.sorbonne_u.components.washingMachine.mil.events.SwitchOffWashingMachine;
 import fr.sorbonne_u.components.washingMachine.mil.events.SwitchOnWashingMachine;
 import fr.sorbonne_u.components.washingMachine.mil.events.Wash;
@@ -143,7 +142,7 @@ public class			RunWasingMachineUnitarySimulation
 							new EventSink(WashingMachineElectricityModel.URI,
 										  Wash.class),
 							new EventSink(WashingMachineTemperatureModel.URI,
-										  DoNotHeatWater.class)
+									Wash.class)
 					});
 			
 			connections.put(
@@ -151,18 +150,10 @@ public class			RunWasingMachineUnitarySimulation
 									Rinse.class),
 					new EventSink[] {
 							new EventSink(WashingMachineElectricityModel.URI,
-										  Rinse.class)
-					});
-			
-			connections.put(
-					new EventSource(WashingMachineUnitTesterModel.URI, Rinse.class),
-					new EventSink[] {
-							new EventSink(WashingMachineElectricityModel.URI,
 										  Rinse.class),
 							new EventSink(WashingMachineTemperatureModel.URI,
-										  StopHeatWater.class)
+									Rinse.class)
 					});
-			
 			
 			connections.put(
 					new EventSource(WashingMachineUnitTesterModel.URI, Spin.class),
@@ -170,7 +161,7 @@ public class			RunWasingMachineUnitarySimulation
 							new EventSink(WashingMachineElectricityModel.URI,
 										  Spin.class),
 							new EventSink(WashingMachineTemperatureModel.URI,
-										  StopHeatWater.class)
+									Spin.class)
 					});
 			
 			

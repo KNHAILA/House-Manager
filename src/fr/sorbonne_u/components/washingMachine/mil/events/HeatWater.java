@@ -51,12 +51,12 @@ implements	WashingMachineEventI
 	public void			executeOn(AtomicModel model)
 	{
 		assert	model instanceof WashingMachineElectricityModel ||
-									model instanceof WashingMachineElectricityModel;
+									model instanceof WashingMachineTemperatureModel;
 
 		if (model instanceof WashingMachineElectricityModel) {
-			WashingMachineElectricityModel heater = (WashingMachineElectricityModel)model;
-			assert	heater.getState() == WashingMachineElectricityModel.State.ON;
-			heater.setState(WashingMachineElectricityModel.State.HEATING);
+			WashingMachineElectricityModel washingMachine = (WashingMachineElectricityModel)model;
+			assert	washingMachine.getState() != WashingMachineElectricityModel.State.OFF;
+			washingMachine.setState(WashingMachineElectricityModel.State.HEATING);
 		} else if (model instanceof WashingMachineTemperatureModel) {
 			WashingMachineTemperatureModel heaterTemperature =
 											(WashingMachineTemperatureModel)model;

@@ -118,6 +118,16 @@ extends		ElectricMeterElectricityModel
 	// DEVS simulation protocol
 	// -------------------------------------------------------------------------
 
+	public double		getCurrentConsumption()
+	{
+		return this.currentConsumption.v;
+	}
+	
+	public double		getCurrentProduction()
+	{
+		return this.currentProduction.v;
+	}
+	
 	/**
 	 * @see fr.sorbonne_u.devs_simulation.models.Model#setSimulationRunParameters(java.util.Map)
 	 */

@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.HEM_ReportI;
-import fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater;
-import fr.sorbonne_u.components.washingMachine.mil.events.HeatWater;
-import fr.sorbonne_u.components.washingMachine.mil.events.StopHeatWater;
-import fr.sorbonne_u.components.washingMachine.mil.events.WashingMachineEventI;
+import fr.sorbonne_u.components.washingMachine.mil.events.*;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ImportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.InternalVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithDE;
@@ -71,7 +68,7 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
  * 
  * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
-@ModelExternalEvents(imported = {HeatWater.class, DoNotHeatWater.class, StopHeatWater.class})
+@ModelExternalEvents(imported = {HeatWater.class, DoNotHeatWater.class, Rinse.class, Spin.class, Wash.class })
 public class WashingMachineTemperatureModel
 extends		AtomicHIOAwithDE
 {

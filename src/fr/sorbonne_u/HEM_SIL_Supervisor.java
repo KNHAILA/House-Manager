@@ -53,12 +53,18 @@ import fr.sorbonne_u.components.vacuumCleaner.VacuumCleaner;
 //water heater
 import fr.sorbonne_u.components.waterHeater.mil.WaterHeaterCoupledModel;
 import fr.sorbonne_u.components.waterHeater.mil.events.*;
+import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 
 //Wind turbine
 import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
 import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineCoupledModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
+import fr.sorbonne_u.components.washingMachine.ThermostatedWashingMachine;
+//Washing machine
+import fr.sorbonne_u.components.washingMachine.mil.WashingMachineCoupledModel;
+import fr.sorbonne_u.components.washingMachine.mil.events.*;
 
 //meter
 import fr.sorbonne_u.meter.ElectricMeter;
@@ -269,7 +275,7 @@ extends		AbstractCyPhyComponent
 						TimeUnit.SECONDS,
 						Fan.REFLECTION_INBOUND_PORT_URI));
 		
-		// The vacuum cleaner simulation model held by the Fan component.
+		// The vacuum cleaner simulation model held by the vacuum cleaner component.
 				atomicModelDescriptors.put(
 						VacuumCleanerCoupledModel.URI,
 						RTComponentAtomicModelDescriptor.create(
@@ -293,6 +299,22 @@ extends		AbstractCyPhyComponent
 								HeatWater.class, DoNotHeatWater.class},
 						TimeUnit.SECONDS,
 						ThermostatedWaterHeater.REFLECTION_INBOUND_PORT_URI));
+		
+		// The Washing machine simulation model held by the ThermostatedWaterHeater component.
+		/*		
+		atomicModelDescriptors.put(
+						WashingMachineCoupledModel.URI,
+						RTComponentAtomicModelDescriptor.create(
+								WashingMachineCoupledModel.URI,
+								new Class[]{},
+								new Class[]{
+										SwitchOnWashingMachine.class, SwitchOffWashingMachine.class,
+										fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class, 
+										fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class,
+										Rinse.class, Spin.class, Wash.class},
+								TimeUnit.SECONDS,
+								ThermostatedWashingMachine.REFLECTION_INBOUND_PORT_URI));
+								*/
 		
 		// The Refrigerator simulation model held by the ThermostatedRefrigerator component.
 				atomicModelDescriptors.put(
@@ -347,14 +369,17 @@ extends		AbstractCyPhyComponent
 		 */
 		
 		/*,
-		CloseRefrigeratorDoor.class, OpenRefrigeratorDoor.class,
-		Freezing.class, OffRefrigerator.class, OnRefrigerator.class, Resting.class
+		SwitchOnWashingMachine.class, SwitchOffWashingMachine.class,
+								fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class, 
+								fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class,
+								Rinse.class, Spin.class, Wash.class
 		*/
 
 		Set<String> submodels = new HashSet<String>();
 		submodels.add(FanCoupledModel.URI);
 		submodels.add(VacuumCleanerCoupledModel.URI);
 		submodels.add(WaterHeaterCoupledModel.URI);
+		//submodels.add(WashingMachineCoupledModel.URI);
 		submodels.add(RefrigeratorCoupledModel.URI);
 	//	submodels.add(WindTurbineCoupledModel.URI);
 		submodels.add(ElectricMeterCoupledModel.URI);
@@ -459,8 +484,60 @@ extends		AbstractCyPhyComponent
 									  DoNotHeatWater.class)
 				});
 		
-		//refrigerator
+		//Washing machine
+		/*
+		connections.put(
+				new EventSource(WashingMachineCoupledModel.URI,
+						fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
+				});
+		connections.put(
+				new EventSource(WashingMachineCoupledModel.URI,
+						fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class)
+				});
+		connections.put(
+				new EventSource(WashingMachineCoupledModel.URI,
+						Rinse.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								Rinse.class)
+				});
+		connections.put(
+				new EventSource(WashingMachineCoupledModel.URI,
+						Spin.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								Spin.class)
+				});
+		connections.put(
+				new EventSource(WashingMachineCoupledModel.URI,
+						Wash.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								Wash.class)
+				});
+		connections.put(
+				new EventSource(WashingMachineCoupledModel.URI,
+						SwitchOnWashingMachine.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								SwitchOnWashingMachine.class)
+				});
+		connections.put(
+				new EventSource(WashingMachineCoupledModel.URI,
+						SwitchOffWashingMachine.class),
+				new EventSink[] {
+						new EventSink(ElectricMeterCoupledModel.URI,
+								SwitchOffWashingMachine.class)
+				});
+				*/
 		
+		//refrigerator
 		connections.put(
 				new EventSource(RefrigeratorCoupledModel.URI,
 						CloseRefrigeratorDoor.class),
