@@ -23,7 +23,7 @@ implements	MiniHydroelectricDamCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.MiniHydroelectricDam.MiniHydroelectricDamCI#isRunning()
+	 * @see fr.sorbonne_u.components.MiniHydroelectricDam.MiniHydroelectricDamCI#isRunning()
 	 */
 	@Override
 	public boolean	isRunning() throws Exception
@@ -32,7 +32,7 @@ implements	MiniHydroelectricDamCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.MiniHydroelectricDam.MiniHydroelectricDamCI#startMiniHydroelectricDam()
+	 * @see fr.sorbonne_u.components.MiniHydroelectricDam.MiniHydroelectricDamCI#startMiniHydroelectricDam()
 	 */
 	@Override
 	public void	startMiniHydroelectricDam() throws Exception
@@ -41,7 +41,7 @@ implements	MiniHydroelectricDamCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.MiniHydroelectricDam.MiniHydroelectricDamCI#stopMiniHydroelectricDam()
+	 * @see fr.sorbonne_u.components.MiniHydroelectricDam.MiniHydroelectricDamCI#stopMiniHydroelectricDam()
 	 */
 	@Override
 	public void	stopMiniHydroelectricDam() throws Exception

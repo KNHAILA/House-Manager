@@ -42,9 +42,9 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>HairDryerElectricitySILModel</code> extends the base
- * {@code HairDryerElectricityModel} to cater for its execution inside
- * the {@code HairDryer} component.
+ * The class <code>fanElectricitySILModel</code> extends the base
+ * {@code fanElectricityModel} to cater for its execution inside
+ * the {@code fan} component.
  *
  * <p><strong>Description</strong></p>
  * 
@@ -67,7 +67,8 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
  * 
  * <p>Created on : 2021-10-04</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public class			FanElectricitySILModel
 extends		FanElectricityModel

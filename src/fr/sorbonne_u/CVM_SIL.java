@@ -41,7 +41,7 @@ import fr.sorbonne_u.components.vacuumCleaner.VacuumCleaner;
 import fr.sorbonne_u.components.washingMachine.ThermostatedWashingMachine;
 import fr.sorbonne_u.components.waterHeater.ThermostatedWaterHeater;
 import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbine;
-
+import fr.sorbonne_u.storage.battery.Battery;
 import fr.sorbonne_u.hem.HEM;
 import fr.sorbonne_u.meter.ElectricMeter;
 
@@ -60,7 +60,8 @@ import fr.sorbonne_u.meter.ElectricMeter;
  * 
  * <p>Created on : 2021-10-11</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public class			CVM_SIL
 extends		AbstractCVM
@@ -116,13 +117,6 @@ extends		AbstractCVM
 				// second 'true' that it must be executed as a unit test.
 				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
 		
-		//washing machine
-		/*
-		AbstractComponent.createComponent(
-						ThermostatedWashingMachine.class.getCanonicalName(),
-						new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
-						*/
-		
 		//refrigerator
 		AbstractComponent.createComponent(
 				ThermostatedRefrigerator.class.getCanonicalName(),
@@ -130,10 +124,9 @@ extends		AbstractCVM
 				
 		
 		//WindTurbine
-		/*
-		AbstractComponent.createComponent(
+		/*AbstractComponent.createComponent(
 				SelfControlWindTurbine.class.getCanonicalName(),
-				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+				new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
 				*/
 		
 		
@@ -149,13 +142,29 @@ extends		AbstractCVM
 		AbstractComponent.createComponent(
 				HEM.class.getCanonicalName(),
 				new Object[]{false});
+		
 
 		AbstractComponent.createComponent(
 				SIL_Coordinator.class.getCanonicalName(),
 				new Object[]{});
+		
 		AbstractComponent.createComponent(
 				HEM_SIL_Supervisor.class.getCanonicalName(),
 				new Object[]{});
+		
+		//battery
+				/*
+				AbstractComponent.createComponent(
+						Battery.class.getCanonicalName(),
+						new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, false});
+						*/
+				
+				//washing machine
+				/*
+				AbstractComponent.createComponent(
+								ThermostatedWashingMachine.class.getCanonicalName(),
+								new Object[]{HEM_SIL_Supervisor.SIM_ARCHITECTURE_URI, true});
+								*/
 
 		super.deploy();
 	}

@@ -86,7 +86,8 @@ import fr.sorbonne_u.components.AbstractComponent;
  * 
  * <p>Created on : 2021-09-10</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 @OfferedInterfaces(offered={WaterHeaterCI.class})
 public class			ThermostatedWaterHeater
@@ -105,7 +106,8 @@ implements	WaterHeaterImplementationI
 	 * 
 	 * <p>Created on : 2021-09-10</p>
 	 * 
-	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+	 *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
 	 */
 	protected static enum	WaterHeaterState
 	{
@@ -562,7 +564,7 @@ implements	WaterHeaterImplementationI
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#isRunning()
+	 * @see fr.sorbonne_u.components.heater.HeaterImplementationI#isRunning()
 	 */
 	@Override
 	public boolean		isRunning() throws Exception
@@ -575,7 +577,7 @@ implements	WaterHeaterImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#startHeater()
+	 * @see fr.sorbonne_u.components.heater.HeaterImplementationI#startHeater()
 	 */
 	@Override
 	public void			startWaterHeater() throws Exception
@@ -604,7 +606,7 @@ implements	WaterHeaterImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#stopHeater()
+	 * @see fr.sorbonne_u.components.heater.HeaterImplementationI#stopHeater()
 	 */
 	@Override
 	public void			stopWaterHeater() throws Exception
@@ -624,7 +626,7 @@ implements	WaterHeaterImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#setTargetTemperature(double)
+	 * @see fr.sorbonne_u.components.heater.HeaterImplementationI#setTargetTemperature(double)
 	 */
 	@Override
 	public void			setTargetTemperature(double target) throws Exception
@@ -641,7 +643,7 @@ implements	WaterHeaterImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#getTargetTemperature()
+	 * @see fr.sorbonne_u.components.heater.HeaterImplementationI#getTargetTemperature()
 	 */
 	@Override
 	public double		getTargetTemperature() throws Exception
@@ -655,7 +657,7 @@ implements	WaterHeaterImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.heater.HeaterImplementationI#getCurrentTemperature()
+	 * @see fr.sorbonne_u.components.heater.HeaterImplementationI#getCurrentTemperature()
 	 */
 	@Override
 	public double		getCurrentTemperature() throws Exception

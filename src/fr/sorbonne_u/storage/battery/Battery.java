@@ -51,7 +51,8 @@ import fr.sorbonne_u.components.AbstractComponent;
  * 
  * <p>Created on : 2021-09-10</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 @OfferedInterfaces(offered={BatteryCI.class})
 public class			Battery
@@ -70,7 +71,8 @@ implements	BatteryImplementation
 	 * 
 	 * <p>Created on : 2021-09-10</p>
 	 * 
-	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+	 *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
 	 */
 	protected static enum	BatteryState
 	{
@@ -88,8 +90,9 @@ implements	BatteryImplementation
 	public static final String		REFLECTION_INBOUND_PORT_URI =
 												"Battery-rip";
 	/** URI of the hair dryer inbound port used in tests.	*/
-	public static final String		Battery_INBOUND_PORT_URI =
+	public static final String		INBOUND_PORT_URI =
 												"Battery-INBOUND-PORT-URI";
+	
 	/** when true, methods trace their actions.								*/
 	public static final boolean		VERBOSE = true;
 
@@ -155,7 +158,7 @@ implements	BatteryImplementation
 			
 			) throws Exception
 		{
-			this(Battery_INBOUND_PORT_URI, simArchitectureURI, executesAsUnitTest);
+			this(INBOUND_PORT_URI, simArchitectureURI, executesAsUnitTest);
 		}
 
 	/**

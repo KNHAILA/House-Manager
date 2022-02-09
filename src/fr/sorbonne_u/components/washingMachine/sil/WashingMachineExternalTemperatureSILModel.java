@@ -67,7 +67,8 @@ import java.util.Map;
  * 
  * <p>Created on : 2021-10-05</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public class			WashingMachineExternalTemperatureSILModel
 extends		WashingMachineExternalTemperatureModel

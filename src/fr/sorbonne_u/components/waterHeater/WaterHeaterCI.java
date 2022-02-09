@@ -26,37 +26,37 @@ extends		WaterHeaterImplementationI,
 			OfferedCI
 {
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WaterHeater.WaterHeaterImplementationI#isRunning()
+	 * @see fr.sorbonne_u.components.WaterHeater.WaterHeaterImplementationI#isRunning()
 	 */
 	@Override
 	public boolean		isRunning() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WaterHeater.WaterHeaterImplementationI#startWaterHeater()
+	 * @see fr.sorbonne_u.components.WaterHeater.WaterHeaterImplementationI#startWaterHeater()
 	 */
 	@Override
 	public void			startWaterHeater() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WaterHeater.WaterHeaterImplementationI#stopWaterHeater()
+	 * @see fr.sorbonne_u.components.WaterHeater.WaterHeaterImplementationI#stopWaterHeater()
 	 */
 	@Override
 	public void			stopWaterHeater() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WaterHeater.WaterHeaterImplementationI#setTargetTemperature(double)
+	 * @see fr.sorbonne_u.components.WaterHeater.WaterHeaterImplementationI#setTargetTemperature(double)
 	 */
 	@Override
 	public void			setTargetTemperature(double target) throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WaterHeater.WaterHeaterImplementationI#getTargetTemperature()
+	 * @see fr.sorbonne_u.components.WaterHeater.WaterHeaterImplementationI#getTargetTemperature()
 	 */
 	@Override
 	public double		getTargetTemperature() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.WaterHeater.WaterHeaterImplementationI#getCurrentTemperature()
+	 * @see fr.sorbonne_u.components.WaterHeater.WaterHeaterImplementationI#getCurrentTemperature()
 	 */
 	@Override
 	public double		getCurrentTemperature() throws Exception;

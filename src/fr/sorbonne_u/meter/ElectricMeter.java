@@ -41,12 +41,12 @@ import fr.sorbonne_u.meter.ElectricMeterInboundPort;
 import fr.sorbonne_u.components.fan.mil.events.*;
 import fr.sorbonne_u.components.vacuumCleaner.mil.events.*;
 import fr.sorbonne_u.components.washingMachine.mil.events.*;
-import fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater;
-import fr.sorbonne_u.components.washingMachine.mil.events.HeatWater;
+import fr.sorbonne_u.components.waterHeater.mil.events.HeatWater;
 import fr.sorbonne_u.components.refrigerator.mil.events.*;
 import fr.sorbonne_u.components.waterHeater.mil.events.*;
+import fr.sorbonne_u.components.waterHeater.mil.events.DoNotHeatWater;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
-
+import fr.sorbonne_u.storage.battery.mil.events.*;
 import fr.sorbonne_u.CVM_SIL;
 import fr.sorbonne_u.meter.sil.ElectricMeterCoupledModel;
 import fr.sorbonne_u.meter.sil.ElectricMeterElectricitySILModel;
@@ -71,7 +71,8 @@ import fr.sorbonne_u.components.AbstractComponent;
  * 
  * <p>Created on : 2021-09-13</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 @OfferedInterfaces(offered={ElectricMeterCI.class})
 public class			ElectricMeter
@@ -456,7 +457,7 @@ implements	ElectricMeterImplementationI
 						@Override
 						public void run() {
 							try {
-								// trigger the SetHighHairDryer event
+								// trigger the SetHighfan event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
 											FAN_ELECTRICITY_MODEL_URI,
@@ -496,7 +497,7 @@ implements	ElectricMeterImplementationI
 						@Override
 						public void run() {
 							try {
-								// trigger the SwitchOffHairDryer event
+								// trigger the SwitchOfffan event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
 											FAN_ELECTRICITY_MODEL_URI,
@@ -538,7 +539,7 @@ implements	ElectricMeterImplementationI
 						@Override
 						public void run() {
 							try {
-								// trigger the SetHighHairDryer event
+								// trigger the SetHighfan event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
 											VACUUMCLEANER_ELECTRICITY_MODEL_URI,
@@ -578,7 +579,7 @@ implements	ElectricMeterImplementationI
 						@Override
 						public void run() {
 							try {
-								// trigger the SwitchOffHairDryer event
+								// trigger the SwitchOfffan event
 								sp.triggerExternalEvent(
 									ElectricMeterRTAtomicSimulatorPlugin.
 											VACUUMCLEANER_ELECTRICITY_MODEL_URI,
@@ -702,6 +703,46 @@ implements	ElectricMeterImplementationI
 					},
 					(long)(3.0/ACC_FACTOR),
 					TimeUnit.SECONDS);
+			
+			// Battery
+			/*
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+												BATTERY_ELECTRICITY_MODEL_URI,
+									t -> new UseBattery(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+
+					(long)(10.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+			this.scheduleTask(
+					AbstractComponent.STANDARD_SCHEDULABLE_HANDLER_URI,
+					new AbstractComponent.AbstractTask() {
+						@Override
+						public void run() {
+							try {
+								sp.triggerExternalEvent(
+									ElectricMeterRTAtomicSimulatorPlugin.
+									BATTERY_ELECTRICITY_MODEL_URI,
+									t -> new DoNotUseBattery(t));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					},
+
+					(long)(12.0/ACC_FACTOR),
+					TimeUnit.SECONDS);
+					*/
 			
 			//washing machine
 			/*
@@ -856,7 +897,7 @@ implements	ElectricMeterImplementationI
 					// execution: at 3 second, possibly accelerated
 					(long)(3.0/ACC_FACTOR),
 					TimeUnit.SECONDS);
-			*/
+					*/
 			
 		}
 	}
@@ -882,7 +923,7 @@ implements	ElectricMeterImplementationI
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.meter.ElectricMeterImplementationI#getCurrentConsumption()
+	 * @see fr.sorbonne_u.components.meter.ElectricMeterImplementationI#getCurrentConsumption()
 	 */
 	@Override
 	public double		getCurrentConsumption() throws Exception
@@ -909,7 +950,7 @@ implements	ElectricMeterImplementationI
 
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.meter.ElectricMeterImplementationI#getCurrentProduction()
+	 * @see fr.sorbonne_u.components.meter.ElectricMeterImplementationI#getCurrentProduction()
 	 */
 	@Override
 	public double		getCurrentProduction() throws Exception

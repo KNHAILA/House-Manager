@@ -22,7 +22,7 @@ public class VacuumCleanerInboundPort extends AbstractInboundPort implements Vac
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.VacuumCleaner.VacuumCleanerCI#getState()
+	 * @see fr.sorbonne_u.components.VacuumCleaner.VacuumCleanerCI#getState()
 	 */
 	@Override
 	public VacuumCleanerState	getState() throws Exception
@@ -38,7 +38,7 @@ public class VacuumCleanerInboundPort extends AbstractInboundPort implements Vac
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.VacuumCleaner.VacuumCleanerCI#getMode()
+	 * @see fr.sorbonne_u.components.VacuumCleaner.VacuumCleanerCI#getMode()
 	 */
 	@Override
 	public VacuumCleanerMode	getMode() throws Exception
@@ -54,7 +54,7 @@ public class VacuumCleanerInboundPort extends AbstractInboundPort implements Vac
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.VacuumCleaner.VacuumCleanerCI#turnOn()
+	 * @see fr.sorbonne_u.components.VacuumCleaner.VacuumCleanerCI#turnOn()
 	 */
 	@Override
 	public void	turnOn() throws Exception
@@ -71,7 +71,7 @@ public class VacuumCleanerInboundPort extends AbstractInboundPort implements Vac
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.VacuumCleaner.VacuumCleanerCI#turnOff()
+	 * @see fr.sorbonne_u.components.VacuumCleaner.VacuumCleanerCI#turnOff()
 	 */
 	@Override
 	public void	turnOff() throws Exception
@@ -88,7 +88,7 @@ public class VacuumCleanerInboundPort extends AbstractInboundPort implements Vac
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.VacuumCleaner.VacuumCleanerCI#setHigh()
+	 * @see fr.sorbonne_u.components.VacuumCleaner.VacuumCleanerCI#setHigh()
 	 */
 	@Override
 	public void			setHigh() throws Exception
@@ -105,7 +105,7 @@ public class VacuumCleanerInboundPort extends AbstractInboundPort implements Vac
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.VacuumCleaner.VacuumCleanerCI#setLow()
+	 * @see fr.sorbonne_u.components.VacuumCleaner.VacuumCleanerCI#setLow()
 	 */
 	@Override
 	public void			setLow() throws Exception

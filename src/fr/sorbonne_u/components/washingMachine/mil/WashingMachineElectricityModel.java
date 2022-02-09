@@ -59,7 +59,8 @@ import fr.sorbonne_u.utils.Electricity;
  * 
  * <p>Created on : 2021-09-20</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 @ModelExternalEvents(imported = {SwitchOnWashingMachine.class,
 								 SwitchOffWashingMachine.class,
@@ -77,7 +78,8 @@ extends		AtomicHIOA
 	 *
 	 * <p>Created on : 2021-09-24</p>
 	 * 
-	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+	 *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
 	 */
 	public static enum	State {
 		ON,
@@ -390,7 +392,8 @@ extends		AtomicHIOA
 	 * 
 	 * <p>Created on : 2021-10-01</p>
 	 * 
-	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+	 *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
 	 */
 	public static class		WashingMachineElectricityReport
 	implements	SimulationReportI, HEM_ReportI

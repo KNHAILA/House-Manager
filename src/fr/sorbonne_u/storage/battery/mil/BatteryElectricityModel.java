@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.HEM_ReportI;
-import fr.sorbonne_u.storage.battery.mil.events.AbstractBatteryEvent;
 import fr.sorbonne_u.storage.battery.mil.events.*;
 import fr.sorbonne_u.utils.Electricity;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
@@ -300,7 +299,7 @@ public class BatteryElectricityModel extends AtomicHIOA
         message.append(")\n");
         this.logMessage(message.toString());
 
-        assert	ce instanceof AbstractBatteryEvent;
+        assert	ce instanceof BatteryEventI;
         // events have a method execute on to perform their effect on this
         // model
         ce.executeOn(this);

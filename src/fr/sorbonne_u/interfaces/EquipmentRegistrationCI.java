@@ -66,7 +66,8 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
  * 
  * <p>Created on : 2021-09-09</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public interface		EquipmentRegistrationCI
 extends		OfferedCI, RequiredCI

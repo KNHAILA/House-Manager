@@ -39,7 +39,7 @@ implements	RefrigeratorCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#isRunning()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#isRunning()
 	 */
 	@Override
 	public boolean		isRunning() throws Exception
@@ -48,7 +48,7 @@ implements	RefrigeratorCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#startRefrigerator()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#startRefrigerator()
 	 */
 	@Override
 	public void			startRefrigerator() throws Exception
@@ -57,7 +57,7 @@ implements	RefrigeratorCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#stopRefrigerator()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#stopRefrigerator()
 	 */
 	@Override
 	public void			stopRefrigerator() throws Exception
@@ -66,7 +66,7 @@ implements	RefrigeratorCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#setTargetTemperature(double)
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#setTargetTemperature(double)
 	 */
 	@Override
 	public void			setTargetTemperature(double target) throws Exception
@@ -75,7 +75,7 @@ implements	RefrigeratorCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#getTargetTemperature()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#getTargetTemperature()
 	 */
 	@Override
 	public double		getTargetTemperature() throws Exception
@@ -84,7 +84,7 @@ implements	RefrigeratorCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorCI#getCurrentTemperature()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorCI#getCurrentTemperature()
 	 */
 	@Override
 	public double		getCurrentTemperature() throws Exception

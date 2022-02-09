@@ -48,7 +48,7 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>HairDryerUserModel</code> defines a very simple user
+ * The class <code>fanUserModel</code> defines a very simple user
  * model for the hair dryer.
  *
  * <p><strong>Description</strong></p>
@@ -68,7 +68,8 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
  * 
  * <p>Created on : 2021-09-20</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public class			VacuumCleanerUserModel
 extends		AtomicModel
@@ -141,8 +142,8 @@ extends		AtomicModel
 
 	/**
 	 * generate the next event in the test scenario; current implementation
-	 * cycles through {@code SwitchOnHairDryer}, {@code SetHighHairDryer},
-	 * {@code SetLowHairDryer} and {@code SwitchOffHairDryer} in this order
+	 * cycles through {@code SwitchOnfan}, {@code SetHighfan},
+	 * {@code SetLowfan} and {@code SwitchOfffan} in this order
 	 * at a random time interval following a gaussian distribution with
 	 * mean {@code STEP_MEAN_DURATION} and standard deviation
 	 * {@code STEP_MEAN_DURATION/2.0}.

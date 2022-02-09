@@ -23,7 +23,7 @@ public class BatteryUnitTester extends AbstractComponent {
 	// -------------------------------------------------------------------------
 
 	protected BatteryUnitTester() throws Exception {
-		this(Battery.Battery_INBOUND_PORT_URI);
+		this(Battery.INBOUND_PORT_URI);
 	}
 
 	protected BatteryUnitTester(String batteryInboundPortURI) throws Exception {

@@ -55,7 +55,8 @@ import fr.sorbonne_u.production_unities.miniHydroelectricDam.mil.events.*;
 * 
 * <p>Created on : 2021-10-05</p>
 * 
-* @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
 */
 //-----------------------------------------------------------------------------
 @ModelExternalEvents(

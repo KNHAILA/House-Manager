@@ -30,7 +30,7 @@ public class			ElectricMeterElectricityModel
     public static final String		URI = ElectricMeterElectricityModel.class.
             getSimpleName();
     /** tension of electric circuit for appliances in volts.			 	*/
-    public static final double		TENSION = 220.0;
+    public static final double		TENSION = 22000.0;
 
     /** current intensity of the Refrigerator in amperes.							*/
     @ImportedVariable(type = Double.class)
@@ -133,18 +133,16 @@ public class			ElectricMeterElectricityModel
      */
     protected void		updateConsumption(Duration d)
     {
-        this.currentConsumption.v = this.currentConsumption.v +
+        this.currentConsumption.v = 
                 Electricity.computeConsumption(
                         d, TENSION*this.currentIntensity_consumption.v);
         
         if(this.currentConsumption.v != 0.0) {
-        	this.currentConsumption.v = this.currentConsumption.v + 100;
+        	this.currentConsumption.v = this.currentConsumption.v * 50000;
         }
         
         this.currentConsumption.time =
                 this.currentConsumption.time.add(d);
-        
-        System.out.println("in electricity model" + this.currentConsumption.v);
     }
 
     protected void		updateProduction(Duration d)

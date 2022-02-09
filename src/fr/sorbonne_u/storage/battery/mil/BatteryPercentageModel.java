@@ -38,10 +38,11 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 * 
 * <p>Created on : 2021-09-23</p>
 * 
-* @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
 */
 //-----------------------------------------------------------------------------
-@ModelExternalEvents(imported = {ChargeBattery.class, DoNotChargeBattery.class, UseBattery.class, DoNotUseBattery.class})
+@ModelExternalEvents(imported = {ChargeBattery.class, DoNotChargeBattery.class})
 //-----------------------------------------------------------------------------
 public class			BatteryPercentageModel
 extends		AtomicHIOAwithDE
@@ -56,7 +57,8 @@ extends		AtomicHIOAwithDE
 	 *
 	 * <p>Created on : 2021-09-24</p>
 	 * 
-	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+	 *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
 	 */
 	public static enum	State {
 		/** battery is charging.												*/

@@ -35,7 +35,7 @@ public class			OffRefrigerator
     public boolean		hasPriorityOver(EventI e)
     {
         // if many Refrigerator events occur at the same time, the
-        // SwitchOffHairDryer one will be executed after all others.
+        // SwitchOfffan one will be executed after all others.
         return false;
     }
 

@@ -22,7 +22,7 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.fan.FanCI#getState()
+	 * @see fr.sorbonne_u.components.fan.FanCI#getState()
 	 */
 	@Override
 	public State	getState() throws Exception
@@ -38,7 +38,7 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Fan.FanCI#getMode()
+	 * @see fr.sorbonne_u.components.Fan.FanCI#getMode()
 	 */
 	@Override
 	public Mode	getMode() throws Exception
@@ -54,7 +54,7 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.fan.FanCI#turnOn()
+	 * @see fr.sorbonne_u.components.fan.FanCI#turnOn()
 	 */
 	@Override
 	public void	turnOn() throws Exception
@@ -71,7 +71,7 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.fan.FanCI#turnOff()
+	 * @see fr.sorbonne_u.components.fan.FanCI#turnOff()
 	 */
 	@Override
 	public void	turnOff() throws Exception
@@ -88,7 +88,7 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.fan.FanCI#setHigh()
+	 * @see fr.sorbonne_u.components.fan.FanCI#setHigh()
 	 */
 	@Override
 	public void			setHigh() throws Exception
@@ -105,7 +105,7 @@ public class FanInboundPort extends AbstractInboundPort implements FanCI {
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.fan.FanCI#setLow()
+	 * @see fr.sorbonne_u.components.fan.FanCI#setLow()
 	 */
 	@Override
 	public void			setLow() throws Exception

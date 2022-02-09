@@ -73,7 +73,6 @@ import fr.sorbonne_u.components.refrigerator.sil.RefrigeratorElectricitySILModel
 //Wind turbine
 import fr.sorbonne_u.production_unities.windTurbine.sil.WindTurbineElectricitySILModel;
 import fr.sorbonne_u.production_unities.windTurbine.SelfControlWindTurbineRTAtomicSimulatorPlugin;
-import fr.sorbonne_u.production_unities.windTurbine.mil.WindTurbineElectricityModel;
 import fr.sorbonne_u.production_unities.windTurbine.mil.events.*;
 
 //vacuum cleaner
@@ -85,6 +84,12 @@ import fr.sorbonne_u.components.vacuumCleaner.sil.VacuumCleanerElectricitySILMod
 import fr.sorbonne_u.components.washingMachine.ThermostatedWashingMachineRTAtomicSimulatorPlugin;
 import fr.sorbonne_u.components.washingMachine.sil.WashingMachineElectricitySILModel;
 import fr.sorbonne_u.components.washingMachine.mil.events.*;
+
+//Battery
+import fr.sorbonne_u.storage.battery.BatteryRTAtomicSimulatorPlugin;
+import fr.sorbonne_u.storage.battery.mil.events.*;
+import fr.sorbonne_u.storage.battery.sil.BatteryElectricitySILModel;
+
 // -----------------------------------------------------------------------------
 /**
  * The class <code>ElectricMeterRTAtomicSimulatorPlugin</code> implements
@@ -100,7 +105,8 @@ import fr.sorbonne_u.components.washingMachine.mil.events.*;
  * 
  * <p>Created on : 2021-10-07</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public class			ElectricMeterRTAtomicSimulatorPlugin
 extends		RTAtomicSimulatorPlugin
@@ -174,6 +180,14 @@ extends		RTAtomicSimulatorPlugin
 	                                REFRIGERATOR_ELECTRICITY_MODEL_CLASS =
 	                                		RefrigeratorElectricitySILModel.class;
 	
+	/** URI of the battery electricity model.								*/
+	protected static final String	BATTERY_ELECTRICITY_MODEL_URI =
+											BatteryElectricitySILModel.URI;
+	/** class implementing the battery electricity model.					*/
+	protected static final Class<BatteryElectricitySILModel>
+	                                BATTERY_ELECTRICITY_MODEL_CLASS =
+	                                		BatteryElectricitySILModel.class;
+	
 	public static final String	CURRENT_CONSUMPTION = "cc";
 	public static final String	CURRENT_PRODUCTION = "cp";
 	
@@ -239,20 +253,23 @@ extends		RTAtomicSimulatorPlugin
 					OWNER_REFERENCE_NAME,
 					  this.getOwner());
 		
-		//washing machine
-		/*simParams.put(ThermostatedWashingMachineRTAtomicSimulatorPlugin.
-							OWNER_REFERENCE_NAME,
-							  this.getOwner());
-							  */
-		
 		//refrigerator
 		simParams.put(ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 				OWNER_REFERENCE_NAME,
                   this.getOwner());
                   
-		
+		//battery
+				/*simParams.put(BatteryRTAtomicSimulatorPlugin.
+						OWNER_REFERENCE_NAME,
+						  this.getOwner());*/
+				
+				//washing machine
+				/*simParams.put(ThermostatedWashingMachineRTAtomicSimulatorPlugin.
+									OWNER_REFERENCE_NAME,
+									  this.getOwner());
+									  */
 		//wind turbine
-	/*	simParams.put(SelfControlWindTurbineRTAtomicSimulatorPlugin.
+		/*simParams.put(SelfControlWindTurbineRTAtomicSimulatorPlugin.
 																OWNER_REFERENCE_NAME,
 							  this.getOwner());
 							  */
@@ -274,15 +291,17 @@ extends		RTAtomicSimulatorPlugin
 		simParams.remove(METER_REFERENCE_NAME);
 		simParams.remove(ThermostatedWaterHeaterRTAtomicSimulatorPlugin.
 														OWNER_REFERENCE_NAME);
-		/*simParams.remove(ThermostatedWashingMachineRTAtomicSimulatorPlugin.
-				OWNER_REFERENCE_NAME);
-				*/
 		simParams.remove(ThermostatedRefrigeratorRTAtomicSimulatorPlugin.
 				OWNER_REFERENCE_NAME);
-				
-	/*	simParams.remove(SelfControlWindTurbineRTAtomicSimulatorPlugin.
+		/*simParams.remove(BatteryRTAtomicSimulatorPlugin.
+				OWNER_REFERENCE_NAME);*/
+		/*simParams.remove(ThermostatedWashingMachineRTAtomicSimulatorPlugin.
+				OWNER_REFERENCE_NAME);
+				*/		
+		/*simParams.remove(SelfControlWindTurbineRTAtomicSimulatorPlugin.
 				OWNER_REFERENCE_NAME);
 				*/
+				
 		simParams.remove(FanRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME);
 		simParams.remove(VacuumCleanerRTAtomicSimulatorPlugin.OWNER_REFERENCE_NAME);
 	}
@@ -326,10 +345,12 @@ extends		RTAtomicSimulatorPlugin
 		submodels.add(FAN_ELECTRICITY_MODEL_URI);
 		submodels.add(VACUUMCLEANER_ELECTRICITY_MODEL_URI);
 		submodels.add(WATER_HEATER_ELECTRICITY_MODEL_URI);
-		//submodels.add(WASHING_MACHINE_ELECTRICITY_MODEL_URI);
 		submodels.add(REFRIGERATOR_ELECTRICITY_MODEL_URI);
-		//submodels.add(WIND_TURBINE_ELECTRICITY_MODEL_URI);
 		submodels.add(ElectricMeterElectricitySILModel.URI);
+		//submodels.add(BATTERY_ELECTRICITY_MODEL_URI);
+		//submodels.add(WASHING_MACHINE_ELECTRICITY_MODEL_URI);
+		//submodels.add(WIND_TURBINE_ELECTRICITY_MODEL_URI);
+		
 
 		//fan
 		atomicModelDescriptors.put(
@@ -364,31 +385,6 @@ extends		RTAtomicSimulatorPlugin
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						accFactor));
 		
-		//washing machine
-		/*
-		atomicModelDescriptors.put(
-						WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-						RTAtomicHIOA_Descriptor.create(
-						WASHING_MACHINE_ELECTRICITY_MODEL_CLASS,
-						WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-						TimeUnit.SECONDS,
-						null,
-						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
-						accFactor));
-						*/
-		
-		//Wind turbine
-		/*
-		atomicModelDescriptors.put(
-						WIND_TURBINE_ELECTRICITY_MODEL_URI,
-						RTAtomicHIOA_Descriptor.create(
-						WIND_TURBINE_ELECTRICITY_MODEL_CLASS,
-						WIND_TURBINE_ELECTRICITY_MODEL_URI,
-						TimeUnit.SECONDS,
-						null,
-						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
-						accFactor));
-		*/
 		//refrigerator
 		atomicModelDescriptors.put(
 						REFRIGERATOR_ELECTRICITY_MODEL_URI,
@@ -400,6 +396,44 @@ extends		RTAtomicSimulatorPlugin
 								SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 								accFactor));
 								
+		//Battery
+				/*
+				atomicModelDescriptors.put(
+						BATTERY_ELECTRICITY_MODEL_URI,
+						RTAtomicHIOA_Descriptor.create(
+								BATTERY_ELECTRICITY_MODEL_CLASS,
+								BATTERY_ELECTRICITY_MODEL_URI,
+								TimeUnit.SECONDS,
+								null,
+								SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+								accFactor));
+								*/
+				
+				//washing machine
+				/*
+				atomicModelDescriptors.put(
+								WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+								RTAtomicHIOA_Descriptor.create(
+								WASHING_MACHINE_ELECTRICITY_MODEL_CLASS,
+								WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+								TimeUnit.SECONDS,
+								null,
+								SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+								accFactor));
+								*/
+				
+				//Wind turbine
+				/*
+				atomicModelDescriptors.put(
+								WIND_TURBINE_ELECTRICITY_MODEL_URI,
+								RTAtomicHIOA_Descriptor.create(
+								WIND_TURBINE_ELECTRICITY_MODEL_CLASS,
+								WIND_TURBINE_ELECTRICITY_MODEL_URI,
+								TimeUnit.SECONDS,
+								null,
+								SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
+								accFactor));
+								*/
 		
 		//meter
 		atomicModelDescriptors.put(
@@ -411,6 +445,7 @@ extends		RTAtomicSimulatorPlugin
 						null,
 						SimulationEngineCreationMode.ATOMIC_RT_ENGINE,
 						accFactor));
+		
 
 		Map<Class<? extends EventI>, EventSink[]> imported = null;
 
@@ -446,53 +481,6 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(WATER_HEATER_ELECTRICITY_MODEL_URI,
 										  DoNotHeatWater.class)
 					});
-			
-			//washing machine
-			/*
-			imported.put(
-					fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class,
-					new EventSink[] {
-							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-									fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
-					});
-			imported.put(
-					fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class,
-					new EventSink[] {
-							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-									fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class)
-					});
-			imported.put(
-					Rinse.class,
-					new EventSink[] {
-							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-									Rinse.class)
-					});
-			imported.put(
-					Spin.class,
-					new EventSink[] {
-							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-									Spin.class)
-					});
-			
-			imported.put(
-					SwitchOffWashingMachine.class,
-					new EventSink[] {
-							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-									SwitchOffWashingMachine.class)
-					});
-			imported.put(
-					SwitchOnWashingMachine.class,
-					new EventSink[] {
-							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-									SwitchOnWashingMachine.class)
-					});
-			imported.put(
-					Wash.class,
-					new EventSink[] {
-							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
-									Wash.class)
-					});
-					*/
 			
 			//refrigerator
 			imported.put(
@@ -531,24 +519,7 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(REFRIGERATOR_ELECTRICITY_MODEL_URI,
 									Resting.class)
 					});
-			
 
-			//wind turbine
-			/*
-			imported.put(
-					StartWindTurbine.class,
-					new EventSink[] {
-							new EventSink(WIND_TURBINE_ELECTRICITY_MODEL_URI,
-									StartWindTurbine.class)
-					});
-			imported.put(
-					StopWindTurbine.class,
-					new EventSink[] {
-							new EventSink(WIND_TURBINE_ELECTRICITY_MODEL_URI,
-									StopWindTurbine.class)
-					});
-					*/
-			
 			//fan
 			imported.put(
 					SwitchOnFan.class,
@@ -600,6 +571,98 @@ extends		RTAtomicSimulatorPlugin
 							new EventSink(VACUUMCLEANER_ELECTRICITY_MODEL_URI,
 										  SetLowVacuumCleaner.class)
 					});
+			
+
+			//battery
+			/*
+			imported.put(
+					UseBattery.class,
+					new EventSink[] {
+							new EventSink(BATTERY_ELECTRICITY_MODEL_URI,
+									UseBattery.class)
+					});
+			imported.put(
+					DoNotUseBattery.class,
+					new EventSink[] {
+							new EventSink(BATTERY_ELECTRICITY_MODEL_URI,
+									DoNotUseBattery.class)
+					});
+			imported.put(
+					ChargeBattery.class,
+					new EventSink[] {
+							new EventSink(BATTERY_ELECTRICITY_MODEL_URI,
+									ChargeBattery.class)
+					});
+			imported.put(
+					DoNotChargeBattery.class,
+					new EventSink[] {
+							new EventSink(BATTERY_ELECTRICITY_MODEL_URI,
+									DoNotChargeBattery.class)
+					});
+					*/
+			
+			//washing machine
+			/*
+			imported.put(
+					fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater.class)
+					});
+			imported.put(
+					fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									fr.sorbonne_u.components.washingMachine.mil.events.HeatWater.class)
+					});
+			imported.put(
+					Rinse.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									Rinse.class)
+					});
+			imported.put(
+					Spin.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									Spin.class)
+					});
+			
+			imported.put(
+					SwitchOffWashingMachine.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									SwitchOffWashingMachine.class)
+					});
+			imported.put(
+					SwitchOnWashingMachine.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									SwitchOnWashingMachine.class)
+					});
+			imported.put(
+					Wash.class,
+					new EventSink[] {
+							new EventSink(WASHING_MACHINE_ELECTRICITY_MODEL_URI,
+									Wash.class)
+					});
+					*/
+			//wind turbine
+			/*
+			imported.put(
+					StartWindTurbine.class,
+					new EventSink[] {
+							new EventSink(WIND_TURBINE_ELECTRICITY_MODEL_URI,
+									StartWindTurbine.class)
+					});
+			imported.put(
+					StopWindTurbine.class,
+					new EventSink[] {
+							new EventSink(WIND_TURBINE_ELECTRICITY_MODEL_URI,
+									StopWindTurbine.class)
+					});
+					*/
+			
 		}
 
 		// variable bindings between exporting and importing models
@@ -642,19 +705,6 @@ extends		RTAtomicSimulatorPlugin
 										 ElectricMeterElectricityModel.URI)
 				});
 		
-		//washing machine
-		/*
-		bindings.put(
-				new VariableSource("currentIntensity",
-										   Double.class,
-										   WASHING_MACHINE_ELECTRICITY_MODEL_URI),
-				new VariableSink[] {
-						new VariableSink("currentWashingMachineIntensity",
-												 Double.class,
-												 ElectricMeterElectricityModel.URI)
-						});
-						*/
-		
 		//refrigerator
 		bindings.put(
 				new VariableSource("currentIntensity",
@@ -679,6 +729,42 @@ extends		RTAtomicSimulatorPlugin
 												 ElectricMeterElectricityModel.URI)
 						});
 						*/
+		//Battery
+				/*
+				bindings.put(
+						new VariableSource("currentIntensity_consumption",
+												   Double.class,
+												   BATTERY_ELECTRICITY_MODEL_URI),
+						new VariableSink[] {
+										new VariableSink("currentBatteryIntensity_consumption",
+														 Double.class,
+														 ElectricMeterElectricityModel.URI)
+								});
+				
+				bindings.put(
+						new VariableSource("currentIntensity_production",
+												   Double.class,
+												   BATTERY_ELECTRICITY_MODEL_URI),
+						new VariableSink[] {
+										new VariableSink("currentBatteryIntensity_production",
+														 Double.class,
+														 ElectricMeterElectricityModel.URI)
+								});
+								*/
+				
+		//washing machine
+				/*
+				bindings.put(
+						new VariableSource("currentIntensity",
+												   Double.class,
+												   WASHING_MACHINE_ELECTRICITY_MODEL_URI),
+						new VariableSink[] {
+								new VariableSink("currentWashingMachineIntensity",
+														 Double.class,
+														 ElectricMeterElectricityModel.URI)
+								});
+								*/
+						
 
 
 		// coupled model descriptor: an HIOA requires a

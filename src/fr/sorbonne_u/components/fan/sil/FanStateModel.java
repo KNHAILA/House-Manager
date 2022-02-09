@@ -54,7 +54,7 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>HairDryerStateModel</code> defines a simulation model
+ * The class <code>fanStateModel</code> defines a simulation model
  * tracking the state changes on a hair dryer.
  *
  * <p><strong>Description</strong></p>
@@ -83,7 +83,8 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
  * 
  * <p>Created on : 2021-10-04</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 // -----------------------------------------------------------------------------
 @ModelExternalEvents(

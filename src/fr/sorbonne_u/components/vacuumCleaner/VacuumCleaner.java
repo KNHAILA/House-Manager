@@ -50,7 +50,7 @@ import java.util.HashMap;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>HairDryer</code> implements the hair dryer component
+ * The class <code>fan</code> implements the hair dryer component
  * including a SIL simulation.
  *
  * <p><strong>Description</strong></p>
@@ -82,7 +82,8 @@ import java.util.HashMap;
  * 
  * <p>Created on : 2021-09-09</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 @OfferedInterfaces(offered={VacuumCleanerCI.class})
 public class			VacuumCleaner
@@ -110,7 +111,7 @@ implements	VacuumCleanerImplementation
 	/** current mode of operation (low, high) of the hair dryer.			*/
 	protected VacuumCleanerMode			currentMode;
 
-	/** inbound port offering the <code>HairDryerCI</code> interface.		*/
+	/** inbound port offering the <code>fanCI</code> interface.		*/
 	protected VacuumCleanerInboundPort	hdip;
 
 	// SIL simulation
@@ -144,8 +145,8 @@ implements	VacuumCleanerImplementation
 	 * pre	{@code !INBOUND_PORT_URI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
-	 * post	{@code getState() == HairDryerState.OFF}
-	 * post	{@code getMode() == HairDryerMode.LOW}
+	 * post	{@code getState() == fanState.OFF}
+	 * post	{@code getMode() == fanMode.LOW}
 	 * </pre>
 	 * 
 	 * @param simArchitectureURI	URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
@@ -168,28 +169,28 @@ implements	VacuumCleanerImplementation
 	 * <p><strong>Contract</strong></p>
 	 * 
 	 * <pre>
-	 * pre	{@code hairDryerInboundPortURI != null}
-	 * pre	{@code !hairDryerInboundPortURI.isEmpty()}
+	 * pre	{@code fanInboundPortURI != null}
+	 * pre	{@code !fanInboundPortURI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
-	 * post	{@code getState() == HairDryerState.OFF}
-	 * post	{@code getMode() == HairDryerMode.LOW}
+	 * post	{@code getState() == fanState.OFF}
+	 * post	{@code getMode() == fanMode.LOW}
 	 * </pre>
 	 * 
-	 * @param hairDryerInboundPortURI	URI of the hair dryer inbound port.
+	 * @param fanInboundPortURI	URI of the hair dryer inbound port.
 	 * @param simArchitectureURI		URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest		true if the component executes as a unit test, false otherwise.
 	 * @throws Exception				<i>to do</i>.
 	 */
 	protected			VacuumCleaner(
-		String hairDryerInboundPortURI,
+		String fanInboundPortURI,
 		String simArchitectureURI,
 		boolean executesAsUnitTest
 		)
 	throws Exception
 	{
 		super(REFLECTION_INBOUND_PORT_URI, 1, 0);
-		this.initialise(hairDryerInboundPortURI, simArchitectureURI,
+		this.initialise(fanInboundPortURI, simArchitectureURI,
 						executesAsUnitTest);
 	}
 
@@ -200,30 +201,30 @@ implements	VacuumCleanerImplementation
 	 * <p><strong>Contract</strong></p>
 	 * 
 	 * <pre>
-	 * pre	{@code hairDryerInboundPortURI != null}
-	 * pre	{@code !hairDryerInboundPortURI.isEmpty()}
+	 * pre	{@code fanInboundPortURI != null}
+	 * pre	{@code !fanInboundPortURI.isEmpty()}
 	 * pre	{@code reflectionInboundPortURI != null}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
-	 * post	{@code getState() == HairDryerState.OFF}
-	 * post	{@code getMode() == HairDryerMode.LOW}
+	 * post	{@code getState() == fanState.OFF}
+	 * post	{@code getMode() == fanMode.LOW}
 	 * </pre>
 	 *
 	 * @param reflectionInboundPortURI	URI of the reflection innbound port of the component.
-	 * @param hairDryerInboundPortURI	URI of the hair dryer inbound port.
+	 * @param fanInboundPortURI	URI of the hair dryer inbound port.
 	 * @param simArchitectureURI		URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest		true if the component executes as a unit test, false otherwise.
 	 * @throws Exception				<i>to do</i>.
 	 */
 	protected			VacuumCleaner(
 		String reflectionInboundPortURI,
-		String hairDryerInboundPortURI,
+		String fanInboundPortURI,
 		String simArchitectureURI,
 		boolean executesAsUnitTest
 		) throws Exception
 	{
 		super(reflectionInboundPortURI, 1, 0);
-		this.initialise(hairDryerInboundPortURI, simArchitectureURI,
+		this.initialise(fanInboundPortURI, simArchitectureURI,
 						executesAsUnitTest);
 	}
 
@@ -233,29 +234,29 @@ implements	VacuumCleanerImplementation
 	 * <p><strong>Contract</strong></p>
 	 * 
 	 * <pre>
-	 * pre	{@code hairDryerInboundPortURI != null}
-	 * pre	{@code !hairDryerInboundPortURI.isEmpty()}
+	 * pre	{@code fanInboundPortURI != null}
+	 * pre	{@code !fanInboundPortURI.isEmpty()}
 	 * pre	{@code simArchitectureURI != null}
 	 * pre	{@code !simArchitectureURI.isEmpty() || !executesAsUnitTest}
-	 * post	{@code getState() == HairDryerState.OFF}
-	 * post	{@code getMode() == HairDryerMode.LOW}
+	 * post	{@code getState() == fanState.OFF}
+	 * post	{@code getMode() == fanMode.LOW}
 	 * </pre>
 	 * 
-	 * @param hairDryerInboundPortURI	URI of the hair dryer inbound port.
+	 * @param fanInboundPortURI	URI of the hair dryer inbound port.
 	 * @param simArchitectureURI		URI of the simulation architecture to be created or the empty string  if the component does not execute as a SIL simulation.
 	 * @param executesAsUnitTest		true if the component executes as a unit test, false otherwise.
 	 * @throws Exception				<i>to do</i>.
 	 */
 	protected void		initialise(
-		String hairDryerInboundPortURI,
+		String fanInboundPortURI,
 		String simArchitectureURI,
 		boolean executesAsUnitTest
 		) throws Exception
 	{
-		assert	hairDryerInboundPortURI != null :
+		assert	fanInboundPortURI != null :
 					new PreconditionException(
 										"vacuumCleanerInboundPortURI != null");
-		assert	!hairDryerInboundPortURI.isEmpty() :
+		assert	!fanInboundPortURI.isEmpty() :
 					new PreconditionException(
 										"!vacuumCleanerrInboundPortURI.isEmpty()");
 		assert	simArchitectureURI != null;
@@ -266,7 +267,7 @@ implements	VacuumCleanerImplementation
 		this.executesAsUnitTest = executesAsUnitTest;
 		this.currentState = INITIAL_STATE;
 		this.currentMode = INITIAL_MODE;
-		this.hdip = new VacuumCleanerInboundPort(hairDryerInboundPortURI, this);
+		this.hdip = new VacuumCleanerInboundPort(fanInboundPortURI, this);
 		this.hdip.publishPort();
 
 		if (VacuumCleaner.VERBOSE) {
@@ -348,7 +349,7 @@ implements	VacuumCleanerImplementation
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#getState()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#getState()
 	 */
 	@Override
 	public VacuumCleanerState	getState() throws Exception
@@ -362,7 +363,7 @@ implements	VacuumCleanerImplementation
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#getMode()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#getMode()
 	 */
 	@Override
 	public VacuumCleanerMode	getMode() throws Exception
@@ -376,7 +377,7 @@ implements	VacuumCleanerImplementation
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#turnOn()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#turnOn()
 	 */
 	@Override
 	public void			turnOn() throws Exception
@@ -393,8 +394,8 @@ implements	VacuumCleanerImplementation
 		this.currentMode = VacuumCleanerMode.LOW;
 
 		if (this.isSILsimulated) {
-			// trigger an immediate SwitchOnHairDryer event on the
-			// HairDryerStateModel, which in turn will emit this event
+			// trigger an immediate SwitchOnfan event on the
+			// fanStateModel, which in turn will emit this event
 			// towards the other models of the hair dryer
 			// the t parameter in the lambda expression represents the current
 			// simulation time to be provided by he simulator before passing
@@ -406,7 +407,7 @@ implements	VacuumCleanerImplementation
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#turnOff()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#turnOff()
 	 */
 	@Override
 	public void			turnOff() throws Exception
@@ -422,8 +423,8 @@ implements	VacuumCleanerImplementation
 		this.currentState = VacuumCleanerState.OFF;
 
 		if (this.isSILsimulated) {
-			// trigger an immediate SwitchOffHairDryer event on the
-			// HairDryerStateModel, which in turn will emit this event
+			// trigger an immediate SwitchOfffan event on the
+			// fanStateModel, which in turn will emit this event
 			// towards the other models of the hair dryer
 			// the t parameter in the lambda expression represents the current
 			// simulation time to be provided by he simulator before passing
@@ -435,7 +436,7 @@ implements	VacuumCleanerImplementation
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#setHigh()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#setHigh()
 	 */
 	@Override
 	public void			setHigh() throws Exception
@@ -453,8 +454,8 @@ implements	VacuumCleanerImplementation
 		this.currentMode = VacuumCleanerMode.HIGH;
 
 		if (this.isSILsimulated) {
-			// trigger an immediate SetHighHairDryer event on the
-			// HairDryerStateModel, which in turn will emit this event
+			// trigger an immediate SetHighfan event on the
+			// fanStateModel, which in turn will emit this event
 			// towards the other models of the hair dryer
 			// the t parameter in the lambda expression represents the current
 			// simulation time to be provided by he simulator before passing
@@ -466,7 +467,7 @@ implements	VacuumCleanerImplementation
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#setLow()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#setLow()
 	 */
 	@Override
 	public void			setLow() throws Exception
@@ -485,8 +486,8 @@ implements	VacuumCleanerImplementation
 		this.currentMode = VacuumCleanerMode.LOW;
 
 		if (this.isSILsimulated) {
-			// trigger an immediate SetLowHairDryer event on the
-			// HairDryerStateModel, which in turn will emit this event
+			// trigger an immediate SetLowfan event on the
+			// fanStateModel, which in turn will emit this event
 			// towards the other models of the hair dryer
 			// the t parameter in the lambda expression represents the current
 			// simulation time to be provided by the simulator before passing

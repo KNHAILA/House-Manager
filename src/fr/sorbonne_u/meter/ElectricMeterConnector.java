@@ -49,14 +49,15 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
  * 
  * <p>Created on : 2021-09-13</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public class			ElectricMeterConnector
 extends		AbstractConnector
 implements	ElectricMeterCI
 {
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.meter.ElectricMeterCI#getCurrentConsumption()
+	 * @see fr.sorbonne_u.components.meter.ElectricMeterCI#getCurrentConsumption()
 	 */
 	@Override
 	public double		getCurrentConsumption() throws Exception
@@ -65,7 +66,7 @@ implements	ElectricMeterCI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.meter.ElectricMeterCI#getCurrentProduction()
+	 * @see fr.sorbonne_u.components.meter.ElectricMeterCI#getCurrentProduction()
 	 */
 	@Override
 	public double		getCurrentProduction() throws Exception

@@ -6,37 +6,37 @@ import fr.sorbonne_u.components.interfaces.RequiredCI;
 public interface VacuumCleanerCI extends OfferedCI, RequiredCI, VacuumCleanerImplementation {
 	
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#getState()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#getState()
 	 */
 	@Override
 	public VacuumCleanerState	getState() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#getMode()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#getMode()
 	 */
 	@Override
 	public VacuumCleanerMode	getMode() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#turnOn()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#turnOn()
 	 */
 	@Override
 	public void	turnOn() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#turnOff()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#turnOff()
 	 */
 	@Override
 	public void	turnOff() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#setHigh()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#setHigh()
 	 */
 	@Override
 	public void	setHigh() throws Exception;
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.hairdryer.HairDryerImplementationI#setLow()
+	 * @see fr.sorbonne_u.components.fan.fanImplementationI#setLow()
 	 */
 	@Override
 	public void	setLow() throws Exception;

@@ -90,7 +90,8 @@ import fr.sorbonne_u.components.AbstractComponent;
  * 
  * <p>Created on : 2021-09-10</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 @OfferedInterfaces(offered={RefrigeratorCI.class})
 public class			ThermostatedRefrigerator
@@ -109,7 +110,8 @@ implements	RefrigeratorImplementationI
 	 * 
 	 * <p>Created on : 2021-09-10</p>
 	 * 
-	 * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+	 *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
 	 */
 	protected static enum	RefrigeratorState
 	{
@@ -583,7 +585,7 @@ implements	RefrigeratorImplementationI
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.refrigerator.RefrigeratorImplementationI#isRunning()
+	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI#isRunning()
 	 */
 	@Override
 	public boolean		isRunning() throws Exception
@@ -596,7 +598,7 @@ implements	RefrigeratorImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.refrigerator.RefrigeratorImplementationI#startRefrigerator()
+	 * @see fr.sorbonne_u.components.refrigerator.RefrigeratorImplementationI#startRefrigerator()
 	 */
 	@Override
 	public void			startRefrigerator() throws Exception
@@ -628,7 +630,7 @@ implements	RefrigeratorImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#stopRefrigerator()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorImplementationI#stopRefrigerator()
 	 */
 	@Override
 	public void			stopRefrigerator() throws Exception
@@ -648,7 +650,7 @@ implements	RefrigeratorImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#setTargetTemperature(double)
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorImplementationI#setTargetTemperature(double)
 	 */
 	@Override
 	public void			setTargetTemperature(double target) throws Exception
@@ -665,7 +667,7 @@ implements	RefrigeratorImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#getTargetTemperature()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorImplementationI#getTargetTemperature()
 	 */
 	@Override
 	public double		getTargetTemperature() throws Exception
@@ -679,7 +681,7 @@ implements	RefrigeratorImplementationI
 	}
 
 	/**
-	 * @see fr.sorbonne_u.components.cyphy.hem2021e1.equipments.Refrigerator.RefrigeratorImplementationI#getCurrentTemperature()
+	 * @see fr.sorbonne_u.components.Refrigerator.RefrigeratorImplementationI#getCurrentTemperature()
 	 */
 	@Override
 	public double		getCurrentTemperature() throws Exception

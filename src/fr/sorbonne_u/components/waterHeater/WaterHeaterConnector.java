@@ -21,47 +21,6 @@ import fr.sorbonne_u.interfaces.SuspensionEquipmentControlCI;
 * @author	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
 */
 
-/*
-public class WaterHeaterConnector extends AbstractConnector implements WaterHeaterCI {
-	
-	@Override
-	public boolean isRunning() throws Exception {
-		return ((WaterHeaterCI)this.offering).isRunning();
-	}
-	
-	
-	@Override
-	public void startWaterHeater() throws Exception {
-		((WaterHeaterCI)this.offering).startWaterHeater();
-	}
-	
-	
-	@Override
-	public void stopWaterHeater() throws Exception {
-		((WaterHeaterCI)this.offering).stopWaterHeater();
-	}
-
-	
-	@Override
-	public void setTargetTemperature(double target) throws Exception {
-		((WaterHeaterCI)this.offering).setTargetTemperature(target);
-	}
-	
-	
-	@Override
-	public double getTargetTemperature() throws Exception {
-		return ((WaterHeaterCI)this.offering).getTargetTemperature();
-	}
-	
-	
-	@Override
-	public double getCurrentTemperature() throws Exception {
-		return ((WaterHeaterCI)this.offering).getCurrentTemperature();
-	}
-}
-
-*/
-
 
 public class			WaterHeaterConnector
 extends		AbstractConnector

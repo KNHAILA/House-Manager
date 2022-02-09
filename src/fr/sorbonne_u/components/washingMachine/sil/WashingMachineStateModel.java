@@ -37,11 +37,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.washingMachine.mil.WashingMachineElectricityModel.State;
-import fr.sorbonne_u.components.washingMachine.mil.events.DoNotHeatWater;
-import fr.sorbonne_u.components.washingMachine.mil.events.HeatWater;
-import fr.sorbonne_u.components.washingMachine.mil.events.WashingMachineEventI;
-import fr.sorbonne_u.components.washingMachine.mil.events.SwitchOffWashingMachine;
-import fr.sorbonne_u.components.washingMachine.mil.events.SwitchOnWashingMachine;
+import fr.sorbonne_u.components.washingMachine.mil.events.*;
 import fr.sorbonne_u.components.washingMachine.ThermostatedWashingMachine;
 import fr.sorbonne_u.components.washingMachine.ThermostatedWashingMachineRTAtomicSimulatorPlugin;
 import fr.sorbonne_u.components.cyphy.plugins.devs.utils.StandardComponentLogger;
@@ -90,14 +86,15 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
  * 
  * <p>Created on : 2021-10-05</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 // -----------------------------------------------------------------------------
 @ModelExternalEvents(
 		imported = {SwitchOnWashingMachine.class,SwitchOffWashingMachine.class,
-					HeatWater.class,DoNotHeatWater.class},
+					HeatWater.class,DoNotHeatWater.class, Rinse.class, Spin.class, Wash.class},
 		exported = {SwitchOnWashingMachine.class,SwitchOffWashingMachine.class,
-					HeatWater.class,DoNotHeatWater.class})
+					HeatWater.class,DoNotHeatWater.class, Rinse.class, Spin.class, Wash.class})
 // -----------------------------------------------------------------------------
 public class			WashingMachineStateModel
 extends		AtomicModel

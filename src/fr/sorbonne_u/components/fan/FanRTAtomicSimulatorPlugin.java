@@ -60,7 +60,7 @@ import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>HairDryerRTAtomicSimulatorPlugin</code> defines the plug-in
+ * The class <code>fanRTAtomicSimulatorPlugin</code> defines the plug-in
  * that manages the SIL simulation inside the hair dryer component.
  *
  * <p><strong>Description</strong></p>
@@ -73,7 +73,8 @@ import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
  * 
  * <p>Created on : 2021-10-04</p>
  * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public class			FanRTAtomicSimulatorPlugin
 extends		RTAtomicSimulatorPlugin

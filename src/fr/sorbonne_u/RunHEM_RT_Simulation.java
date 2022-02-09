@@ -124,7 +124,8 @@ import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
  *
  * <p>Created on : 2021-09-30</p>
  *
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
+ *  @authors	<a href="kaoutar.nhaila@etu.sorbonne-universite.fr">NHAILA Kaoutar</a>
+ *              <a href="maedeh.daemi@etu.sorbonne-universite.fr">DAEMI Maedeh</a>
  */
 public class			RunHEM_RT_Simulation
 {
